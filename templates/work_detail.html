@@ -1,0 +1,113 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        /* ทำให้ textarea และ comment-card มีขนาดเท่ากับตาราง */
+        .comment-box {
+            width: 80%; /* ความกว้างเท่ากับตาราง */
+            margin: 10px auto;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: white;
+        }
+
+        .comment-card {
+            width: 80%; /* ความกว้างเท่ากับตาราง */
+            margin: 10px auto;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        hr {
+            width: 80%;
+            display: block;
+            margin: 20px auto;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+            <br>
+    <h1 style="text-align: center;">Task List</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Create Date</th>
+                <th>Work Order</th>
+                <th>Equipment</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Report By</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ works.number }}</td>
+                <td>{{ works.create_date }}</td>
+                <td>{{ works.work_order }}</td>
+                <td>{{ works.equipment }}</td>
+                <td>{{ works.description }}</td>
+                <td>{{ works.location }}</td>
+                <td>{{ works.report_by }}</td>
+                <td>{{ works.status }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- การแสดงคอมเม้นต์ที่โพสต์ไปแล้ว -->
+    <div class="comment-card">
+        <p><strong>{{ works.report_by }}</strong> <small class="text-muted">on 27/11/2024 at 17:00</small></p>
+        <p>{{works.action}}</p>
+		<a href="{{works.link}}">{{works.link}}</a>
+    </div>
+
+    <div class="comment-card">
+        <p><strong>Jane Smith</strong> <small class="text-muted">on 27/11/2024 at 18:00</small></p>
+        <p>Another comment regarding the work order.</p>
+    </div>
+
+    <hr>
+            
+            <div class="comment-box">
+            <h3>Post Your Comment</h3>
+                        <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
+                        <form method="POST">
+                                    <textarea class="comment-box" name="comment" rows="4" placeholder="Post your comment here..."></textarea>
+                        </form>
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+            </div>
+</body>
+</html>
+
+
+{% endblock %}
