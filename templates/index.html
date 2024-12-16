@@ -51,7 +51,7 @@
         </thead>
         <tbody>
             {% for work in works %}
-            {% if work.status != 'Closed' %}
+            {# {% if work.status != 'Closed' %} #}  <!-- คอมเมนต์เงื่อนไขนี้ -->  
             <tr>
                 <td>{{ work.number }}</td>
                 <td>{{ work.create_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
@@ -70,7 +70,7 @@
                     {% endif %}
                 </td>
             </tr>
-            {% endif %}
+            {# {% endif %} #}  <!-- คอมเมนต์ส่วนนี้ด้วย -->
             {% endfor %}
         </tbody>
     </table>
