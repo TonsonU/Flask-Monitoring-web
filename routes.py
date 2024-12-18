@@ -9,6 +9,89 @@ from models import Line, Location, DeviceType, DeviceName
 
 # Routes for the app
 def init_app(app):
+    # Route สำหรับการสมัครสมาชิก (Register)
+    @app.route('/register', methods=['GET', 'POST'])
+    def register():
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        if request.method == 'POST':
+            username = request.form['username']
+            password = request.form['password']
+            role = request.form.get('role')  # รับค่า Role จากฟอร์ม
+
+            # ตรวจสอบว่ามี username นี้ในระบบหรือไม่
+            if User.query.filter_by(username=username).first():
+                flash("Username already exists. Please choose a different one.", "danger")
+                return redirect(url_for('register'))
+
+            # ใช้ generate_password_hash โดยไม่ระบุ method (ค่าเริ่มต้นคือ pbkdf2:sha256)
+            hashed_password = generate_password_hash(password)
+
+            # บันทึกผู้ใช้ใหม่ลงในฐานข้อมูล
+            new_user = User(username=username, password=hashed_password, role=role)
+            db.session.add(new_user)
+            db.session.commit()
+
+            flash("Registration successful! You can now login.", "success")
+            return redirect(url_for('login'))
+
+        return render_template('register.html')
+
+    @app.route('/forgot_password', methods=['GET', 'POST'])
+    def forgot_password():
+        user_found = True  # Default value, assume user exists
+
+        if request.method == 'POST':
+            username = request.form['username']
+            new_password = request.form['new_password']
+
+            # ค้นหาผู้ใช้ในฐานข้อมูล
+            user = User.query.filter_by(username=username).first()
+
+            if user:
+                # อัปเดตรหัสผ่านใหม่
+                hashed_password = generate_password_hash(new_password)
+                user.password = hashed_password
+                db.session.commit()
+
+                flash("Password updated successfully.", "success")
+                return redirect(url_for('login'))
+            else:
+                # ถ้าไม่พบผู้ใช้ให้แสดงข้อความ
+                user_found = False
+                #flash("User not found. Please register.", "danger")
+
+        return render_template('forgot_password.html', user_found=user_found)
+
+
+    # Route สำหรับการเข้าสู่ระบบ (Login)
+    @app.route('/login', methods=['GET', 'POST'])
+    def login():
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        if request.method == 'POST':
+            username = request.form['username']
+            password = request.form['password']
+
+            # ดึงผู้ใช้จากฐานข้อมูล
+            user = User.query.filter_by(username=username).first()
+            
+            if user and check_password_hash(user.password, password):  # ตรวจสอบรหัสผ่าน
+                login_user(user)
+                #flash("Logged in successfully!", "success")
+                return redirect(url_for('index'))
+            else:
+                flash("Invalid username or password.", "danger")
+        return render_template('login.html')
+
+    # Route สำหรับการออกจากระบบ (Logout)
+    @app.route('/logout')
+    @login_required
+    def logout():
+        logout_user()
+        flash("You have been logged out.", "info")
+        return redirect(url_for('login'))
+    
     @app.route('/')
     @login_required
     def index():
@@ -85,103 +168,7 @@ def init_app(app):
             flash("Work not found.", "danger")
         #return redirect(url_for('index'))
         return redirect(url_for('index'))
-
-    # Route สำหรับการสมัครสมาชิก (Register)
-    @app.route('/register', methods=['GET', 'POST'])
-    def register():
-        if current_user.is_authenticated:
-            return redirect(url_for('index'))
-        if request.method == 'POST':
-            username = request.form['username']
-            password = request.form['password']
-            role = request.form.get('role')  # รับค่า Role จากฟอร์ม
-
-            # ตรวจสอบว่ามี username นี้ในระบบหรือไม่
-            if User.query.filter_by(username=username).first():
-                flash("Username already exists. Please choose a different one.", "danger")
-                return redirect(url_for('register'))
-
-            # ใช้ generate_password_hash โดยไม่ระบุ method (ค่าเริ่มต้นคือ pbkdf2:sha256)
-            hashed_password = generate_password_hash(password)
-
-            # บันทึกผู้ใช้ใหม่ลงในฐานข้อมูล
-            new_user = User(username=username, password=hashed_password, role=role)
-            db.session.add(new_user)
-            db.session.commit()
-
-            flash("Registration successful! You can now login.", "success")
-            return redirect(url_for('login'))
-
-        return render_template('register.html')
-
-    @app.route('/forgot_password', methods=['GET', 'POST'])
-    def forgot_password():
-        user_found = True  # Default value, assume user exists
-
-        if request.method == 'POST':
-            username = request.form['username']
-            new_password = request.form['new_password']
-
-            # ค้นหาผู้ใช้ในฐานข้อมูล
-            user = User.query.filter_by(username=username).first()
-
-            if user:
-                # อัปเดตรหัสผ่านใหม่
-                hashed_password = generate_password_hash(new_password)
-                user.password = hashed_password
-                db.session.commit()
-
-                flash("Password updated successfully.", "success")
-                return redirect(url_for('login'))
-            else:
-                # ถ้าไม่พบผู้ใช้ให้แสดงข้อความ
-                user_found = False
-                #flash("User not found. Please register.", "danger")
-
-        return render_template('forgot_password.html', user_found=user_found)
-
-
-    # Route สำหรับการเข้าสู่ระบบ (Login)
-    @app.route('/login', methods=['GET', 'POST'])
-    def login():
-        if current_user.is_authenticated:
-            return redirect(url_for('index'))
-        if request.method == 'POST':
-            username = request.form['username']
-            password = request.form['password']
-
-            # ดึงผู้ใช้จากฐานข้อมูล
-            user = User.query.filter_by(username=username).first()
-            
-            if user and check_password_hash(user.password, password):  # ตรวจสอบรหัสผ่าน
-                login_user(user)
-                #flash("Logged in successfully!", "success")
-                return redirect(url_for('index'))
-            else:
-                flash("Invalid username or password.", "danger")
-        return render_template('login.html')
-
-
-    # Route สำหรับการออกจากระบบ (Logout)
-    @app.route('/logout')
-    @login_required
-    def logout():
-        logout_user()
-        flash("You have been logged out.", "info")
-        return redirect(url_for('login'))
-
-    # ลบข้อมูลทั้งหมดในตาราง Work
-    @app.route('/clear-tables', methods=['GET'])
-    @login_required 
-    def clear_tables():
-        if current_user.role != 'admin':
-            flash("You don't have permission to clear tables.", "danger")
-            return redirect(url_for('index'))
-        db.session.query(Work).delete()
-        db.session.commit()
-        flash("Table cleared!", "success")
-        return redirect(url_for('index'))
-
+    
     # Route สำหรับทำการแก้ไขข้อมูล 
     @app.route('/edit/<int:number>', methods=['GET', 'POST'])
     @login_required
@@ -225,7 +212,7 @@ def init_app(app):
             form.device_name.data = works.device_name
 
         return render_template("edit.html", form=form, works=works)
-
+    
     # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
     @app.route('/work/<int:number>', methods=['GET'])
     @login_required
@@ -342,3 +329,15 @@ def init_app(app):
             db.session.add(DeviceName(name="A2445/2447", device_type_id=depot_axle.id, location_id=s01.id))
 
             db.session.commit()
+            
+    # ลบข้อมูลทั้งหมดในตาราง Work
+    @app.route('/clear-tables', methods=['GET'])
+    @login_required 
+    def clear_tables():
+        if current_user.role != 'admin':
+            flash("You don't have permission to clear tables.", "danger")
+            return redirect(url_for('index'))
+        db.session.query(Work).delete()
+        db.session.commit()
+        flash("Table cleared!", "success")
+        return redirect(url_for('index'))
