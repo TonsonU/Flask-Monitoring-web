@@ -102,4 +102,3 @@ class EditForm(FlaskForm):
     status = SelectField("Status", choices=[("Open", "Open"), ("Closed", "Closed")], validators=[DataRequired()])  # สถานะ
     link = StringField("Link", validators=[DataRequired(),])                       # URL ของไฟล์
     submit = SubmitField("Submit")
-    
