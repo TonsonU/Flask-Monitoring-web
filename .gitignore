@@ -1,0 +1,23 @@
+# ยกเว้น _pycache_ และไฟล์ .pyc ที่สร้างโดย Python
+__pycache__/
+*.pyc
+
+# ยกเว้นไฟล์ฐานข้อมูล SQLite หรือชั่วคราว
+*.db
+*.sqlite3
+
+# ยกเว้นไดเรกทอรี migrations เวอร์ชันที่ไม่จำเป็น
+migrations/versions/*.pyc
+
+# ยกเว้นไฟล์ Virtual Environment
+env/
+venv/
+ENV/
+
+# ยกเว้นไฟล์ที่เกี่ยวกับระบบปฏิบัติการ
+.DS_Store
+Thumbs.db
+
+# ยกเว้น log file และ output ต่าง ๆ
+*.log
+*.out
