@@ -14,3 +14,5 @@
 6. backup_app.py: backup ไฟล์ app เก่า
 
 # feature/select line
+1. gitignore ป้องกันไฟล์หรือโฟลเดอร์ที่ไม่จำเป็น จะไม่ถูกอัพโหลดขึ้น Git
+2. 
