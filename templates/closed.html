@@ -38,10 +38,10 @@
             <tr>
                 <th data-sortable="true" data-field="number">Number</th>
                 <th data-sortable="true" data-field="create_date">Create Date</th>
-                <th data-sortable="true" data-field="work_order">Work Order</th>
-                <th data-sortable="true" data-field="equipment">Equipment</th>
+                <th data-sortable="true" data-field="location_name">Location</th> <!-- New Column -->
+                <th data-sortable="true" data-field="device_type">Device Type</th> <!-- New Column -->
+                <th data-sortable="true" data-field="device_name">Device Name</th> <!-- New Column -->
                 <th data-sortable="true" data-field="description">Description</th>
-                <th data-sortable="true" data-field="location">Location</th>
                 <th data-sortable="true" data-field="report_by">Report By</th>
                 <th data-sortable="true" data-field="status">Status</th>
                 <th data-field="action">Action</th>
@@ -53,10 +53,18 @@
             <tr>
                 <td>{{ work.number }}</td>
                 <td>{{ work.create_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                <td>{{ work.work_order }}</td>
-                <td>{{ work.equipment }}</td>
-                <td>{{ work.description }}</td>
-                <td>{{ work.location }}</td>
+                <td>{{ work.location.name if work.location else 'N/A' }}</td>  <!-- แสดง Location Name -->
+                <td>{{ work.device_type.name if work.device_type else 'N/A' }}</td>  <!-- แสดง Device Type -->
+                <td>{{ work.device_name.name if work.device_name else 'N/A' }}</td>  <!-- แสดง Device Name -->
+                <td>
+                    {% if work.description|length > 20 %}
+                        <span title="{{ work.description }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            {{ work.description[:20] }}...
+                        </span>
+                    {% else %}
+                        {{ work.description }}
+                    {% endif %}
+                </td>
                 <td>{{ work.report_by }}</td>
                 <td>{{ work.status }}</td>
                 
