@@ -58,7 +58,15 @@
                 <td>{{ work.location.name if work.location else 'N/A' }}</td>  <!-- แสดง Location Name -->
                 <td>{{ work.device_type.name if work.device_type else 'N/A' }}</td>  <!-- แสดง Device Type -->
                 <td>{{ work.device_name.name if work.device_name else 'N/A' }}</td>  <!-- แสดง Device Name -->
-                <th data-sortable="true" data-field="description">Description</th>
+                <td>
+                    {% if work.description|length > 20 %}
+                        <span title="{{ work.description }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            {{ work.description[:20] }}...
+                        </span>
+                    {% else %}
+                        {{ work.description }}
+                    {% endif %}
+                </td>
                 <td>{{ work.report_by }}</td>
                 <td>{{ work.status }}</td>
                 
