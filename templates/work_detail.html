@@ -65,8 +65,12 @@
                 <th>Location</th>
                 <th>Device Type</th>
                 <th>Device Name</th>
+                <th>Description</th>
                 <th>Report By</th>
                 <th>Status</th>
+                
+                
+                
             </tr>
         </thead>
         <tbody>
@@ -78,8 +82,10 @@
                 <td>{{ works.location.name if location else 'N/A' }}</td>  <!-- แสดง Location Name -->
                 <td>{{ works.device_type.name if device_type else 'N/A' }}</td>  <!-- แสดง Device Type -->
                 <td>{{ works.device_name.name if device_name else 'N/A' }}</td>  <!-- แสดง Device Name -->
+                <td>{{ works.description }}</td>
                 <td>{{ works.report_by }}</td>
                 <td>{{ works.status }}</td>
+                
             </tr>
         </tbody>
     </table>
