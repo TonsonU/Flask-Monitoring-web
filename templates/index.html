@@ -70,7 +70,6 @@
                 
                 <td class="actions">
                     <a href="{{ url_for('work_detail', number=work.number) }}" class="btn btn-success btn-sm">View</a>
-                    <a href="/edit/{{work.number}}" class="btn btn-warning btn-sm">Edit</a>
                     {% if current_user.role == 'admin' %}
                         <a href="#" onclick="confirmDelete('{{ work.number }}')" class="btn btn-danger btn-sm">Delete</a>
                     {% endif %}
