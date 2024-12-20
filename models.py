@@ -76,6 +76,7 @@ class DeviceName(db.Model):
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
     device_type = db.relationship('DeviceType', backref=db.backref('device_names', lazy=True))
     location = db.relationship('Location', backref=db.backref('device_names', lazy=True))
+    bound = db.Column(db.String(100), nullable=False)
 
     def __repr__(self):
         return f"<DeviceName {self.name}>"
