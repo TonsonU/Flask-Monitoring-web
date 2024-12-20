@@ -2,7 +2,6 @@
 {% extends "layout.html" %}
 
 {% block content %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,9 +21,8 @@
         th {
             background-color: #f4f4f4;
         }
-        /* ทำให้ textarea และ comment-card มีขนาดเท่ากับตาราง */
         .comment-box {
-            width: 80%; /* ความกว้างเท่ากับตาราง */
+            width: 80%; 
             margin: 10px auto;
             padding: 8px;
             border: 1px solid #ddd;
@@ -34,7 +32,7 @@
         }
 
         .comment-card {
-            width: 80%; /* ความกว้างเท่ากับตาราง */
+            width: 80%; 
             margin: 10px auto;
             padding: 15px;
             border: 1px solid #ddd;
@@ -51,44 +49,61 @@
         button {
             margin-top: 10px;
         }
+
+        .edit-btn-container {
+            width: 80%;
+            margin: 0 auto 20px auto;
+            text-align: right;
+        }
+        .wrap-text {
+            white-space: normal;
+            overflow-wrap: break-word;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
-            <br>
-    <h1 style="text-align: center;">Task List</h1>
-
+    <br>
+    <h1 style="text-align: center;">Task Detail</h1>
+    <div class="edit-btn-container">
+        <a href="{{ url_for('edit', number=works.number) }}" class="btn btn-warning" style="width: 150px;">Edit</a>
+    </div>
     <table>
         <thead>
             <tr>
                 <th>Number</th>
                 <th>Create Date</th>
                 <th>Work Order</th>
-                <th>Equipment</th>
-                <th>Description</th>
+                <th>Line</th>
                 <th>Location</th>
+                <th>Device Type</th>
+                <th>Device Name</th>
+                <th>Description</th>
                 <th>Report By</th>
                 <th>Status</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>{{ works.number }}</td>
-                <td>{{ works.create_date }}</td>
-                <td>{{ works.work_order }}</td>
-                <td>{{ works.equipment }}</td>
-                <td>{{ works.description }}</td>
-                <td>{{ works.location }}</td>
-                <td>{{ works.report_by }}</td>
-                <td>{{ works.status }}</td>
+                <td class="wrap-text">{{ works.number }}</td>
+                <td class="wrap-text">{{ works.create_date }}</td>
+                <td class="wrap-text">{{ works.work_order }}</td>
+                <td class="wrap-text">{{ works.line.name if line else 'N/A' }}</td>
+                <td class="wrap-text">{{ works.location.name if location else 'N/A' }}</td>
+                <td class="wrap-text">{{ works.device_type.name if device_type else 'N/A' }}</td>
+                <td class="wrap-text">{{ works.device_name.name if device_name else 'N/A' }}</td>
+                <td class="wrap-text">{{ works.description }}</td>
+                <td class="wrap-text">{{ works.report_by }}</td>
+                <td class="wrap-text">{{ works.status }}</td>
             </tr>
         </tbody>
     </table>
-
+    
     <!-- การแสดงคอมเม้นต์ที่โพสต์ไปแล้ว -->
     <div class="comment-card">
-        <p><strong>{{ works.report_by }}</strong> <small class="text-muted">on 27/11/2024 at 17:00</small></p>
-        <p>{{works.action}}</p>
-		<a href="{{works.link}}">{{works.link}}</a>
+        <p><strong>{{ works.report_by }}</strong> <small class="text-muted">on {{ works.create_date.strftime('%d/%m/%Y at %H:%M') }}</small></p>
+        <p>{{ works.description }}</p>
+        <a href="{{ works.link }}" target="_blank">{{ works.link }}</a>
     </div>
 
     <div class="comment-card">
@@ -98,16 +113,14 @@
 
     <hr>
             
-            <div class="comment-box">
-            <h3>Post Your Comment</h3>
-                        <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
-                        <form method="POST">
-                                    <textarea class="comment-box" name="comment" rows="4" placeholder="Post your comment here..."></textarea>
-                        </form>
-                        <button type="submit" class="btn btn-primary">Post Comment</button>
-            </div>
+    <div class="comment-box">
+        <h3>Post Your Comment</h3>
+        <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
+        <form method="POST">
+            <textarea class="comment-box" name="comment" rows="4" placeholder="Post your comment here..."></textarea>
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+    </div>
 </body>
 </html>
-
-
 {% endblock %}

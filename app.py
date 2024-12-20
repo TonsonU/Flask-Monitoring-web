@@ -6,12 +6,15 @@ from flask_bootstrap import Bootstrap
 from config import Config
 from models import db,User
 from routes import init_app
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 # กำหนดการตั้งค่าฐานข้อมูล
 db.init_app(app)
+# เชื่อมต่อ db และ Migrate
+migrate = Migrate(app, db)
 
 # ตั้งค่า Flask-Login
 login_manager = LoginManager()
@@ -31,3 +34,5 @@ init_app(app)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+    
