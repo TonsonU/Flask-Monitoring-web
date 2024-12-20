@@ -170,7 +170,7 @@ def init_app(app):
         return redirect(url_for('index'))
     
     # Route สำหรับทำการแก้ไขข้อมูล 
-    @app.route('/edit/<int:number>', methods=['GET', 'POST'])
+    @app.route('/edit/<number>', methods=['GET', 'POST'], endpoint='edit')
     @login_required
     def editWork(number):
         works = Work.query.filter_by(number=number).first_or_404()
