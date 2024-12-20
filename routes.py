@@ -254,6 +254,12 @@ def init_app(app):
         data = [{"id": dn.id, "name": dn.name} for dn in device_names]
         return jsonify(data)
     
+    @app.route('/inventory')
+    @login_required
+    def inventory():
+        devices = DeviceName.query.all()
+        return render_template("inventory.html", devices=devices)
+    
     @app.before_request
     def setup_db():
         db.create_all()
