@@ -1,0 +1,127 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Serial Number</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Styles for the card with black border */
+        .card-custom {
+            border: 2px solid #000; /* Black border */
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        /* Styles for the close button */
+        .btn-close-custom {
+            color: #ffffff; /* White color for the close button */
+        }
+        .btn-close-custom:hover {
+            color: #ff0000; /* Change to red on hover */
+        }
+        /* Customize the heading */
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        /* Customize the Submit button */
+        .btn-submit {
+            width: 100%;
+        }
+        /* Customize the history table */
+        .history-table th, .history-table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+        /* Additional padding for the history section */
+        .history-section {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="card shadow card-custom">
+        <!-- Card Header with "Edit" Title and Close Button -->
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h3>Edit Serial Number {{ device.name }} </h3> <!-- Changed heading to "Edit" -->
+            <a href="{{ url_for('inventory') }}" class="btn-close btn-close-white btn-close-custom" aria-label="Close">&times;</a>
+        </div>
+        
+        <!-- Card Body with Form -->
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <!-- Serial Number Field -->
+                <div class="mb-3">
+                    {{ form.serial_number.label(class="form-label fw-bold") }}
+                    {{ form.serial_number(class="form-control", placeholder="Enter new Serial Number") }}
+                    {% for error in form.serial_number.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Remark Field -->
+                <div class="mb-4">
+                    {{ form.remark.label(class="form-label fw-bold") }}
+                    {{ form.remark(class="form-control", rows="3", placeholder="Enter remarks (optional)") }}
+                    {% for error in form.remark.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="text-center">
+                    {{ form.submit(class="btn btn-success btn-submit") }}
+                </div>
+            </form>
+        </div>
+        
+        <!-- Divider -->
+        <hr>
+        
+        <!-- Edit History Section -->
+        <div class="card-body history-section">
+            <h3 class="mt-4">Serial Number Edit History</h3>
+            {% if history %}
+            <table class="table table-bordered history-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Old Serial Number</th>
+                        <th>New Serial Number</th>
+                        <th>Remark</th>
+                        <th>Edited By</th>
+                        <th>Edit Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in history %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ record.old_serial_number or 'N/A' }}</td>
+                        <td>{{ record.new_serial_number }}</td>
+                        <td>{{ record.remark or 'None' }}</td>
+                        <td>{{ record.user.username }}</td>
+                        <td>{{ record.changed_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No edit history available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% endblock %}
