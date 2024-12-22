@@ -72,7 +72,7 @@
                             <td>{{ record.new_serial_number }}</td>
                             <td>{{ record.remark or 'None' }}</td>
                             <td>{{ record.user.username }}</td>
-                            <td>{{ record.changed_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
