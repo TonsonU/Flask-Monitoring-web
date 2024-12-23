@@ -35,6 +35,7 @@ def init_app(app):
             return redirect(url_for('login'))
 
         return render_template('register.html')
+    
 
     @app.route('/forgot_password', methods=['GET', 'POST'])
     def forgot_password():
@@ -82,6 +83,7 @@ def init_app(app):
             else:
                 flash("Invalid username or password.", "danger")
         return render_template('login.html')
+    
 
     # Route สำหรับการออกจากระบบ (Logout)
     @app.route('/logout')
@@ -91,11 +93,13 @@ def init_app(app):
         flash("You have been logged out.", "info")
         return redirect(url_for('login'))
     
+    
     @app.route('/')
     @login_required
     def index():
         works = Work.query.all()
         return render_template("index.html", works=works)
+    
     
     @app.route('/create', methods=['GET', 'POST'])
     @login_required
@@ -141,9 +145,8 @@ def init_app(app):
             # หลังจากบันทึกข้อมูลเสร็จแล้ว ให้รีไดเรกต์ไปที่หน้า index
             return redirect(url_for('index'))
         return render_template("create.html", form=form)
-
-        return render_template('create.html', form=form)
-   
+    
+    
     # Route สำหรับจัดการ Work ที่ปิดแล้ว
     @app.route('/closed',methods=['GET','POST'])
     @login_required
@@ -151,12 +154,14 @@ def init_app(app):
         works = Work.query.all()  
         return render_template("closed.html", works=works)
     
+    
     # Route สำหรับจัดการ Work ที่ปิดแล้ว
     @app.route('/open',methods=['GET','POST'])
     @login_required
     def open():
         works = Work.query.all()  
         return render_template("open.html", works=works)
+    
 
     # Route สำหรับการลบ Work (เฉพาะ admin)    
     @app.route('/delete/<int:number>', methods=['POST'])
@@ -174,6 +179,7 @@ def init_app(app):
             flash("Work not found.", "danger")
         #return redirect(url_for('index'))
         return redirect(url_for('index'))
+    
     
     # Route สำหรับทำการแก้ไขข้อมูล 
     @app.route('/edit/<number>', methods=['GET', 'POST'], endpoint='edit')
@@ -219,6 +225,7 @@ def init_app(app):
 
         return render_template("edit.html", form=form, works=works)
     
+    
     # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
     @app.route('/work/<int:number>', methods=['GET', 'POST'])
     @login_required
@@ -251,6 +258,7 @@ def init_app(app):
         # ส่งข้อมูลไปยัง template
         return render_template("work_detail.html", works=works, line=line, location=location, device_type=device_type, device_name=device_name, form=form, comments=comments)
     
+    
     # Route สำหรับลบคอมเมนต์
     @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
     @login_required
@@ -263,6 +271,7 @@ def init_app(app):
         db.session.commit()
         flash('Your comment has been deleted.', 'success')
         return redirect(url_for('work_detail', number=work_id))
+    
 
     # Endpoint สำหรับ AJAX ดึง Location ตาม Line
     @app.route('/get_locations/<int:line_id>')
@@ -270,6 +279,7 @@ def init_app(app):
         locations = Location.query.filter_by(line_id=line_id).all()
         data = [{"id": l.id, "name": l.name} for l in locations]
         return jsonify(data)
+    
 
     # Endpoint สำหรับ AJAX ดึง DeviceType ตาม Line
     @app.route('/get_device_types/<int:line_id>')
@@ -277,6 +287,7 @@ def init_app(app):
         device_types = DeviceType.query.filter_by(line_id=line_id).all()
         data = [{"id": d.id, "name": d.name} for d in device_types]
         return jsonify(data)
+    
 
     # Endpoint สำหรับ AJAX ดึง DeviceName ตาม Location และ DeviceType
     @app.route('/get_device_names/<int:location_id>/<int:device_type_id>')
@@ -285,11 +296,13 @@ def init_app(app):
         data = [{"id": dn.id, "name": dn.name} for dn in device_names]
         return jsonify(data)
     
+    
     @app.route('/inventory')
     @login_required
     def inventory():
         devices = DeviceName.query.all()
         return render_template("inventory.html", devices=devices)
+    
     
     # Route สำหรับแก้ไข serial_number
     @app.route('/device/<int:device_id>/edit_serial', methods=['GET', 'POST'])
@@ -328,6 +341,7 @@ def init_app(app):
         history_records = SerialNumberHistory.query.filter_by(device_id=device.id).order_by(SerialNumberHistory.changed_at.desc()).all()
 
         return render_template('edit_serial_number.html', form=form, device=device, history=history_records)
+    
 
     @app.before_request
     def setup_db():
@@ -404,6 +418,7 @@ def init_app(app):
             db.session.add(DeviceName(name="A2445/2447", device_type_id=depot_axle.id, location_id=s01.id))
 
             db.session.commit()
+
             
     # ลบข้อมูลทั้งหมดในตาราง Work
     @app.route('/clear-tables', methods=['GET'])
@@ -416,3 +431,4 @@ def init_app(app):
         db.session.commit()
         flash("Table cleared!", "success")
         return redirect(url_for('index'))
+    
