@@ -29,6 +29,7 @@
                 <th data-sortable="true" data-field="device_type">Device Type</th>
                 <th data-sortable="true" data-field="location_name">Location</th>
                 <th data-sortable="true" data-field="bound">Bound</th>
+                <th data-sortable="true" data-field="inandout">In/Out</th>
                 <th data-sortable="true" data-field="serial_number">Serial Number</th>
             </tr>
         </thead>
@@ -40,6 +41,7 @@
                 <td>{{ device.device_type.name if device.device_type else 'N/A' }}</td>
                 <td>{{ device.location.name if device.location else 'N/A' }}</td>
                 <td>{{ device.bound }}</td>
+                <td>{{ device.inandout }}</td>
                 <td>
                     <a href="{{ url_for('edit_serial_number', device_id=device.id) }}">
                         {{ device.serial_number or 'None' }}
