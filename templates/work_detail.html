@@ -90,28 +90,45 @@
         </tbody>
     </table>
 
+
     <!-- การแสดงคอมเม้นต์ที่โพสต์ไปแล้ว -->
     <div class="comment-card">
         <p><strong>{{ works.report_by }}</strong> <small class="text-muted">on {{ works.create_date.strftime('%d/%m/%Y at %H:%M') }}</small></p>
         <p>{{ works.description }}</p>
         <a href="{{ works.link }}" target="_blank">{{ works.link }}</a>
     </div>
-
-    <div class="comment-card">
-        <p><strong>Jane Smith</strong> <small class="text-muted">on 27/11/2024 at 18:00</small></p>
-        <p>Another comment regarding the work order.</p>
+    
+    {% for comment in comments %}
+    <div class="comment-card d-flex flex-column">
+        <div>
+            <p><strong>{{ comment.user.username }}</strong> <small class="text-muted">on {{ comment.timestamp.strftime('%d/%m/%Y at %H:%M') }}</small></p>
+            <p>{{ comment.content }}</p>
+        </div>
+        {% if comment.user_id == current_user.id %}
+        <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="align-self-end">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+        </form>
+        {% endif %}
     </div>
-
+    {% endfor %}
+    
     <hr>
-            
+                
     <div class="comment-box">
         <h3>Post Your Comment</h3>
         <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
-        <form method="POST">
-            <textarea class="comment-box" name="comment" rows="4" placeholder="Post your comment here..."></textarea>
+        <form method="POST" action="{{ url_for('work_detail', number=works.number) }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.comment.label(class="form-label") }}
+                {{ form.comment(class="form-control", rows=4, placeholder="Post your comment here...") }}
+            </div>
+            <div class="form-group mt-2">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
         </form>
-        <button type="submit" class="btn btn-primary">Post Comment</button>
     </div>
+    
 </body>
 </html>
 {% endblock %}

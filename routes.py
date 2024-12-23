@@ -3,8 +3,8 @@ from flask import render_template, flash, redirect, url_for, request, abort, jso
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from models import db, User, Work
-from forms import RegisterForm, LoginForm, CreateForm, EditForm
+from models import db, User, Work,Comment
+from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm
 from models import Line, Location, DeviceType, DeviceName
 
 # Routes for the app
@@ -151,6 +151,13 @@ def init_app(app):
     def closed():
         works = Work.query.all()  
         return render_template("closed.html", works=works)
+    
+    # Route สำหรับจัดการ Work ที่ปิดแล้ว
+    @app.route('/open',methods=['GET','POST'])
+    @login_required
+    def open():
+        works = Work.query.all()  
+        return render_template("open.html", works=works)
 
     # Route สำหรับการลบ Work (เฉพาะ admin)    
     @app.route('/delete/<int:number>', methods=['POST'])
@@ -214,7 +221,7 @@ def init_app(app):
         return render_template("edit.html", form=form, works=works)
     
     # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
-    @app.route('/work/<int:number>', methods=['GET'])
+    @app.route('/work/<int:number>', methods=['GET', 'POST'])
     @login_required
     def work_detail(number):
         # ดึงข้อมูลจากตาราง Work โดยใช้ number
@@ -230,8 +237,33 @@ def init_app(app):
         device_type = works.device_type
         device_name = works.device_name
 
+        # สร้างแบบฟอร์มคอมเมนต์
+        form = CommentForm()
+        if form.validate_on_submit():
+            comment = Comment(content=form.comment.data, work_id=number, user_id=current_user.id)
+            db.session.add(comment)
+            db.session.commit()
+            flash('Your comment has been posted.', 'success')
+            return redirect(url_for('work_detail', number=number))
+
+        # ดึงคอมเมนต์ที่เกี่ยวข้องกับ Work
+        comments = Comment.query.filter_by(work_id=number).order_by(Comment.timestamp.desc()).all()
+
         # ส่งข้อมูลไปยัง template
-        return render_template("work_detail.html", works=works, line=line, location=location, device_type=device_type, device_name=device_name)
+        return render_template("work_detail.html", works=works, line=line, location=location, device_type=device_type, device_name=device_name, form=form, comments=comments)
+    
+    # Route สำหรับลบคอมเมนต์
+    @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+    @login_required
+    def delete_comment(comment_id):
+        comment = Comment.query.get_or_404(comment_id)
+        work_id = comment.work_id
+        if comment.user_id != current_user.id:
+            abort(403)  # Forbidden
+        db.session.delete(comment)
+        db.session.commit()
+        flash('Your comment has been deleted.', 'success')
+        return redirect(url_for('work_detail', number=work_id))
 
     # Endpoint สำหรับ AJAX ดึง Location ตาม Line
     @app.route('/get_locations/<int:line_id>')

@@ -22,6 +22,11 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
+# Comment Form
+class CommentForm(FlaskForm):
+    comment = TextAreaField('Comment', validators=[DataRequired()])
+    submit = SubmitField('Post Comment')
+
 # Create Form
 class CreateForm(FlaskForm):
     create_date = StringField("Create Date", validators=[DataRequired()])             # วันที่และเวลา

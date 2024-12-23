@@ -79,3 +79,13 @@ class DeviceName(db.Model):
 
     def __repr__(self):
         return f"<DeviceName {self.name}>"
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    work_id = db.Column(db.Integer, db.ForeignKey('work.number'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    user = db.relationship('User', backref='comments')
+    work = db.relationship('Work', backref='comments')
