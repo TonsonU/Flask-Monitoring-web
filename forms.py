@@ -4,6 +4,7 @@ from wtforms import StringField, SubmitField, PasswordField, TextAreaField, Sele
 from wtforms.validators import DataRequired, Length, ValidationError
 from wtforms_sqlalchemy.fields import QuerySelectField
 from models import Line, Location, DeviceType, DeviceName
+from datetime import datetime
 
 # Register Form
 class RegisterForm(FlaskForm):
@@ -29,7 +30,7 @@ class CommentForm(FlaskForm):
 
 # Create Form
 class CreateForm(FlaskForm):
-    create_date = StringField("Create Date", validators=[DataRequired()])             # วันที่และเวลา
+    create_date = StringField("Create Date", validators=[DataRequired()], render_kw={"value": datetime.now().strftime('%Y-%m-%d %H:%M')})             # วันที่และเวลา
     work_order = StringField("Work Order", validators=[DataRequired()])               # Work Order
     line_name = QuerySelectField(
         "Line Name",
