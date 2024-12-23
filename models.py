@@ -1,12 +1,14 @@
 # models.py: เก็บโมเดลที่เกี่ยวข้องกับฐานข้อมูล
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 # สร้างตัวแปร db เพื่อใช้ในการสร้างฐานข้อมูล
 db = SQLAlchemy()
 
+def now_utc():
+    return datetime.now(timezone.utc)
 
 # User Model
 class User(UserMixin, db.Model):
@@ -21,7 +23,7 @@ class User(UserMixin, db.Model):
 # Model สำหรับ Work
 class Work(db.Model):
     number = db.Column(db.Integer, primary_key=True, autoincrement=True)  # เลข 6 หลัก รันอัตโนมัติ
-    create_date = db.Column(db.DateTime, default=datetime.utcnow)  # วันที่และเวลา สร้างอัตโนมัติ
+    create_date = db.Column(db.DateTime, default=now_utc)  # วันที่และเวลา สร้างอัตโนมัติ
     work_order = db.Column(db.String(50), nullable=False)          # Work Order
     # ForeignKey เชื่อมกับตารางอื่นๆ
     line_id = db.Column(db.Integer, db.ForeignKey('line.id'), nullable=True)
@@ -88,7 +90,7 @@ class SerialNumberHistory(db.Model):
     device_id = db.Column(db.Integer, db.ForeignKey('device_name.id'), nullable=False)
     old_serial_number = db.Column(db.String(100), nullable=True)
     new_serial_number = db.Column(db.String(100), nullable=True)
-    changed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    changed_at = db.Column(db.DateTime, default=now_utc, nullable=False)
     changed_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     remark = db.Column(db.String(100), nullable=True)
 
@@ -103,7 +105,7 @@ class Comment(db.Model):
     work_id = db.Column(db.Integer, db.ForeignKey('work.number'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    timestamp = db.Column(db.DateTime, default=now_utc, nullable=False)
 
     user = db.relationship('User', backref='comments')
     work = db.relationship('Work', backref='comments')
