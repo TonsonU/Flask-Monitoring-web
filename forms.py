@@ -107,3 +107,8 @@ class EditForm(FlaskForm):
     status = SelectField("Status", choices=[("Open", "Open"), ("Closed", "Closed")], validators=[DataRequired()])  # สถานะ
     link = StringField("Link", validators=[DataRequired(),])                       # URL ของไฟล์
     submit = SubmitField("Submit")
+
+class EditSerialNumberForm(FlaskForm):
+    serial_number = StringField('Serial Number', validators=[DataRequired(), Length(max=100)])
+    remark = StringField('Remark',validators=[Length(max=100)])
+    submit = SubmitField('Save')

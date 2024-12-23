@@ -3,9 +3,8 @@ from flask import render_template, flash, redirect, url_for, request, abort, jso
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from models import db, User, Work,Comment
-from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm
-from models import Line, Location, DeviceType, DeviceName
+from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory
+from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm
 
 # Routes for the app
 def init_app(app):
@@ -177,7 +176,7 @@ def init_app(app):
         return redirect(url_for('index'))
     
     # Route สำหรับทำการแก้ไขข้อมูล 
-    @app.route('/edit/<int:number>', methods=['GET', 'POST'])
+    @app.route('/edit/<number>', methods=['GET', 'POST'], endpoint='edit')
     @login_required
     def editWork(number):
         works = Work.query.filter_by(number=number).first_or_404()
@@ -286,6 +285,50 @@ def init_app(app):
         data = [{"id": dn.id, "name": dn.name} for dn in device_names]
         return jsonify(data)
     
+    @app.route('/inventory')
+    @login_required
+    def inventory():
+        devices = DeviceName.query.all()
+        return render_template("inventory.html", devices=devices)
+    
+    # Route สำหรับแก้ไข serial_number
+    @app.route('/device/<int:device_id>/edit_serial', methods=['GET', 'POST'])
+    @login_required
+    def edit_serial_number(device_id):
+        device = DeviceName.query.get_or_404(device_id)
+        form = EditSerialNumberForm(obj=device)
+
+        if form.validate_on_submit():
+            old_serial = device.serial_number
+            new_serial = form.serial_number.data
+            remark = request.form.get('remark')  # รับค่า remark จากฟอร์ม
+
+            if old_serial != new_serial:
+                # บันทึกประวัติการเปลี่ยนแปลง
+                history = SerialNumberHistory(
+                    device_id=device.id,
+                    old_serial_number=old_serial,
+                    new_serial_number=new_serial,
+                    changed_by=current_user.id,
+                    remark=remark  # บันทึก remark
+                )
+                db.session.add(history)
+
+                # อัปเดต serial_number
+                device.serial_number = new_serial
+                db.session.commit()
+
+                flash('Serial Number updated successfully!', 'success')
+                return redirect(url_for('inventory'))  # เปลี่ยนเป็น 'inventory'
+            else:
+                flash('No changes detected.', 'info')
+                return redirect(url_for('inventory'))  # เปลี่ยนเป็น 'inventory'
+
+        # ดึงประวัติการเปลี่ยนแปลง
+        history_records = SerialNumberHistory.query.filter_by(device_id=device.id).order_by(SerialNumberHistory.changed_at.desc()).all()
+
+        return render_template('edit_serial_number.html', form=form, device=device, history=history_records)
+
     @app.before_request
     def setup_db():
         db.create_all()

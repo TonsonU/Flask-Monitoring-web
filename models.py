@@ -76,9 +76,26 @@ class DeviceName(db.Model):
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
     device_type = db.relationship('DeviceType', backref=db.backref('device_names', lazy=True))
     location = db.relationship('Location', backref=db.backref('device_names', lazy=True))
+    bound = db.Column(db.String(100), nullable=False)
+    serial_number = db.Column(db.String(100), nullable=True)
 
     def __repr__(self):
         return f"<DeviceName {self.name}>"
+    
+class SerialNumberHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    device_id = db.Column(db.Integer, db.ForeignKey('device_name.id'), nullable=False)
+    old_serial_number = db.Column(db.String(100), nullable=True)
+    new_serial_number = db.Column(db.String(100), nullable=True)
+    changed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    changed_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    remark = db.Column(db.String(100), nullable=True)
+
+    device = db.relationship('DeviceName', backref=db.backref('serial_number_histories', lazy=True))
+    user = db.relationship('User', backref=db.backref('serial_number_changes', lazy=True))
+
+    def __repr__(self):
+        return f"<SerialNumberHistory DeviceID: {self.device_id}, Changed At: {self.changed_at}>"
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
