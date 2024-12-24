@@ -30,7 +30,7 @@ class CommentForm(FlaskForm):
 
 # Create Form
 class CreateForm(FlaskForm):
-    create_date = StringField("Create Date", validators=[DataRequired()], render_kw={"value": datetime.now().strftime('%Y-%m-%d %H:%M')})             # วันที่และเวลา
+    create_date = StringField("Create Date", validators=[DataRequired()], render_kw={"placeholder": "Select Date and Time"})             # วันที่และเวลา
     work_order = StringField("Work Order", validators=[DataRequired()])               # Work Order
     line_name = QuerySelectField(
         "Line Name",
@@ -111,5 +111,5 @@ class EditForm(FlaskForm):
 
 class EditSerialNumberForm(FlaskForm):
     serial_number = StringField('Serial Number', validators=[DataRequired(), Length(max=100)])
-    remark = StringField('Remark',validators=[Length(max=100)])
+    remark = StringField('Remark', validators=[Length(max=100)])
     submit = SubmitField('Save')
