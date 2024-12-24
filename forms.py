@@ -4,6 +4,7 @@ from wtforms import StringField, SubmitField, PasswordField, TextAreaField, Sele
 from wtforms.validators import DataRequired, Length, ValidationError
 from wtforms_sqlalchemy.fields import QuerySelectField
 from models import Line, Location, DeviceType, DeviceName
+from datetime import datetime
 
 # Register Form
 class RegisterForm(FlaskForm):
@@ -22,9 +23,14 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
+# Comment Form
+class CommentForm(FlaskForm):
+    comment = TextAreaField('Comment', validators=[DataRequired()])
+    submit = SubmitField('Post Comment')
+
 # Create Form
 class CreateForm(FlaskForm):
-    create_date = StringField("Create Date", validators=[DataRequired()])             # วันที่และเวลา
+    create_date = StringField("Create Date", validators=[DataRequired()], render_kw={"value": datetime.now().strftime('%Y-%m-%d %H:%M')})             # วันที่และเวลา
     work_order = StringField("Work Order", validators=[DataRequired()])               # Work Order
     line_name = QuerySelectField(
         "Line Name",
@@ -102,3 +108,8 @@ class EditForm(FlaskForm):
     status = SelectField("Status", choices=[("Open", "Open"), ("Closed", "Closed")], validators=[DataRequired()])  # สถานะ
     link = StringField("Link", validators=[DataRequired(),])                       # URL ของไฟล์
     submit = SubmitField("Submit")
+
+class EditSerialNumberForm(FlaskForm):
+    serial_number = StringField('Serial Number', validators=[DataRequired(), Length(max=100)])
+    remark = StringField('Remark',validators=[Length(max=100)])
+    submit = SubmitField('Save')

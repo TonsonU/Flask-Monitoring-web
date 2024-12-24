@@ -7,9 +7,13 @@ from config import Config
 from models import db,User
 from routes import init_app
 from flask_migrate import Migrate
+from filters import datetime_bangkok
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# ลงทะเบียน filter
+app.add_template_filter(datetime_bangkok, name='datetime_bangkok')
 
 # กำหนดการตั้งค่าฐานข้อมูล
 db.init_app(app)

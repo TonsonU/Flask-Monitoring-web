@@ -3,9 +3,8 @@ from flask import render_template, flash, redirect, url_for, request, abort, jso
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from models import db, User, Work
-from forms import RegisterForm, LoginForm, CreateForm, EditForm
-from models import Line, Location, DeviceType, DeviceName
+from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory
+from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm
 
 # Routes for the app
 def init_app(app):
@@ -36,6 +35,7 @@ def init_app(app):
             return redirect(url_for('login'))
 
         return render_template('register.html')
+    
 
     @app.route('/forgot_password', methods=['GET', 'POST'])
     def forgot_password():
@@ -83,6 +83,7 @@ def init_app(app):
             else:
                 flash("Invalid username or password.", "danger")
         return render_template('login.html')
+    
 
     # Route สำหรับการออกจากระบบ (Logout)
     @app.route('/logout')
@@ -92,11 +93,13 @@ def init_app(app):
         flash("You have been logged out.", "info")
         return redirect(url_for('login'))
     
+    
     @app.route('/')
     @login_required
     def index():
         works = Work.query.all()
         return render_template("index.html", works=works)
+    
     
     @app.route('/create', methods=['GET', 'POST'])
     @login_required
@@ -142,15 +145,23 @@ def init_app(app):
             # หลังจากบันทึกข้อมูลเสร็จแล้ว ให้รีไดเรกต์ไปที่หน้า index
             return redirect(url_for('index'))
         return render_template("create.html", form=form)
-
-        return render_template('create.html', form=form)
-   
+    
+    
     # Route สำหรับจัดการ Work ที่ปิดแล้ว
     @app.route('/closed',methods=['GET','POST'])
     @login_required
     def closed():
         works = Work.query.all()  
         return render_template("closed.html", works=works)
+    
+    
+    # Route สำหรับจัดการ Work ที่ปิดแล้ว
+    @app.route('/open',methods=['GET','POST'])
+    @login_required
+    def open():
+        works = Work.query.all()  
+        return render_template("open.html", works=works)
+    
 
     # Route สำหรับการลบ Work (เฉพาะ admin)    
     @app.route('/delete/<int:number>', methods=['POST'])
@@ -168,6 +179,7 @@ def init_app(app):
             flash("Work not found.", "danger")
         #return redirect(url_for('index'))
         return redirect(url_for('index'))
+    
     
     # Route สำหรับทำการแก้ไขข้อมูล 
     @app.route('/edit/<number>', methods=['GET', 'POST'], endpoint='edit')
@@ -213,8 +225,9 @@ def init_app(app):
 
         return render_template("edit.html", form=form, works=works)
     
+    
     # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
-    @app.route('/work/<int:number>', methods=['GET'])
+    @app.route('/work/<int:number>', methods=['GET', 'POST'])
     @login_required
     def work_detail(number):
         # ดึงข้อมูลจากตาราง Work โดยใช้ number
@@ -230,8 +243,35 @@ def init_app(app):
         device_type = works.device_type
         device_name = works.device_name
 
+        # สร้างแบบฟอร์มคอมเมนต์
+        form = CommentForm()
+        if form.validate_on_submit():
+            comment = Comment(content=form.comment.data, work_id=number, user_id=current_user.id)
+            db.session.add(comment)
+            db.session.commit()
+            flash('Your comment has been posted.', 'success')
+            return redirect(url_for('work_detail', number=number))
+
+        # ดึงคอมเมนต์ที่เกี่ยวข้องกับ Work
+        comments = Comment.query.filter_by(work_id=number).order_by(Comment.timestamp.desc()).all()
+
         # ส่งข้อมูลไปยัง template
-        return render_template("work_detail.html", works=works, line=line, location=location, device_type=device_type, device_name=device_name)
+        return render_template("work_detail.html", works=works, line=line, location=location, device_type=device_type, device_name=device_name, form=form, comments=comments)
+    
+    
+    # Route สำหรับลบคอมเมนต์
+    @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+    @login_required
+    def delete_comment(comment_id):
+        comment = Comment.query.get_or_404(comment_id)
+        work_id = comment.work_id
+        if comment.user_id != current_user.id:
+            abort(403)  # Forbidden
+        db.session.delete(comment)
+        db.session.commit()
+        flash('Your comment has been deleted.', 'success')
+        return redirect(url_for('work_detail', number=work_id))
+    
 
     # Endpoint สำหรับ AJAX ดึง Location ตาม Line
     @app.route('/get_locations/<int:line_id>')
@@ -239,6 +279,7 @@ def init_app(app):
         locations = Location.query.filter_by(line_id=line_id).all()
         data = [{"id": l.id, "name": l.name} for l in locations]
         return jsonify(data)
+    
 
     # Endpoint สำหรับ AJAX ดึง DeviceType ตาม Line
     @app.route('/get_device_types/<int:line_id>')
@@ -246,6 +287,7 @@ def init_app(app):
         device_types = DeviceType.query.filter_by(line_id=line_id).all()
         data = [{"id": d.id, "name": d.name} for d in device_types]
         return jsonify(data)
+    
 
     # Endpoint สำหรับ AJAX ดึง DeviceName ตาม Location และ DeviceType
     @app.route('/get_device_names/<int:location_id>/<int:device_type_id>')
@@ -254,12 +296,53 @@ def init_app(app):
         data = [{"id": dn.id, "name": dn.name} for dn in device_names]
         return jsonify(data)
     
+    
     @app.route('/inventory')
     @login_required
     def inventory():
         devices = DeviceName.query.all()
         return render_template("inventory.html", devices=devices)
     
+    
+    # Route สำหรับแก้ไข serial_number
+    @app.route('/device/<int:device_id>/edit_serial', methods=['GET', 'POST'])
+    @login_required
+    def edit_serial_number(device_id):
+        device = DeviceName.query.get_or_404(device_id)
+        form = EditSerialNumberForm(obj=device)
+
+        if form.validate_on_submit():
+            old_serial = device.serial_number
+            new_serial = form.serial_number.data
+            remark = request.form.get('remark')  # รับค่า remark จากฟอร์ม
+
+            if old_serial != new_serial:
+                # บันทึกประวัติการเปลี่ยนแปลง
+                history = SerialNumberHistory(
+                    device_id=device.id,
+                    old_serial_number=old_serial,
+                    new_serial_number=new_serial,
+                    changed_by=current_user.id,
+                    remark=remark  # บันทึก remark
+                )
+                db.session.add(history)
+
+                # อัปเดต serial_number
+                device.serial_number = new_serial
+                db.session.commit()
+
+                flash('Serial Number updated successfully!', 'success')
+                return redirect(url_for('inventory'))  # เปลี่ยนเป็น 'inventory'
+            else:
+                flash('No changes detected.', 'info')
+                return redirect(url_for('inventory'))  # เปลี่ยนเป็น 'inventory'
+
+        # ดึงประวัติการเปลี่ยนแปลง
+        history_records = SerialNumberHistory.query.filter_by(device_id=device.id).order_by(SerialNumberHistory.changed_at.desc()).all()
+
+        return render_template('edit_serial_number.html', form=form, device=device, history=history_records)
+    
+
     @app.before_request
     def setup_db():
         db.create_all()
@@ -335,6 +418,7 @@ def init_app(app):
             db.session.add(DeviceName(name="A2445/2447", device_type_id=depot_axle.id, location_id=s01.id))
 
             db.session.commit()
+
             
     # ลบข้อมูลทั้งหมดในตาราง Work
     @app.route('/clear-tables', methods=['GET'])
@@ -347,3 +431,4 @@ def init_app(app):
         db.session.commit()
         flash("Table cleared!", "success")
         return redirect(url_for('index'))
+    
