@@ -2,27 +2,32 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="container my-2">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Serial Number</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body class="bg-light">
     <div class="container py-5">
         <div class="card shadow">
             <!-- Card Header with "Edit" Title and Close Button -->
             <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                <h3>Edit Serial Number {{ device.name }} </h3> <!-- Changed heading to "Edit" -->
+                <h3>Edit Serial Number {{ device.name }}</h3> <!-- Changed heading to "Edit" -->
                 <a href="{{ url_for('inventory') }}" class="btn-close btn-close-white" aria-label="Close"></a>
             </div>
             
             <!-- Card Body with Form -->
             <div class="card-body">
-                <form method="POST">
+                <form method="POST" id="editSerialForm">
                     {{ form.hidden_tag() }}
                     
                     <!-- Serial Number Field -->
                     <div class="mb-3">
                         {{ form.serial_number.label('New Serial Number', class="form-label fw-bold") }}
-                        {{ form.serial_number(class="form-control", placeholder="Enter new Serial Number") }}
+                        {{ form.serial_number(class="form-control", id="serial_number", placeholder="Enter new Serial Number") }}
                         {% for error in form.serial_number.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}
@@ -39,14 +44,12 @@
                     
                     <!-- Submit Button -->
                     <div class="text-center">
-                        {{ form.submit(class="btn btn-success btn-submit") }}
+                        {{ form.submit(class="btn btn-success btn-submit", disabled=True) }}
                     </div>
                 </form>
                 <!-- Divider -->
                 <hr>
             </div>
-            
-            
             
             {% if history %}
             <!-- Edit History Section -->
@@ -77,13 +80,50 @@
                 </table>
             </div>
             {% else %}
-            <div class="card-body"> <p >No history available.</p> </div>
+            <div class="card-body"> <p>No history available.</p> </div>
             {% endif %}
         </div>
     </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const serialNumberInput = document.getElementById('serial_number');
+            const submitButton = document.querySelector('.btn-submit');
+            const originalSerialNumber = "{{ device.serial_number }}";
+
+            // Function to check if serial number has changed
+            const checkSerialNumberChange = () => {
+                const currentValue = serialNumberInput.value.trim();
+                if (currentValue !== originalSerialNumber.trim()) {
+                    submitButton.disabled = false;
+                } else {
+                    submitButton.disabled = true;
+                }
+            };
+
+            // Initial check
+            checkSerialNumberChange();
+
+            // Add event listener to serial number input
+            serialNumberInput.addEventListener('input', checkSerialNumberChange);
+
+            // Optional: Prevent form submission if no changes
+            const form = document.getElementById('editSerialForm');
+            form.addEventListener('submit', (e) => {
+                const currentValue = serialNumberInput.value.trim();
+                if (currentValue === originalSerialNumber.trim()) {
+                    e.preventDefault();
+                    alert('คุณยังไม่ได้เปลี่ยนแปลง Serial Number.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
+
 {% endblock %}
