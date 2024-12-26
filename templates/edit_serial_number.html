@@ -26,8 +26,8 @@
                     
                     <!-- Serial Number Field -->
                     <div class="mb-3">
-                        {{ form.serial_number.label('New Serial Number', class="form-label fw-bold") }}
-                        {{ form.serial_number(class="form-control", id="serial_number", placeholder="Enter new Serial Number") }}
+                        {{ form.serial_number.label('New serial number', class="form-label fw-bold") }}
+                        {{ form.serial_number(class="form-control", id="serial_number", placeholder="Enter new serial number") }}
                         {% for error in form.serial_number.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}
