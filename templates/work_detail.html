@@ -21,6 +21,10 @@
         th {
             background-color: #f4f4f4;
         }
+        .fa-file-pdf {
+            color: red; /* กำหนดสีของไอคอน PDF */
+            margin-right: 5px; /* ระยะห่างระหว่างไอคอนและข้อความ */
+        }
         .comment-box {
             width: 80%; 
             margin: 10px auto;
@@ -60,7 +64,41 @@
             overflow-wrap: break-word;
             max-width: 300px;
         }
+        .position-relative {
+        position: relative;
+        }
+        .upload-image-icon {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #007bff;
+        }
+        .uploaded-image-info {
+        position: absolute;
+        bottom: 10px;
+        left: 40px;
+        background-color: white;
+        padding: 2px 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        font-size: 12px; /* ปรับขนาดฟอนต์ให้เล็กลง */
+        font-family: 'Roboto', sans-serif; /* เลือกฟอนต์ที่สวยงาม */
+        }
+        .uploaded-image-name {
+            margin-right: 5px;
+        }
+        .comment-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 600px; /* กำหนดความสูงสูงสุดของรูปภาพใน comment */
+            display: block;
+            margin: 0 auto; /* จัดกึ่งกลางรูปภาพ */
+        }
     </style>
+     <!-- Add Font Awesome -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <div class="container my-2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -71,7 +109,7 @@
             <div class="card shadow">
                 <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">Task Detail</h3>
-                    <a href="javascript:history.back()" class="btn-close btn-close-white" aria-label="Close"></a>
+                    <a href="{{ url_for('index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
                 </div>
                 <div class="card-body">
                 <div class="edit-btn-container">
@@ -108,19 +146,43 @@
                     </tbody>
                 </table>
                 
-                
+                <!-- การแสดง Flash Message -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="alert-container">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mt-2" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
                 <!-- การแสดงคอมเม้นต์ที่โพสต์ไปแล้ว -->
                 <div class="comment-card">
                     <p><strong>{{ works.report_by }}</strong> <small class="text-muted">on {{ works.create_date.strftime('%d/%m/%Y at %H:%M') }}</small></p>
                     <p>{{ works.description }}</p>
                     <a href="{{ works.link }}" target="_blank">{{ works.link }}</a>
                 </div>
-                
+
                 {% for comment in comments %}
                 <div class="comment-card d-flex flex-column">
                     <div>
                         <p><strong>{{ comment.user.username }}</strong> <small class="text-muted">on {{ comment.timestamp.strftime('%d/%m/%Y at %H:%M') }}</small></p>
                         <p>{{ comment.content }}</p>
+                        {% if comment.pdf_url %}
+                        <p>
+                            <a href="{{ comment.pdf_url }}" target="_blank">
+                                <i class="fas fa-file-pdf"></i> {{ comment.pdf_url }}
+                            </a>
+                        </p>
+                        {% endif %}
+                        {% if comment.image_url %}
+                        <p>
+                            <img src="{{ comment.image_url }}" alt="Comment Image" class="comment-image">
+                        </p>
+                        {% endif %}
                     </div>
                     {% if comment.user_id == current_user.id %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="align-self-end">
@@ -129,23 +191,61 @@
                     {% endif %}
                 </div>
                 {% endfor %}
-                
+
                 <hr>
-                            
+
+                <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
                 <div class="comment-box">
                     <h3>Post Your Comment</h3>
-                    <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
-                    <form method="POST" action="{{ url_for('work_detail', number=works.number) }}">
+                    <form method="POST" action="{{ url_for('work_detail', number=works.number) }}"enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
-                        <div class="form-group">
+                        <div class="form-group position-relative">
                             {{ form.comment.label(class="form-label") }}
-                            {{ form.comment(class="form-control", rows=4, placeholder="Post your comment here...") }}
+                            <div class="position-relative">
+                                {{ form.comment(class="form-control", rows=4, placeholder="Post your comment here...") }}
+                                <i class="fas fa-image upload-image-icon" style="cursor: pointer;"></i>
+                                {{ form.image(class="form-control-file", style="display: none;") }}
+                                <div class="uploaded-image-info" style="display: none;">
+                                    <span class="uploaded-image-name"></span>
+                                    <i class="fas fa-times remove-uploaded-image" style="cursor: pointer; color: red;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="pdf_url">
+                                <i class="fas fa-file-pdf"></i> Add PDF Link
+                            </label>
+                            {{ form.pdf_url(class="form-control", placeholder="Enter PDF link (optional)") }}
+                            {% if form.pdf_url.errors %}  <!-- ตรวจสอบว่ามีข้อผิดพลาด -->
+                            <div class="text-danger mt-1">
+                                {{ form.pdf_url.errors[0] }}  <!-- แสดงข้อความเตือน -->
+                            </div>
+                            {% endif %}
                         </div>
                         <div class="form-group mt-2">
                             {{ form.submit(class="btn btn-primary") }}
                         </div>
                     </form>
                 </div>
+
+                <script>
+                    document.querySelector('.upload-image-icon').addEventListener('click', function() {
+                        document.querySelector('input[type="file"][name="image"]').click();
+                    });
+                    
+                    document.querySelector('input[type="file"][name="image"]').addEventListener('change', function(event) {
+                        const fileInput = event.target;
+                        const fileName = fileInput.files[0].name;
+                        document.querySelector('.uploaded-image-name').textContent = fileName;
+                        document.querySelector('.uploaded-image-info').style.display = 'inline';
+                    });
+
+                    document.querySelector('.remove-uploaded-image').addEventListener('click', function() {
+                        document.querySelector('input[type="file"][name="image"]').value = '';
+                        document.querySelector('.uploaded-image-info').style.display = 'none';
+                    });
+                </script>
+
     
     </body>
 </div>
