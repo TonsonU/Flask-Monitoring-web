@@ -1,3 +1,15 @@
+####################################################
+# Web Ticket
+#
+# 
+# Project : Flask, Python
+# Author  : Thanapoom Sukarin, Tonson Ubonsri and KK Team
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+
 # app.py: เป็นไฟล์หลักที่รวมทุกอย่าง
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy

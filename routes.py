@@ -1,3 +1,15 @@
+####################################################
+# Web Ticket
+#
+# 
+# Project : Flask, Python
+# Author  : Thanapoom Sukarin, Tonson Ubonsri and KK Team
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+
 # routes.py: เก็บเส้นทางของแอป (Routes)
 from flask import render_template, flash, redirect, url_for, request, abort, jsonify
 from flask_login import login_required, current_user, login_user, logout_user
