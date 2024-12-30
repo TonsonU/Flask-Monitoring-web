@@ -404,7 +404,7 @@ def init_app(app):
 
         return render_template('edit_serial_number.html', form=form, device=device, history=history_records)
     
-
+    """
     @app.before_request
     def setup_db():
         db.create_all()
@@ -480,6 +480,7 @@ def init_app(app):
             db.session.add(DeviceName(name="A2445/2447", device_type_id=depot_axle.id, location_id=s01.id))
 
             db.session.commit()
+    """
 
             
     # ลบข้อมูลทั้งหมดในตาราง Work
@@ -490,6 +491,10 @@ def init_app(app):
             flash("You don't have permission to clear tables.", "danger")
             return redirect(url_for('index'))
         db.session.query(Work).delete()
+        db.session.query(DeviceName).delete()
+        db.session.query(DeviceType).delete()
+        db.session.query(Location).delete()
+        db.session.query(Line).delete()
         db.session.commit()
         flash("Table cleared!", "success")
         return redirect(url_for('index'))
