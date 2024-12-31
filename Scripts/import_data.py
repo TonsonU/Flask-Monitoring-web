@@ -47,9 +47,7 @@ def add_lines_from_excel(file_path):
 
 def add_locations_from_excel(file_path):
     df = pd.read_excel(file_path)
-    print(f"Columns in {file_path}: {df.columns.tolist()}")
-    print(df.head())
-
+    
     for index, row in df.iterrows():
         row_id = row.get('id', None)
         row_name = row.get('name', None)
