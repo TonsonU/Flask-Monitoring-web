@@ -495,6 +495,7 @@ def init_app(app):
         db.session.query(DeviceType).delete()
         db.session.query(Location).delete()
         db.session.query(Line).delete()
+        db.session.query(SerialNumberHistory).delete()
         db.session.commit()
         flash("Table cleared!", "success")
         return redirect(url_for('index'))
