@@ -121,7 +121,7 @@ def main():
             add_lines_from_excel('data/line.xlsx')
             add_locations_from_excel('data/location.xlsx')
             add_device_types_from_excel('data/device_type.xlsx')
-            add_device_names_from_excel('data/output_file1.xlsx')
+            add_device_names_from_excel('data/device_name rev01.xlsx')
 
             print("Import Data from Excel Success")
         except Exception as e:
