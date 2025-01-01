@@ -227,14 +227,6 @@ def init_app(app):
 
         return render_template("edit.html", form=form, works=works)
     
-    def convert_to_file_url(path):
-        
-        # แปลง Network Path (\\server\path\file.pdf) ให้เป็น URL (file:///server/path/file.pdf)
-        
-        if path.startswith('\\\\'):
-            return 'file:///' + path.replace('\\', '/')
-        return path
-
     
     # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
     @app.route('/work/<int:number>', methods=['GET', 'POST'])
@@ -266,14 +258,9 @@ def init_app(app):
                 image_url = url_for('static', filename='uploads/' + filename)
                 
             # แปลง PDF Path เป็น URL หากจำเป็น
-            pdf_url = convert_to_file_url(form.pdf_url.data.strip()) if form.pdf_url.data else None
+            pdf_url = form.pdf_url.data.strip() if form.pdf_url.data else None
 
-            if form.validate_on_submit():
-                print("PDF URL:", form.pdf_url.data)  # ตรวจสอบค่าที่ได้รับจากฟอร์ม
-
-                pdf_url = convert_to_file_url(form.pdf_url.data.strip()) if form.pdf_url.data else None
-                print("Converted PDF URL:", pdf_url)  # ตรวจสอบ URL หลังแปลง
-
+            
             # สร้าง Comment ใหม่
             comment = Comment(
                 content=form.comment.data,

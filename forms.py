@@ -25,22 +25,10 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
-# Validator สำหรับตรวจสอบ URL PDF
-class PDFLinkValidator:
-    def __call__(self, form, field):
-        if field.data:
-            # ตรวจสอบว่า URL หรือ Network Path ลงท้ายด้วย .pdf
-            pdf_pattern = re.compile(
-                r'^(http|https):\/\/.*\.(pdf)$|^(\\\\[a-zA-Z0-9_.-]+\\[a-zA-Z0-9_.\\-]+.*\.(pdf))$', 
-                re.IGNORECASE
-            )
-            if not pdf_pattern.match(field.data):
-                raise ValidationError('The link must be a valid PDF URL or a valid network path to a PDF file.')
-
 # Comment Form
 class CommentForm(FlaskForm):
     comment = TextAreaField('Comment', validators=[DataRequired()])
-    pdf_url = StringField('PDF Link', validators=[Optional(),  PDFLinkValidator()])
+    pdf_url = StringField('PDF Link', validators=[Optional(),])
     image = FileField('Image', validators=[Optional(), FileAllowed(['jpg', 'png', 'gif'], 'Images only!')])
     submit = SubmitField('Post Comment')
 
