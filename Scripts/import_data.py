@@ -3,7 +3,7 @@
 #
 # 
 # Project : Python, Flask, MySQLite, Bootstrap
-# Author  : Thanapoom Sukarin, Tonson Ubonsri
+# Author  : Thanapoom Sukarin
 # Modifier: 
 # Version : 
 # Date    : Dec 01, 2024
@@ -119,7 +119,7 @@ def main():
             add_lines_from_excel('data/line.xlsx')
             add_locations_from_excel('data/location.xlsx')
             add_device_types_from_excel('data/device_type.xlsx')
-            add_device_names_from_excel('data/device_name rev01.xlsx')
+            add_device_names_from_excel('data/device_name rev03.xlsx')
 
             print("Import Data from Excel Success")
         except Exception as e:
