@@ -490,12 +490,15 @@ def init_app(app):
         if current_user.role != 'admin':
             flash("You don't have permission to clear tables.", "danger")
             return redirect(url_for('index'))
+        
         db.session.query(Work).delete()
         db.session.query(DeviceName).delete()
         db.session.query(DeviceType).delete()
         db.session.query(Location).delete()
         db.session.query(Line).delete()
         db.session.query(SerialNumberHistory).delete()
+        db.session.query(Comment).delete()
+        
         db.session.commit()
         flash("Table cleared!", "success")
         return redirect(url_for('index'))
