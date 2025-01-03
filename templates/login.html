@@ -1,35 +1,82 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div class="container" style="max-width: 400px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-        <h2 class="text-center">Login</h2>
+<!-- Container สำหรับ Login Form พร้อมพื้นหลัง -->
+<div class="d-flex justify-content-center align-items-center min-vh-100" style="background: #f8f9fa;">
+    <!-- Card สำหรับแสดงฟอร์ม Login -->
+    <div class="card p-4 custom-card">
+        <!-- ส่วนหัวของฟอร์ม แสดงข้อความ "Login" และคำแนะนำ -->
+        <div class="text-center mb-4">
+            <h3 class="custom-header">Sign In</h3>
+            <p class="custom-subheader">Please Sign In to your account</p>
+        </div>
 
-        <!-- ส่วนแสดงข้อความแจ้งเตือน -->
+        <!-- แสดงข้อความแจ้งเตือนจาก Flask flash messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <div class="alert alert-{{ messages[0][0] }} text-center">
-                {{ messages[0][1] }}
-            </div>
+            {% for category, message in messages %}
+                <!-- แสดงข้อความแจ้งเตือนที่มีประเภท (success, error, info) -->
+                <div class="alert alert-{{ category }} text-center" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% endif %}
         {% endwith %}
 
-
-        <form method="POST" class="mt-4">
-            <div class="form-group mb-3">
+        <!-- ฟอร์ม Login -->
+        <form method="POST">
+            <!-- ช่องกรอกข้อมูล Username -->
+            <div class="form-floating mb-3">
+                <input type="text" id="username" name="username" class="form-control custom-input" placeholder="Username" required>
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" class="form-control" required>
             </div>
-            <div class="form-group mb-3">
+
+            <!-- ช่องกรอกข้อมูล Password พร้อมปุ่มลูกตา -->
+            <div class="form-floating mb-3 position-relative">
+                <input type="password" id="password" name="password" class="form-control custom-input" placeholder="Password" required>
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" required>
+                <!-- ปุ่มลูกตาสำหรับดูรหัสผ่าน -->
+                <button type="button" class="btn btn-eye position-absolute" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility">
+                    <i class="fas fa-eye" id="eye-icon"></i> <!-- ไอคอนลูกตา -->
+                </button>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
+
+            <!-- ช่องสำหรับ "Forgot password" -->
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <!-- ลิงก์สำหรับ "Forgot password" -->
+                <a href="{{ url_for('forgot_password') }}" class="text-decoration-none small custom-text">Forgot password?</a>
+            </div>
+
+            <!-- ปุ่ม Login -->
+            <button type="submit" class="btn btn-primary w-50 py-2 d-block mx-auto custom-button">Sign in</button>
         </form>
-        <div class="text-center mt-3">
-            <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
-            <p><a href="{{ url_for('forgot_password') }}">Forget Password?</a></p>
-        </div>
+
+        <!-- เส้นแบ่งสำหรับแสดงลิงก์ไปยังหน้าสมัคร -->
+        <hr class="my-4">
+
+        <!-- ลิงก์สำหรับผู้ที่ยังไม่มีบัญชี -->
+        <p class="text-center text-muted custom-subheader">Don't have an account? <a href="{{ url_for('register') }}" class="text-primary text-decoration-none">Register</a></p>
     </div>
 </div>
+
+<!-- เชื่อมต่อไฟล์ CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+
+
+<!-- JavaScript สำหรับการสลับดู/ซ่อนรหัสผ่าน -->
+<script>
+    function togglePasswordVisibility() {
+        const passwordField = document.getElementById("password");
+        const eyeIcon = document.getElementById("eye-icon");
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordField.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    }
+</script>
 {% endblock %}
