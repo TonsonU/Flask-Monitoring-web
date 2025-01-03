@@ -270,7 +270,7 @@ body {
 
 /* เปลี่ยนสีเมื่อวางเมาส์ */
 .custom-delete-btn:hover {
-    background-color: #393E46;  /* สีพื้นหลังเมื่อ hover */
+    background-color: #0A5EB0;  /* สีพื้นหลังเมื่อ hover */
     color: #EEEEEE;  /* สีข้อความ */
     transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
 }
