@@ -117,6 +117,7 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=now_utc, nullable=False)
-
+    pdf_url = db.Column(db.String(255), nullable=True)  # URL ของ PDF (สามารถเว้นว่างได้)
+    image_url = db.Column(db.String(255), nullable=True)  # URL ของรูปภาพ (สามารถเว้นว่างได้)
     user = db.relationship('User', backref='comments')
     work = db.relationship('Work', backref='comments')

@@ -14,6 +14,8 @@
 from flask import render_template, flash, redirect, url_for, request, abort, jsonify
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+import os
 from datetime import datetime
 from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory
 from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm
@@ -308,9 +310,30 @@ def init_app(app):
         # สร้างแบบฟอร์มคอมเมนต์
         form = CommentForm()
         if form.validate_on_submit():
-            comment = Comment(content=form.comment.data, work_id=number, user_id=current_user.id)
+            image_url = None
+            # จัดการอัปโหลดรูปภาพ
+            if form.image.data:
+                image_file = form.image.data
+                filename = secure_filename(image_file.filename)
+                image_path = os.path.join('static/uploads', filename)
+                image_file.save(image_path)
+                image_url = url_for('static', filename='uploads/' + filename)
+                
+            # แปลง PDF Path เป็น URL หากจำเป็น
+            pdf_url = form.pdf_url.data.strip() if form.pdf_url.data else None
+
+            
+            # สร้าง Comment ใหม่
+            comment = Comment(
+                content=form.comment.data,
+                pdf_url=pdf_url,
+                image_url=image_url,
+                work_id=number,
+                user_id=current_user.id
+            )
             db.session.add(comment)
             db.session.commit()
+            print("Comment added to DB:", comment)
             flash('Your comment has been posted.', 'success')
             return redirect(url_for('work_detail', number=number))
 
@@ -318,8 +341,16 @@ def init_app(app):
         comments = Comment.query.filter_by(work_id=number).order_by(Comment.timestamp.desc()).all()
 
         # ส่งข้อมูลไปยัง template
-        return render_template("work_detail.html", works=works, line=line, location=location, device_type=device_type, device_name=device_name, form=form, comments=comments)
-    
+        return render_template(
+        "work_detail.html", 
+        works=works, 
+        line=line, 
+        location=location, 
+        device_type=device_type, 
+        device_name=device_name, 
+        form=form, 
+        comments=comments
+        )
     
     # Route สำหรับลบคอมเมนต์
     @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
@@ -329,9 +360,16 @@ def init_app(app):
         work_id = comment.work_id
         if comment.user_id != current_user.id:
             abort(403)  # Forbidden
+        
+        # ลบไฟล์รูปภาพถ้ามี
+        if comment.image_url:
+            image_path = os.path.join('static', comment.image_url.split('static/')[-1])
+            if os.path.exists(image_path):
+                os.remove(image_path)
+
         db.session.delete(comment)
         db.session.commit()
-        flash('Your comment has been deleted.', 'success')
+        flash('Your comment has been deleted.', 'info')
         return redirect(url_for('work_detail', number=work_id))
     
 
