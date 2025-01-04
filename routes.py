@@ -1,3 +1,15 @@
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin, Tonson Ubonsri
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+
 # routes.py: เก็บเส้นทางของแอป (Routes)
 from flask import render_template, flash, redirect, url_for, request, abort, jsonify
 from flask_login import login_required, current_user, login_user, logout_user
@@ -5,6 +17,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory
 from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm
+from pytz import timezone
+import pytz
 
 # Routes for the app
 def init_app(app):
@@ -106,6 +120,12 @@ def init_app(app):
     def create():
     # สร้างฟอร์มจาก CreateForm
         form = CreateForm()
+        thailand_tz = pytz.timezone('Asia/Bangkok')
+        utc_tz = timezone('UTC')
+
+        if request.method == 'GET':
+            now_th = datetime.now(thailand_tz)
+            form.create_date.data = now_th.strftime('%Y-%m-%d %H:%M')
 
     # ตรวจสอบว่าผู้ใช้ทำการส่งฟอร์มหรือไม่
         if form.validate_on_submit():
@@ -121,7 +141,14 @@ def init_app(app):
             link = form.link.data
 
             # แปลงค่า create_date เป็น datetime หากมีการกรอก
-            create_date = datetime.strptime(form.create_date.data, '%Y-%m-%d %H:%M') if form.create_date.data else None
+            create_date_str = form.create_date.data
+            
+            try:
+                create_date_naive = datetime.strptime(create_date_str, '%Y-%m-%d %H:%M')
+                create_date = thailand_tz.localize(create_date_naive)
+            except ValueError:
+                flash('รูปแบบวันที่และเวลาไม่ถูกต้อง', 'danger')
+                return render_template("create.html", form=form)
 
             # สร้างอ็อบเจกต์ใหม่เพื่อบันทึกข้อมูล
             new_work = Work(
@@ -186,30 +213,65 @@ def init_app(app):
     @login_required
     def editWork(number):
         works = Work.query.filter_by(number=number).first_or_404()
-        form = EditForm()
+        form = EditForm(obj=works)
 
         if form.validate_on_submit():
+            # ตรวจสอบว่ามีการเปลี่ยนแปลงในแต่ละฟิลด์
+            has_changed = False
+
+            # เปรียบเทียบและอัปเดตแต่ละฟิลด์ถ้ามีการเปลี่ยนแปลง
             if form.create_date.data:
-                works.create_date = datetime.strptime(form.create_date.data, "%Y-%m-%d %H:%M")
+                new_create_date = datetime.strptime(form.create_date.data, "%Y-%m-%d %H:%M")
+                if new_create_date != works.create_date:
+                    works.create_date = new_create_date
+                    has_changed = True
 
-            works.work_order = form.work_order.data
-            works.description = form.description.data
-            works.report_by = form.report_by.data
-            works.status = form.status.data
-            works.link = form.link.data
+            if form.work_order.data != works.work_order:
+                works.work_order = form.work_order.data
+                has_changed = True
 
-            # เก็บค่า ForeignKey
-            works.line = form.line_name.data
-            works.location = form.location_name.data
-            works.device_type = form.device_type_name.data
-            works.device_name = form.device_name.data
+            if form.description.data != works.description:
+                works.description = form.description.data
+                has_changed = True
 
-            db.session.commit()
-            flash("Work updated successfully!", "success")
-            return redirect(url_for('index'))
+            if form.report_by.data != works.report_by:
+                works.report_by = form.report_by.data
+                has_changed = True
+
+            if form.status.data != works.status:
+                works.status = form.status.data
+                has_changed = True
+
+            if form.link.data != works.link:
+                works.link = form.link.data
+                has_changed = True
+
+            # อัปเดต ForeignKey
+            if form.line_name.data != works.line:
+                works.line = form.line_name.data
+                has_changed = True
+
+            if form.location_name.data != works.location:
+                works.location = form.location_name.data
+                has_changed = True
+
+            if form.device_type_name.data != works.device_type:
+                works.device_type = form.device_type_name.data
+                has_changed = True
+
+            if form.device_name.data != works.device_name:
+                works.device_name = form.device_name.data
+                has_changed = True
+
+            if has_changed:
+                db.session.commit()
+                flash("Work updated successfully!", "success")
+                return redirect(url_for('index'))
+            else:
+                flash("ไม่มีการเปลี่ยนแปลงข้อมูลใดๆ.", "info")
+                return redirect(url_for('edit', number=number))
 
         elif request.method == 'GET':
-
             form.create_date.data = works.create_date.strftime("%Y-%m-%d %H:%M") if works.create_date else None
             form.work_order.data = works.work_order
             form.description.data = works.description
@@ -314,7 +376,7 @@ def init_app(app):
         if form.validate_on_submit():
             old_serial = device.serial_number
             new_serial = form.serial_number.data
-            remark = request.form.get('remark')  # รับค่า remark จากฟอร์ม
+            remark = form.remark.data  # ใช้ฟิลด์จากฟอร์มตรงๆ
 
             if old_serial != new_serial:
                 # บันทึกประวัติการเปลี่ยนแปลง
@@ -342,7 +404,7 @@ def init_app(app):
 
         return render_template('edit_serial_number.html', form=form, device=device, history=history_records)
     
-
+    """
     @app.before_request
     def setup_db():
         db.create_all()
@@ -418,6 +480,7 @@ def init_app(app):
             db.session.add(DeviceName(name="A2445/2447", device_type_id=depot_axle.id, location_id=s01.id))
 
             db.session.commit()
+    """
 
             
     # ลบข้อมูลทั้งหมดในตาราง Work
@@ -427,7 +490,15 @@ def init_app(app):
         if current_user.role != 'admin':
             flash("You don't have permission to clear tables.", "danger")
             return redirect(url_for('index'))
+        
         db.session.query(Work).delete()
+        db.session.query(DeviceName).delete()
+        db.session.query(DeviceType).delete()
+        db.session.query(Location).delete()
+        db.session.query(Line).delete()
+        db.session.query(SerialNumberHistory).delete()
+        db.session.query(Comment).delete()
+        
         db.session.commit()
         flash("Table cleared!", "success")
         return redirect(url_for('index'))
