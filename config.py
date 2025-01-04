@@ -1,3 +1,15 @@
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin, Tonson Ubonsri
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+
 # config.py: เก็บการตั้งค่าทั้งหมดของแอป
 import os
 

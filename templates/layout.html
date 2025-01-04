@@ -1,3 +1,17 @@
+<!--
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin, Tonson Ubonsri
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,57 +33,89 @@
 
 	<!-- ลิงก์ไปยัง Boxicons -->
 	<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+
+	<!-- Custom CSS -->
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+			display: flex;
+			flex-direction: column;
+		}
+		main {
+			flex: 1; /* ให้พื้นที่ของ main ขยายเต็ม */
+			padding: 20px;
+		}
+		footer {
+			padding: 5px 0;
+		}
+		.footer-line {
+			border-top: 1px solid #dee2e6; /* เส้นกั้นสีเทา */
+			width: 90%; /* ความกว้างไม่เต็มจอ */
+			margin: 0 auto; /* กึ่งกลางหน้าจอ */
+		}
+		.footer-text {
+			text-align: center;
+			margin-top: 10px;
+			color: #6c757d; /* สีเทาอ่อน */
+		}
+	</style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" id="custom-navbar">
-        <div class="container">
-            <!-- ใช้ me-auto เพื่อจัด Home, Task List, Inventory ไปทางซ้าย -->
-            <a class="navbar-brand" href="/">Home</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto"> <!-- me-auto ใช้ให้เมนูอยู่ทางซ้ายสุด -->
-                    
-                    
-                    <!-- Dropdown -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Task List
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('open') }}">Open</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('closed') }}">Closed</a></li>
-                            
-                        </ul>
-                    </li>
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark" id="custom-navbar">
+		<div class="container">
+			<!-- ใช้ me-auto เพื่อจัด Home, Task List, Inventory ไปทางซ้าย -->
+			<a class="navbar-brand" href="/">Home</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav me-auto"> <!-- me-auto ใช้ให้เมนูอยู่ทางซ้ายสุด -->
+					
+					
+					<!-- Dropdown -->
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Task List
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<li><a class="dropdown-item" href="{{ url_for('open') }}">Open</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">Closed</a></li>
+							
+						</ul>
+					</li>
 					<li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('inventory') }}">Inventory</a>
-                    </li>
-                </ul>
+						<a class="nav-link" href="{{ url_for('inventory') }}">Inventory</a>
+					</li>
+				</ul>
 
-                <!-- Right-aligned logout button -->
-                <ul class="navbar-nav ms-auto"> <!-- ms-auto สำหรับให้เมนู Login/Logout อยู่ทางขวา -->
-                    {% if current_user.is_authenticated %}
-                        <span class="navbar-text text-light me-3">Hello, {{ current_user.username }}</span>
-                        <a class="nav-link custom-login-btn" href="{{ url_for('logout') }}">Sign Out</a>
-                    {% else %}
-                         <!-- ใช้คลาส custom-login-btn สำหรับปุ่ม Login -->
-						 <a class="nav-link custom-login-btn" href="{{ url_for('login') }}">Sign In</a>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
+				<!-- Right-aligned logout button -->
+				<ul class="navbar-nav ms-auto"> <!-- ms-auto สำหรับให้เมนู Login/Logout อยู่ทางขวา -->
+					{% if current_user.is_authenticated %}
+						<span class="navbar-text text-light me-3">Hello, {{ current_user.username }}</span>
+						<a class="nav-link custom-login-btn" href="{{ url_for('logout') }}">Sign Out</a>
+					{% else %}
+						<!-- ใช้คลาส custom-login-btn สำหรับปุ่ม Login -->
+						<a class="nav-link custom-login-btn" href="{{ url_for('login') }}">Sign In</a>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+	</nav>
 
-    <!-- Main Content -->
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+	<main class="container">
+		{% block content %}
+		{% endblock %}
+	</main>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+	<!-- Footer as a Gray Line -->
+	<footer>
+		<div class="footer-line"></div>
+		<p class="footer-text">© 2024 Task List</p>
+	</footer>
+
+	<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </body>
 </html>
