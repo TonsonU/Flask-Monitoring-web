@@ -21,14 +21,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Serial Number</title>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- เชื่อมต่อไฟล์ CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+
+    
 </head>
 <body class="bg-light">
     <div class="container py-5">
         <div class="card shadow">
             <!-- Card Header with "Edit" Title and Close Button -->
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
                 <h3>Edit Serial Number {{ device.name }}</h3> <!-- Changed heading to "Edit" -->
                 <a href="{{ url_for('inventory') }}" class="btn-close btn-close-white" aria-label="Close"></a>
             </div>
@@ -58,7 +63,7 @@
                     
                     <!-- Submit Button -->
                     <div class="text-center">
-                        {{ form.submit(class="btn btn-success btn-submit", disabled=True) }}
+                        {{ form.submit(class="btn btn-success btn-submit custom-save-btn", disabled=True) }}
                     </div>
                 </form>
                 <!-- Divider -->
@@ -69,7 +74,7 @@
             <!-- Edit History Section -->
             <div class="card-body history-section">
                 <h3 class="mt-4" style="text-align: center;">Edited History</h3>
-                <table class="table table-bordered history-table">
+                <table class="table table-bordered history-table table-striped table-hover">
                 <br>
                     <thead class="table-light">
                         <tr>

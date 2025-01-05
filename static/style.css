@@ -9,7 +9,7 @@ body {
 	padding: 0;
 }
 
-/* Sidebar */
+/* Sidebar NAV layout*/
 .sidebar {
 	width: 250px;
 	height: 100vh;
@@ -76,7 +76,25 @@ body {
 .nav-item.dropdown:hover .dropdown-menu {
     display: block; /* แสดง dropdown */
 }
+main {
+    flex: 1; /* ให้พื้นที่ของ main ขยายเต็ม */
+    padding: 20px;
+}
+footer {
+    padding: 5px 0;
+}
+.footer-line {
+    border-top: 1px solid #dee2e6; /* เส้นกั้นสีเทา */
+    width: 90%; /* ความกว้างไม่เต็มจอ */
+    margin: 0 auto; /* กึ่งกลางหน้าจอ */
+}
+.footer-text {
+    text-align: center;
+    margin-top: 10px;
+    color: #6c757d; /* สีเทาอ่อน */
+}
 
+/*ใช้สำหรับหน้า Sign in*/
 /* Content */
 .content {
 	margin-left: 250px;
@@ -102,8 +120,6 @@ body {
 }
 
 
-
-/*ใช้สำหรับหน้า Sign in*/
 /* สไตล์สำหรับการ์ด */
 .custom-card {
     font-family: 'Ubuntu', sans-serif;
@@ -313,4 +329,21 @@ body {
     color: white;
     padding: 5px 10px;
     border-radius: 3px;
+}
+
+/* ปุ่มกำหนดเอง save edit serial*/
+.custom-save-btn {
+    display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
+    align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
+    text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.custom-edit-header {
+    background-color: #213555; /* กำหนดสีพื้นหลังที่ต้องการ */
+    color: white; /* กำหนดสีข้อความ */
 }
