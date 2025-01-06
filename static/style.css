@@ -60,7 +60,7 @@ body {
 
 /* ตั้งค่าสีพื้นหลังของ Dropdown */
 #custom-navbar .dropdown-menu {
-  background-color: #6a1b9a; /* สีม่วงเข้ม */
+  background-color: #1F509A; /* สีม่วงเข้ม */
 }
 
 /* ตั้งค่าสีลิงก์ใน Dropdown */
@@ -115,7 +115,7 @@ footer {
 
 
 .custom-login-btn:hover {
-    background-color: #FFFAEC; /* สีเขียวเข้มเมื่อ hover */
+    background-color: #8B5DFF; /* สีเขียวเข้มเมื่อ hover */
     text-decoration: none; /* เอา underline ออก */
 }
 
@@ -347,3 +347,119 @@ footer {
     background-color: #213555; /* กำหนดสีพื้นหลังที่ต้องการ */
     color: white; /* กำหนดสีข้อความ */
 }
+
+/*ใช้สำหรับหน้า work detail*/
+/* ปุ่มกำหนดเอง save edit serial*/
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background-color: #f4f4f4;
+}
+.fa-file-pdf {
+    color: red; /* กำหนดสีของไอคอน PDF */
+    margin-right: 5px; /* ระยะห่างระหว่างไอคอนและข้อความ */
+}
+.comment-box {
+    width: 80%; 
+    margin: 10px auto;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.comment-card {
+    width: 80%; 
+    margin: 10px auto;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+hr {
+    width: 80%;
+    display: block;
+    margin: 20px auto;
+}
+
+button {
+    margin-top: 10px;
+}
+
+.edit-btn-container {
+    width: 80%;
+    margin: 0 auto 20px auto;
+    text-align: right;
+    
+}
+.wrap-text {
+    white-space: normal;
+    overflow-wrap: break-word;
+    max-width: 300px;
+}
+.position-relative {
+position: relative;
+}
+.upload-image-icon {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: #007bff;
+}
+.uploaded-image-info {
+position: absolute;
+bottom: 10px;
+left: 40px;
+background-color: white;
+padding: 2px 5px;
+border: 1px solid #ddd;
+border-radius: 3px;
+display: flex;
+align-items: center;
+font-size: 12px; /* ปรับขนาดฟอนต์ให้เล็กลง */
+font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่สวยงาม */
+}
+.uploaded-image-name {
+    margin-right: 5px;
+}
+.comment-image {
+    max-width: 100%;
+    height: auto;
+    max-height: 600px; /* กำหนดความสูงสูงสุดของรูปภาพใน comment */
+    display: block;
+    margin: 0 auto; /* จัดกึ่งกลางรูปภาพ */
+}
+/* ปุ่มกำหนดเอง  edit */
+.custom-edit-btn {
+    background-color: #FF9D23;
+    color: #fff;
+    font-size: 16px;
+    padding: 8px 20px;
+    height: auto;
+    border: 1px solid transparent;
+    border-radius: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+/* เปลี่ยนสีเมื่อวางเมาส์ */
+.custom-edit-btn:hover {
+    background-color: #FFD65A;  /* สีพื้นหลังเมื่อ hover */
+    color: #3a3838;  /* สีข้อความ */
+    transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
+}
+
+
