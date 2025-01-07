@@ -67,7 +67,7 @@
 				<!-- Right-aligned logout button -->
 				<ul class="navbar-nav ms-auto"> <!-- ms-auto สำหรับให้เมนู Login/Logout อยู่ทางขวา -->
 					{% if current_user.is_authenticated %}
-						<span class="navbar-text text-light me-3">Hello, {{ current_user.username }}</span>
+						<span class="navbar-text text-light me-3 navbar-text"><i class='bx bxs-user' ></i> {{ current_user.username }}</span>
 						<a class="nav-link custom-login-btn" href="{{ url_for('logout') }}">Sign Out</a>
 					{% else %}
 						<!-- ใช้คลาส custom-login-btn สำหรับปุ่ม Login -->

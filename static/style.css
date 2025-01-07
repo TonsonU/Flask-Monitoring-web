@@ -93,6 +93,14 @@ footer {
     margin-top: 10px;
     color: #6c757d; /* สีเทาอ่อน */
 }
+/* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้งและเว้นระยะห่างระหว่างไอคอนกับข้อความ */
+.navbar-text {
+    display: flex;
+    align-items: center;
+}
+.navbar-text i {
+    margin-right: 8px; /* เว้นระยะห่างระหว่างไอคอนกับข้อความ */
+}
 
 /*ใช้สำหรับหน้า Sign in*/
 /* Content */
@@ -250,8 +258,8 @@ footer {
     display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
     align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
     padding: 2px 6px;
-    background-color: #F9ED69;  /* สีพื้นหลัง */
-    color: #6A2C70;  /* สีข้อความ */
+    background-color: #335d9c;  /* สีพื้นหลัง */
+    color: #ffffff;  /* สีข้อความ */
     font-size: 14px;    
     text-align: center;
     border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
@@ -261,7 +269,7 @@ footer {
 
 /* เปลี่ยนสีเมื่อวางเมาส์ */
 .custom-view-btn:hover {
-    background-color: #F08A5D;  /* สีพื้นหลังเมื่อ hover */
+    background-color: #FFC436;  /* สีพื้นหลังเมื่อ hover */
     transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
 }
 
@@ -286,7 +294,7 @@ footer {
 
 /* เปลี่ยนสีเมื่อวางเมาส์ */
 .custom-delete-btn:hover {
-    background-color: #0A5EB0;  /* สีพื้นหลังเมื่อ hover */
+    background-color: #CF0A0A;  /* สีพื้นหลังเมื่อ hover */
     color: #EEEEEE;  /* สีข้อความ */
     transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
 }
