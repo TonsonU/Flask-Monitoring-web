@@ -26,6 +26,9 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
      <!-- เชื่อมต่อไฟล์ CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+    <!-- ลิงก์ไปยัง Boxicons -->
+	<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+
 </head>
 <div class="container my-2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -40,7 +43,7 @@
                 </div>
                 <div class="card-body">
                 <div class="edit-btn-container">
-                    <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;">Edit</a>
+                    <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class='bx bxs-edit' ></i>Edit</a>
                 </div>
                 <table>
                     <thead>
@@ -127,7 +130,7 @@
                     <form method="POST" action="{{ url_for('work_detail', number=works.number) }}"enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
                         <div class="form-group position-relative">
-                            {{ form.comment.label(class="form-label") }}
+                            
                             <div class="position-relative">
                                 {{ form.comment(class="form-control", rows=4, placeholder="Post your comment here...") }}
                                 <i class="fas fa-image upload-image-icon" style="cursor: pointer;"></i>

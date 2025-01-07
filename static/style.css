@@ -380,7 +380,7 @@ th {
     margin: 10px auto;
     padding: 8px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 1.25rem; /* ปรับขนาดขอบมุม */
     box-sizing: border-box;
     background-color: white;
 }
@@ -390,7 +390,7 @@ th {
     margin: 10px auto;
     padding: 15px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 1.25rem;
     background-color: #f9f9f9;
 }
 
@@ -461,6 +461,10 @@ font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่ส
     text-transform: uppercase;
     margin-top: 10px;
     cursor: pointer;
+    align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+}
+.custom-edit-btn i {
+    margin-right: 8px; /* เว้นระยะห่างระหว่างไอคอนกับข้อความ */
 }
 
 /* เปลี่ยนสีเมื่อวางเมาส์ */
