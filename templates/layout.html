@@ -48,7 +48,7 @@
 				<ul class="navbar-nav me-auto"> <!-- me-auto ใช้ให้เมนูอยู่ทางซ้ายสุด -->
 					
 					
-					<!-- Dropdown -->
+					<!-- Dropdown Task List-->
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 							Task List
@@ -59,8 +59,28 @@
 							
 						</ul>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('inventory') }}">Inventory</a>
+
+					<!-- Dropdown Inventory-->
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Inventory
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<li><a class="dropdown-item" href="{{ url_for('inventory') }}">All</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">IL</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">TAP</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">EMP</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">PID</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">OBC</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">TEL</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">UPS</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">Point</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">Balise</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">Mitrac</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">PLI/H/RI</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">Axle Counter</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('closed') }}">Track Name Plate</a></li>
+						</ul>
 					</li>
 				</ul>
 
