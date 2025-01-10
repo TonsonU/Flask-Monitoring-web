@@ -120,7 +120,7 @@ def main():
     with app.app_context():
         try:
             # หากไฟล์ Excel รวมชื่อ 'data.xlsx'
-            excel_file_path = 'data/device_name rev07.xlsx'
+            excel_file_path = 'data/device_name rev11.xlsx'
             
             add_lines_from_excel(excel_file_path, sheet_name='Line')
             add_locations_from_excel(excel_file_path, sheet_name='Location')
