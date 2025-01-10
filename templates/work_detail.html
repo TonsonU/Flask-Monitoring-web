@@ -21,60 +21,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .comment-box {
-            width: 80%; 
-            margin: 10px auto;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color: white;
-        }
 
-        .comment-card {
-            width: 80%; 
-            margin: 10px auto;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-        }
+     <!-- Add Font Awesome -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+     <!-- เชื่อมต่อไฟล์ CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+    <!-- ลิงก์ไปยัง Boxicons -->
+	<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
 
-        hr {
-            width: 80%;
-            display: block;
-            margin: 20px auto;
-        }
-
-        button {
-            margin-top: 10px;
-        }
-
-        .edit-btn-container {
-            width: 80%;
-            margin: 0 auto 20px auto;
-            text-align: right;
-        }
-        .wrap-text {
-            white-space: normal;
-            overflow-wrap: break-word;
-            max-width: 300px;
-        }
-    </style>
 </head>
 <div class="container my-2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -83,13 +37,13 @@
     <body class="bg-light">
         <div class="container py-5">
             <div class="card shadow">
-                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">Task Detail</h3>
-                    <a href="javascript:history.back()" class="btn-close btn-close-white" aria-label="Close"></a>
+                    <a href="{{ url_for('index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
                 </div>
                 <div class="card-body">
                 <div class="edit-btn-container">
-                    <a href="{{ url_for('edit', number=works.number) }}" class="btn btn-warning" style="width: 150px;">Edit</a>
+                    <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class='bx bxs-edit' ></i>Edit</a>
                 </div>
                 <table>
                     <thead>
@@ -122,44 +76,106 @@
                     </tbody>
                 </table>
                 
-                
+                <!-- การแสดง Flash Message -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="alert-container">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mt-2" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
                 <!-- การแสดงคอมเม้นต์ที่โพสต์ไปแล้ว -->
                 <div class="comment-card">
                     <p><strong>{{ works.report_by }}</strong> <small class="text-muted">on {{ works.create_date.strftime('%d/%m/%Y at %H:%M') }}</small></p>
                     <p>{{ works.description }}</p>
                     <a href="{{ works.link }}" target="_blank">{{ works.link }}</a>
                 </div>
-                
+
                 {% for comment in comments %}
                 <div class="comment-card d-flex flex-column">
                     <div>
                         <p><strong>{{ comment.user.username }}</strong> <small class="text-muted">on {{ comment.timestamp.strftime('%d/%m/%Y at %H:%M') }}</small></p>
                         <p>{{ comment.content }}</p>
+                        {% if comment.pdf_url %}
+                        <p>
+                            <a href="{{ comment.pdf_url }}" target="_blank">
+                                <i class="fas fa-file-pdf"></i> {{ comment.pdf_url }}
+                            </a>
+                        </p>
+                        {% endif %}
+                        {% if comment.image_url %}
+                        <p>
+                            <img src="{{ comment.image_url }}" alt="Comment Image" class="comment-image">
+                        </p>
+                        {% endif %}
                     </div>
                     {% if comment.user_id == current_user.id %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="align-self-end">
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        <button type="submit" class="btn btn-sm custom-delete-btn">Delete</button>
                     </form>
                     {% endif %}
                 </div>
                 {% endfor %}
-                
+
                 <hr>
-                            
+
+                <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
                 <div class="comment-box">
                     <h3>Post Your Comment</h3>
-                    <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
-                    <form method="POST" action="{{ url_for('work_detail', number=works.number) }}">
+                    <form method="POST" action="{{ url_for('work_detail', number=works.number) }}"enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
-                        <div class="form-group">
-                            {{ form.comment.label(class="form-label") }}
-                            {{ form.comment(class="form-control", rows=4, placeholder="Post your comment here...") }}
+                        <div class="form-group position-relative">
+                            
+                            <div class="position-relative">
+                                {{ form.comment(class="form-control", rows=4, placeholder="Post your comment here...") }}
+                                <i class="fas fa-image upload-image-icon" style="cursor: pointer;"></i>
+                                {{ form.image(class="form-control-file", style="display: none;") }}
+                                <div class="uploaded-image-info" style="display: none;">
+                                    <span class="uploaded-image-name"></span>
+                                    <i class="fas fa-times remove-uploaded-image" style="cursor: pointer; color: red;"></i>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group mt-2">
-                            {{ form.submit(class="btn btn-primary") }}
+                            <label for="pdf_url">
+                                <i class="fas fa-file-pdf"></i> Add PDF Link
+                            </label>
+                            {{ form.pdf_url(class="form-control", placeholder="Enter PDF link (optional)") }}
+                            {% if form.pdf_url.errors %}  <!-- ตรวจสอบว่ามีข้อผิดพลาด -->
+                            <div class="text-danger mt-1">
+                                {{ form.pdf_url.errors[0] }}  <!-- แสดงข้อความเตือน -->
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mt-2">
+                            {{ form.submit(class="btn btn-primary custom-login-btn") }}
                         </div>
                     </form>
                 </div>
+
+                <script>
+                    document.querySelector('.upload-image-icon').addEventListener('click', function() {
+                        document.querySelector('input[type="file"][name="image"]').click();
+                    });
+                    
+                    document.querySelector('input[type="file"][name="image"]').addEventListener('change', function(event) {
+                        const fileInput = event.target;
+                        const fileName = fileInput.files[0].name;
+                        document.querySelector('.uploaded-image-name').textContent = fileName;
+                        document.querySelector('.uploaded-image-info').style.display = 'inline';
+                    });
+
+                    document.querySelector('.remove-uploaded-image').addEventListener('click', function() {
+                        document.querySelector('input[type="file"][name="image"]').value = '';
+                        document.querySelector('.uploaded-image-info').style.display = 'none';
+                    });
+                </script>
+
     
     </body>
 </div>

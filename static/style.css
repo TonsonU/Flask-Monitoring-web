@@ -1,0 +1,477 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+
+/* ฟอนต์หลัก */
+body {
+	font-family: 'Ubuntu', sans-serif;
+	background-color: #f8f9fa;
+	color: #343a40;
+	margin: 0;
+	padding: 0;
+}
+
+/* Sidebar NAV layout*/
+.sidebar {
+	width: 250px;
+	height: 100vh;
+	background-color: #343a40;
+	color: #ffffff;
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	padding: 1rem;
+}
+
+.sidebar-header {
+	margin-bottom: 1.5rem;
+}
+
+.sidebar-link {
+	display: block;
+	color: #ffffff;
+	text-decoration: none;
+	padding: 0.5rem 1rem;
+	border-radius: 5px;
+	transition: all 0.3s;
+}
+
+.sidebar-link:hover {
+	background-color: #495057;
+	color: #ffffff;
+}
+
+.sidebar .mt-auto {
+	margin-top: auto;
+}
+
+/* ตั้งค่าพื้นหลังของ Navbar */
+#custom-navbar {
+  background-color: #213555; /* สีเลือกได้ */
+}
+
+/* ตั้งค่าสีของลิงก์ใน Navbar */
+#custom-navbar .nav-link {
+  color: #ffffff; /* สีขาว */
+}
+
+/* การเปลี่ยนสีลิงก์เมื่อ Hover */
+#custom-navbar .nav-link:hover {
+  color: #ff5722; /* สีส้มเมื่อ hover */
+}
+
+/* ตั้งค่าสีพื้นหลังของ Dropdown */
+#custom-navbar .dropdown-menu {
+  background-color: #1F509A; /* สีม่วงเข้ม */
+}
+
+/* ตั้งค่าสีลิงก์ใน Dropdown */
+#custom-navbar .dropdown-item {
+  color: #ffffff; /* สีขาว */
+}
+
+/* การเปลี่ยนสีลิงก์ใน Dropdown เมื่อ Hover */
+#custom-navbar .dropdown-item:hover {
+  background-color: #ff5722; /* สีส้มเมื่อ hover */
+  color: white;
+}
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block; /* แสดง dropdown */
+}
+main {
+    flex: 1; /* ให้พื้นที่ของ main ขยายเต็ม */
+    padding: 20px;
+}
+footer {
+    padding: 5px 0;
+}
+.footer-line {
+    border-top: 1px solid #dee2e6; /* เส้นกั้นสีเทา */
+    width: 90%; /* ความกว้างไม่เต็มจอ */
+    margin: 0 auto; /* กึ่งกลางหน้าจอ */
+}
+.footer-text {
+    text-align: center;
+    margin-top: 10px;
+    color: #6c757d; /* สีเทาอ่อน */
+}
+/* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้งและเว้นระยะห่างระหว่างไอคอนกับข้อความ */
+.navbar-text {
+    display: flex;
+    align-items: center;
+}
+.navbar-text i {
+    margin-right: 8px; /* เว้นระยะห่างระหว่างไอคอนกับข้อความ */
+}
+
+/*ใช้สำหรับหน้า Sign in*/
+/* Content */
+.content {
+	margin-left: 250px;
+	padding: 2rem;
+}
+/* กำหนดสีพื้นหลังและข้อความสำหรับปุ่ม Login */
+.custom-login-btn {
+    background-color: #EC8305; /* สีเขียว */
+    color: #FFFAEC; /* ข้อความสีขาว */
+    border: none;
+    padding: 5px 20px; /* ขนาดของปุ่ม */
+    border-radius: 1.25rem; /* ขอบปุ่มเป็นมุมโค้ง */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+
+.custom-login-btn:hover {
+    background-color: #8B5DFF; /* สีเขียวเข้มเมื่อ hover */
+    text-decoration: none; /* เอา underline ออก */
+}
+
+
+/* สไตล์สำหรับการ์ด */
+.custom-card {
+    font-family: 'Ubuntu', sans-serif;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    background: #fff;
+}
+
+/* สไตล์หัวข้อ */
+.custom-header {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #024CAA;
+}
+
+.custom-subheader {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+/* ช่องกรอกข้อมูล */
+.custom-input {
+    background-color: #ffffff;
+    border-radius: 1.25rem;
+    font-family: 'Ubuntu', sans-serif;
+    padding-right: 50px; /* เว้นที่สำหรับปุ่มลูกตา */
+}
+
+/* ปุ่ม */
+.custom-button {
+    background-color: #EC8305;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px 40px !important;
+    height: auto !important;
+    border: 1px solid transparent;
+    border-radius: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+    display: block;
+    line-height: normal !important;
+}
+
+/* ปุ่มลูกตา */
+.btn-eye {
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    color: #f0f0f0;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.btn-eye:hover {
+    color: #343a40;
+}
+
+/* ใช้สำหรับหน้า forgot PW */
+.forgot-password-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #024CAA; /* กำหนดสีข้อความ */
+}
+
+
+/*ใช้สำหรับหน้า register*/
+/* สไตล์สำหรับการ์ด */
+.register-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #024CAA; /* กำหนดสีข้อความ */
+}
+.custom-card-register {
+    font-family: 'Ubuntu', sans-serif;
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    background: #fff;
+}
+
+/*ใช้สำหรับหน้า index*/
+/* ปุ่มกำหนดเอง create */
+.custom-index-btn {
+    display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
+    align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 10px 20px;
+    background-color: #0D92F4;  /* สีพื้นหลัง */
+    color: #fff;  /* สีข้อความ */
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
+    text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* ปรับขนาดไอคอน */
+.custom-index-btn i {
+    font-size: 16px;         /* ปรับขนาดไอคอน */
+    margin-right: 8px;       /* ระยะห่างระหว่างไอคอนและข้อความ */
+    vertical-align: middle;  /* จัดไอคอนให้อยู่ในแนวเดียวกับข้อความ */
+}
+
+
+/* เปลี่ยนสีเมื่อวางเมาส์ */
+.custom-index-btn:hover {
+    background-color: #77CDFF;  /* สีพื้นหลังเมื่อ hover */
+    transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
+}
+
+/* เปลี่ยนสีเมื่อกดปุ่ม */
+.custom-index-btn:active {
+    background-color: #F95454;  /* สีพื้นหลังเมื่อคลิก */
+}
+
+/* ปุ่มกำหนดเอง view*/
+.custom-view-btn {
+    display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
+    align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 2px 6px;
+    background-color: #335d9c;  /* สีพื้นหลัง */
+    color: #ffffff;  /* สีข้อความ */
+    font-size: 14px;    
+    text-align: center;
+    border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
+    text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* เปลี่ยนสีเมื่อวางเมาส์ */
+.custom-view-btn:hover {
+    background-color: #FFC436;  /* สีพื้นหลังเมื่อ hover */
+    transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
+}
+
+/* เปลี่ยนสีเมื่อกดปุ่ม */
+.custom-view-btn:active {
+    background-color: #B83B5E;  /* สีพื้นหลังเมื่อคลิก */
+}
+
+/* ปุ่มกำหนดเอง delete*/
+.custom-delete-btn {
+    display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
+    align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 2px 6px;
+    background-color: #393E46;  /* สีพื้นหลัง */
+    color: #ffffff;  /* สีข้อความ */
+    font-size: 14px;    
+    text-align: center;
+    border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
+    text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* เปลี่ยนสีเมื่อวางเมาส์ */
+.custom-delete-btn:hover {
+    background-color: #CF0A0A;  /* สีพื้นหลังเมื่อ hover */
+    color: #EEEEEE;  /* สีข้อความ */
+    transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
+}
+
+/* เปลี่ยนสีเมื่อกดปุ่ม */
+.custom-delete-btn:active {
+    background-color: #EEEEEE;  /* สีพื้นหลังเมื่อคลิก */
+}
+
+
+/* ปุ่มกำหนดเอง tag status*/
+.status-open {
+    display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
+    align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 2px 6px;
+    background-color: #5CB338;  /* สีพื้นหลัง */
+    color: #ffffff;  /* สีข้อความ */
+    font-size: 14px;    
+    text-align: center;
+    border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
+    text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.status-closed {
+    display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
+    align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 2px 6px;
+    background-color: #FB4141;  /* สีพื้นหลัง */
+    color: #ffffff;  /* สีข้อความ */
+    font-size: 14px;    
+    text-align: center;
+    border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
+    text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.status-other {
+    background-color: #6c757d; /* สีเทา */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+/* ปุ่มกำหนดเอง save edit serial*/
+.custom-save-btn {
+    display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
+    align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
+    text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.custom-edit-header {
+    background-color: #213555; /* กำหนดสีพื้นหลังที่ต้องการ */
+    color: white; /* กำหนดสีข้อความ */
+}
+
+/*ใช้สำหรับหน้า work detail*/
+/* ปุ่มกำหนดเอง save edit serial*/
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background-color: #f4f4f4;
+}
+.fa-file-pdf {
+    color: red; /* กำหนดสีของไอคอน PDF */
+    margin-right: 5px; /* ระยะห่างระหว่างไอคอนและข้อความ */
+}
+.comment-box {
+    width: 80%; 
+    margin: 10px auto;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 1.25rem; /* ปรับขนาดขอบมุม */
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.comment-card {
+    width: 80%; 
+    margin: 10px auto;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 1.25rem;
+    background-color: #f9f9f9;
+}
+
+hr {
+    width: 80%;
+    display: block;
+    margin: 20px auto;
+}
+
+button {
+    margin-top: 10px;
+}
+
+.edit-btn-container {
+    width: 80%;
+    margin: 0 auto 20px auto;
+    text-align: right;
+    
+}
+.wrap-text {
+    white-space: normal;
+    overflow-wrap: break-word;
+    max-width: 300px;
+}
+.position-relative {
+position: relative;
+}
+.upload-image-icon {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: #007bff;
+}
+.uploaded-image-info {
+position: absolute;
+bottom: 10px;
+left: 40px;
+background-color: white;
+padding: 2px 5px;
+border: 1px solid #ddd;
+border-radius: 3px;
+display: flex;
+align-items: center;
+font-size: 12px; /* ปรับขนาดฟอนต์ให้เล็กลง */
+font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่สวยงาม */
+}
+.uploaded-image-name {
+    margin-right: 5px;
+}
+.comment-image {
+    max-width: 100%;
+    height: auto;
+    max-height: 600px; /* กำหนดความสูงสูงสุดของรูปภาพใน comment */
+    display: block;
+    margin: 0 auto; /* จัดกึ่งกลางรูปภาพ */
+}
+/* ปุ่มกำหนดเอง  edit */
+.custom-edit-btn {
+    background-color: #FF9D23;
+    color: #fff;
+    font-size: 16px;
+    padding: 8px 20px;
+    height: auto;
+    border: 1px solid transparent;
+    border-radius: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+    align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+}
+.custom-edit-btn i {
+    margin-right: 8px; /* เว้นระยะห่างระหว่างไอคอนกับข้อความ */
+}
+
+/* เปลี่ยนสีเมื่อวางเมาส์ */
+.custom-edit-btn:hover {
+    background-color: #FFD65A;  /* สีพื้นหลังเมื่อ hover */
+    color: #3a3838;  /* สีข้อความ */
+    transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
+}
+
+
