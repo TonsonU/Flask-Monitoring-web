@@ -322,6 +322,10 @@ def init_app(app):
             # แปลง PDF Path เป็น URL หากจำเป็น
             pdf_url = form.pdf_url.data.strip() if form.pdf_url.data else None
 
+            # กำหนดเขตเวลาของประเทศไทย
+            thailand_tz = pytz.timezone('Asia/Bangkok')
+            timestamp = datetime.now(thailand_tz)
+
             
             # สร้าง Comment ใหม่
             comment = Comment(
@@ -329,7 +333,9 @@ def init_app(app):
                 pdf_url=pdf_url,
                 image_url=image_url,
                 work_id=number,
-                user_id=current_user.id
+                user_id=current_user.id,
+                timestamp=timestamp  # บันทึกเวลาที่คอมเมนต์ถูกโพสต์ตามเขตเวลาของประเทศไทย
+
             )
             db.session.add(comment)
             db.session.commit()
