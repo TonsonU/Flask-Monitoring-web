@@ -18,12 +18,16 @@
 {% block content %}
 <div class="container my-2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- เชื่อมต่อไฟล์ CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <body class="bg-light">
         <div class="container py-5">
             <div class="card shadow">
-                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">Create</h3>
                     <a href="javascript:history.back()" class="btn-close btn-close-white" aria-label="Close"></a>
                 </div>
@@ -79,7 +83,7 @@
                             {{ form.link(class="form-control", id="link", placeholder="Example: ..\02%20Corrective%20Maintenance\2024\07\KK-2024-07-21%20CM%20IL11%20replace%20lan%20cable%20port%20Gi101%20.pdf") }}
                         </div>
                         <div class="text-center">
-                            {{ form.submit(class="btn btn-success") }}
+                            {{ form.submit(class="btn btn-success custom-save-btn") }}
                         </div>
                     </form>
                 </div>

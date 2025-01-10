@@ -21,98 +21,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .fa-file-pdf {
-            color: red; /* กำหนดสีของไอคอน PDF */
-            margin-right: 5px; /* ระยะห่างระหว่างไอคอนและข้อความ */
-        }
-        .comment-box {
-            width: 80%; 
-            margin: 10px auto;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color: white;
-        }
 
-        .comment-card {
-            width: 80%; 
-            margin: 10px auto;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-        }
-
-        hr {
-            width: 80%;
-            display: block;
-            margin: 20px auto;
-        }
-
-        button {
-            margin-top: 10px;
-        }
-
-        .edit-btn-container {
-            width: 80%;
-            margin: 0 auto 20px auto;
-            text-align: right;
-        }
-        .wrap-text {
-            white-space: normal;
-            overflow-wrap: break-word;
-            max-width: 300px;
-        }
-        .position-relative {
-        position: relative;
-        }
-        .upload-image-icon {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            color: #007bff;
-        }
-        .uploaded-image-info {
-        position: absolute;
-        bottom: 10px;
-        left: 40px;
-        background-color: white;
-        padding: 2px 5px;
-        border: 1px solid #ddd;
-        border-radius: 3px;
-        display: flex;
-        align-items: center;
-        font-size: 12px; /* ปรับขนาดฟอนต์ให้เล็กลง */
-        font-family: 'Roboto', sans-serif; /* เลือกฟอนต์ที่สวยงาม */
-        }
-        .uploaded-image-name {
-            margin-right: 5px;
-        }
-        .comment-image {
-            max-width: 100%;
-            height: auto;
-            max-height: 600px; /* กำหนดความสูงสูงสุดของรูปภาพใน comment */
-            display: block;
-            margin: 0 auto; /* จัดกึ่งกลางรูปภาพ */
-        }
-    </style>
      <!-- Add Font Awesome -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+     <!-- เชื่อมต่อไฟล์ CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+    <!-- ลิงก์ไปยัง Boxicons -->
+	<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+
 </head>
 <div class="container my-2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -121,13 +37,13 @@
     <body class="bg-light">
         <div class="container py-5">
             <div class="card shadow">
-                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">Task Detail</h3>
                     <a href="{{ url_for('index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
                 </div>
                 <div class="card-body">
                 <div class="edit-btn-container">
-                    <a href="{{ url_for('edit', number=works.number) }}" class="btn btn-warning" style="width: 150px;">Edit</a>
+                    <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class='bx bxs-edit' ></i>Edit</a>
                 </div>
                 <table>
                     <thead>
@@ -200,7 +116,7 @@
                     </div>
                     {% if comment.user_id == current_user.id %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="align-self-end">
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        <button type="submit" class="btn btn-sm custom-delete-btn">Delete</button>
                     </form>
                     {% endif %}
                 </div>
@@ -214,7 +130,7 @@
                     <form method="POST" action="{{ url_for('work_detail', number=works.number) }}"enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
                         <div class="form-group position-relative">
-                            {{ form.comment.label(class="form-label") }}
+                            
                             <div class="position-relative">
                                 {{ form.comment(class="form-control", rows=4, placeholder="Post your comment here...") }}
                                 <i class="fas fa-image upload-image-icon" style="cursor: pointer;"></i>
@@ -237,7 +153,7 @@
                             {% endif %}
                         </div>
                         <div class="form-group mt-2">
-                            {{ form.submit(class="btn btn-primary") }}
+                            {{ form.submit(class="btn btn-primary custom-login-btn") }}
                         </div>
                     </form>
                 </div>
