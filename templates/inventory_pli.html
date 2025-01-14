@@ -4,7 +4,7 @@
 #
 # 
 # Project : Python, Flask, MySQLite, Bootstrap
-# Author  : Thanapoom Sukarin
+# Author  : Thanapoom Sukarin,TS
 # Modifier: 
 # Version : 
 # Date    : Dec 01, 2024
@@ -26,12 +26,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.css">
     <!-- เชื่อมต่อไฟล์ CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+    <!-- เชื่อมต่อกับ Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
 </head>
 <body>
 <div class="container">
     <br>
-    <h2>Inventory EMP</h2>
+    <h2>Inventory PLI/H/RI</h2>
 
     {% if devices %}
     <table data-toggle="table"
@@ -42,12 +44,18 @@
            class="table table-striped table-hover">
         <thead>
             <tr>
-                <th data-sortable="true" data-field="number">Number</th>
+                <th data-sortable="true" data-field="number">Number</th> 
                 <th data-sortable="true" data-field="name">Name</th>
                 <th data-sortable="true" data-field="device_type">Device Type</th>
                 <th data-sortable="true" data-field="location_name">Location</th>
                 <th data-sortable="true" data-field="bound">Bound</th>
                 <th data-sortable="true" data-field="inandout">In/Out</th>
+                <th data-sortable="true" data-field="vac_white"><i class="fas fa-circle icon-bordered" style="color: white;"></i> VAC</th>
+                <th data-sortable="true" data-field="current_white"><i class="fas fa-circle icon-bordered" style="color: white;"></i> Current</th>
+                <th data-sortable="true" data-field="vac_red"><i class="fas fa-circle icon-bordered" style="color: red;"></i> VAC</th>
+                <th data-sortable="true" data-field="current_red"><i class="fas fa-circle icon-bordered" style="color: red;"></i> Current</th>
+                <th data-sortable="true" data-field="vac_yellow"><i class="fas fa-circle icon-bordered" style="color: yellow;"></i> VAC</th>
+                <th data-sortable="true" data-field="current_yellow"><i class="fas fa-circle icon-bordered" style="color: yellow;"></i> Current</th>
                 <th data-sortable="true" data-field="serial_number">Serial Number</th>
             </tr>
         </thead>
@@ -61,6 +69,12 @@
                 <td>{{ device.location.name if device.location else 'N/A' }}</td>
                 <td>{{ device.bound or ('N/A') }}</td>
                 <td>{{ device.inandout or ('N/A') }}</td>
+                <td>{{ device.vac_white or ('N/A') }}</td>
+                <td>{{ device.current_white or ('N/A') }}</td>
+                <td>{{ device.vac_red or ('N/A') }}</td>
+                <td>{{ device.current_red or ('N/A') }}</td>                
+                <td>{{ device.vac_yellow or ('N/A') }}</td>
+                <td>{{ device.current_yellow or ('N/A') }}</td>
                 <td>
                     <a href="{{ url_for('edit_serial_number', device_id=device.id) }}">
                         {{ device.serial_number or ('N/A') }}

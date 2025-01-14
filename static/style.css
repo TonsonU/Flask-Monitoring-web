@@ -474,4 +474,29 @@ font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่ส
     transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
 }
 
+/* เพิ่มขอบ icon ในหน้า inventory pli */
+.icon-bordered {
+    border: 1px solid black;
+    padding: 2px;
+    border-radius: 50%; /* ทำให้ขอบเป็นวงกลม */
+}
 
+/* สไตล์สำหรับปุ่มกลับไปบนสุด */
+#backToTopBtn {
+    display: none; /* ซ่อนปุ่มโดยเริ่มต้น */
+    position: fixed; /* ทำให้ปุ่มอยู่ในตำแหน่งคงที่ */
+    bottom: 20px; /* ระยะห่างจากด้านล่าง */
+    right: 30px; /* ระยะห่างจากด้านขวา */
+    z-index: 99; /* ทำให้ปุ่มอยู่ด้านบนสุด */
+    border: none; /* ไม่มีขอบ */
+    outline: none; /* ไม่มีเส้นขอบ */
+    background-color: #555; /* สีพื้นหลัง */
+    color: white; /* สีตัวอักษร */
+    cursor: pointer; /* เปลี่ยนเคอร์เซอร์เมื่อชี้ไปที่ปุ่ม */
+    padding: 10px; /* ขนาดของปุ่ม */
+    border-radius: 10px; /* มุมโค้งของปุ่ม */
+}
+
+#backToTopBtn:hover {
+    background-color: #333; /* สีพื้นหลังเมื่อชี้ไปที่ปุ่ม */
+}
