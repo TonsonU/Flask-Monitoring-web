@@ -15,6 +15,7 @@ from flask import render_template, flash, redirect, url_for, request, abort, jso
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from sqlalchemy import or_
 import os
 from datetime import datetime
 from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory
@@ -408,6 +409,88 @@ def init_app(app):
     def inventory():
         devices = DeviceName.query.all()
         return render_template("inventory.html", devices=devices)
+    
+    @app.route('/inventory/IL', endpoint='inventory_il')
+    @login_required
+    def inventory_il():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'IL').all()
+        return render_template("inventory_il.html", devices=devices)
+    
+    @app.route('/inventory/tap', endpoint='inventory_tap')
+    @login_required
+    def inventory_tap():
+        # กรองข้อมูลเพื่อแสดงเฉพาะ Device Type ที่เป็น TAP
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'TAP').all()
+        return render_template("inventory_tap.html", devices=devices)
+    
+    @app.route('/inventory/emp', endpoint='inventory_emp')
+    @login_required
+    def inventory_emp():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'EMP').all()
+        return render_template("inventory_emp.html", devices=devices)
+    
+    @app.route('/inventory/pid', endpoint='inventory_pid')
+    @login_required
+    def inventory_pid():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'PID').all()
+        return render_template("inventory_pid.html", devices=devices)
+    
+    @app.route('/inventory/obc', endpoint='inventory_obc')
+    @login_required
+    def inventory_obc():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'OBC').all()
+        return render_template("inventory_obc.html", devices=devices)
+    
+    @app.route('/inventory/tel', endpoint='inventory_tel')
+    @login_required
+    def inventory_tel():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'TEL').all()
+        return render_template("inventory_tel.html", devices=devices)
+    
+    @app.route('/inventory/ups', endpoint='inventory_ups')
+    @login_required
+    def inventory_ups():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'UPS').all()
+        return render_template("inventory_ups.html", devices=devices)
+    
+    @app.route('/inventory/point', endpoint='inventory_point')
+    @login_required
+    def inventory_point():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Point').all()
+        return render_template("inventory_point.html", devices=devices)
+    
+    @app.route('/inventory/balise', endpoint='inventory_balise')
+    @login_required
+    def inventory_balise():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Balise').all()
+        return render_template("inventory_balise.html", devices=devices)
+    
+    @app.route('/inventory/mitrac', endpoint='inventory_mitrac')
+    @login_required
+    def inventory_mitrac():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Mitrac').all()
+        return render_template("inventory_mitrac.html", devices=devices)
+    
+    @app.route('/inventory/pli', endpoint='inventory_pli')
+    @login_required
+    def inventory_pli():
+        devices = DeviceName.query.join(DeviceType).filter(or_(DeviceType.name == 'PLI', DeviceType.name == 'Depot Area Signal', DeviceType.name == 'Route Indicator') ).all()
+        return render_template("inventory_pli.html", devices=devices)
+    
+    @app.route('/inventory/axle', endpoint='inventory_axle')
+    @login_required
+    def inventory_axle():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Axle Counter').all()
+        return render_template("inventory_axle.html", devices=devices)
+    
+    @app.route('/inventory/trackname', endpoint='inventory_trackname')
+    @login_required
+    def inventory_trackname():
+        devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Track Name Plate').all()
+        return render_template("inventory_trackname.html", devices=devices)
+
+
+
     
     
     # Route สำหรับแก้ไข serial_number
