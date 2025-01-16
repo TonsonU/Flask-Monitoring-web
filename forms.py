@@ -12,7 +12,7 @@
 
 # forms.py: เก็บฟอร์มทั้งหมดที่ใช้ในแอป
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, TextAreaField, SelectField, FileField
+from wtforms import StringField, SubmitField, PasswordField, TextAreaField, SelectField, FileField,IntegerField
 from wtforms.validators import DataRequired, Length, ValidationError, Optional, URL
 from flask_wtf.file import FileAllowed  # เพิ่มการนำเข้า FileAllowed
 from wtforms_sqlalchemy.fields import QuerySelectField
@@ -128,4 +128,12 @@ class EditForm(FlaskForm):
 class EditSerialNumberForm(FlaskForm):
     serial_number = StringField('Serial Number', validators=[DataRequired(), Length(max=100)])
     remark = StringField('Remark', validators=[Length(max=100)])
+    submit = SubmitField('Save')
+
+class EditForceDataForm(FlaskForm):
+    plus_before = StringField('Plus Before', validators=[DataRequired(), Length(max=100)])
+    minus_before = StringField('Minus Before', validators=[DataRequired(), Length(max=100)])
+    plus_after = StringField('Plus After', validators=[Optional(), Length(max=100)])
+    minus_after = StringField('Minus After', validators=[Optional(), Length(max=100)])
+    remark = TextAreaField('Remark', validators=[Optional()])
     submit = SubmitField('Save')

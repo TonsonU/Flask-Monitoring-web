@@ -18,8 +18,8 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import or_
 import os
 from datetime import datetime
-from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory
-from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm
+from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory,ForceDataHistory
+from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm,EditForceDataForm
 from pytz import timezone
 import pytz
 
@@ -490,9 +490,6 @@ def init_app(app):
         return render_template("inventory_trackname.html", devices=devices)
 
 
-
-    
-    
     # Route สำหรับแก้ไข serial_number
     @app.route('/device/<int:device_id>/edit_serial', methods=['GET', 'POST'])
     @login_required
@@ -531,6 +528,52 @@ def init_app(app):
 
         return render_template('edit_serial_number.html', form=form, device=device, history=history_records)
     
+
+    # Route สำหรับแก้ไข serial_number
+    @app.route('/device/<int:device_id>/edit_force_data', methods=['GET', 'POST'])
+    @login_required
+    def edit_force_data(device_id):
+        device = DeviceName.query.get_or_404(device_id)
+        form = EditForceDataForm(obj=device)
+
+        if form.validate_on_submit():
+            plus_before = form.plus_before.data
+            minus_before = form.minus_before.data
+            plus_after = form.plus_after.data
+            minus_after = form.minus_after.data
+            remark = form.remark.data
+
+            # บันทึกประวัติการเปลี่ยนแปลง
+            force_data_history = ForceDataHistory(
+                device_id=device.id,
+                plus_before=plus_before,
+                minus_before=minus_before,
+                plus_after=plus_after,
+                minus_after=minus_after,
+                changed_by=current_user.id,
+                remark=remark            
+            )
+            db.session.add(force_data_history)
+            # อัปเดตค่า force_data ของ device
+            if plus_after is not None and minus_after is not None:
+                device.force_data = f"{plus_after}, {minus_after}"
+            else:
+                device.force_data = f"{plus_before}, {minus_before}"
+                    
+            db.session.commit()
+
+            flash('Force Data updated successfully!', 'success')
+            return redirect(url_for('inventory_point'))
+            
+
+        # ดึงประวัติการเปลี่ยนแปลง
+        history_force_records = ForceDataHistory.query.filter_by(device_id=device.id).order_by(ForceDataHistory.changed_at.desc()).all()
+
+        return render_template('edit_force_data.html', form=form, device=device, history=history_force_records)
+    
+
+
+
     """
     @app.before_request
     def setup_db():
