@@ -18,8 +18,8 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import or_
 import os
 from datetime import datetime
-from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory,ForceDataHistory
-from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm,EditForceDataForm
+from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory, ForceDataHistory, MacAddressHistory
+from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm,EditForceDataForm,EditMacAddressForm
 from pytz import timezone
 import pytz
 
@@ -529,7 +529,7 @@ def init_app(app):
         return render_template('edit_serial_number.html', form=form, device=device, history=history_records)
     
 
-    # Route สำหรับแก้ไข serial_number
+    # Route สำหรับแก้ไข force_data
     @app.route('/device/<int:device_id>/edit_force_data', methods=['GET', 'POST'])
     @login_required
     def edit_force_data(device_id):
@@ -539,37 +539,78 @@ def init_app(app):
         if form.validate_on_submit():
             plus_before = form.plus_before.data
             minus_before = form.minus_before.data
-            plus_after = form.plus_after.data
-            minus_after = form.minus_after.data
+            plus_after = form.plus_after.data if form.plus_after.data else None
+            minus_after = form.minus_after.data if form.minus_after.data else None
             remark = form.remark.data
 
             # บันทึกประวัติการเปลี่ยนแปลง
             force_data_history = ForceDataHistory(
-                device_id=device.id,
-                plus_before=plus_before,
-                minus_before=minus_before,
-                plus_after=plus_after,
-                minus_after=minus_after,
-                changed_by=current_user.id,
-                remark=remark            
+            device_id=device.id,
+            plus_before=plus_before,
+            minus_before=minus_before,
+            plus_after=plus_after,
+            minus_after=minus_after,
+            changed_by=current_user.id,
+            remark=remark            
             )
             db.session.add(force_data_history)
             # อัปเดตค่า force_data ของ device
             if plus_after is not None and minus_after is not None:
-                device.force_data = f"{plus_after}, {minus_after}"
+                device.force_data = f"{plus_after}, {minus_after}"                
             else:
                 device.force_data = f"{plus_before}, {minus_before}"
+
+            print(f"device.force_data: {device.force_data}")            
                     
             db.session.commit()
 
             flash('Force Data updated successfully!', 'success')
-            return redirect(url_for('inventory_point'))
+            return redirect(url_for('edit_force_data', device_id=device.id))
             
 
         # ดึงประวัติการเปลี่ยนแปลง
         history_force_records = ForceDataHistory.query.filter_by(device_id=device.id).order_by(ForceDataHistory.changed_at.desc()).all()
 
         return render_template('edit_force_data.html', form=form, device=device, history=history_force_records)
+    
+
+    # Route สำหรับแก้ไข mac_address
+    @app.route('/device/<int:device_id>/edit_mac', methods=['GET', 'POST'])
+    @login_required
+    def edit_mac_address(device_id):
+        device = DeviceName.query.get_or_404(device_id)
+        form = EditMacAddressForm(obj=device)
+
+        if form.validate_on_submit():
+            old_mac = device.mac_address
+            new_mac = form.mac_address.data
+            remark = form.remark.data  # ใช้ฟิลด์จากฟอร์มตรงๆ
+
+            if old_mac != new_mac:
+                # บันทึกประวัติการเปลี่ยนแปลง
+                history = MacAddressHistory(
+                    device_id=device.id,
+                    old_mac_address=old_mac,
+                    new_mac_address=new_mac,
+                    changed_by=current_user.id,
+                    remark=remark  # บันทึก remark
+                )
+                db.session.add(history)
+
+                # อัปเดต mac_address
+                device.mac_address = new_mac
+                db.session.commit()
+
+                flash('MAC Address updated successfully!', 'success')
+                return redirect(url_for('edit_mac_address', device_id=device.id))  # เปลี่ยนเป็น 'inventory'
+            else:
+                flash('No changes detected.', 'info')
+                return redirect(url_for('inventory'))  # เปลี่ยนเป็น 'inventory'
+
+        # ดึงประวัติการเปลี่ยนแปลง
+        history_records = MacAddressHistory.query.filter_by(device_id=device.id).order_by(MacAddressHistory.changed_at.desc()).all()
+
+        return render_template('edit_mac_address.html', form=form, device=device, history=history_records)
     
 
 

@@ -137,3 +137,10 @@ class EditForceDataForm(FlaskForm):
     minus_after = StringField('Minus After', validators=[Optional(), Length(max=100)])
     remark = TextAreaField('Remark', validators=[Optional()])
     submit = SubmitField('Save')
+
+class EditMacAddressForm(FlaskForm):
+    mac_address = StringField('MAC Address', validators=[DataRequired(), Length(max=100)])
+    remark = StringField('Remark', validators=[Length(max=100)])
+    submit = SubmitField('Save')
+
+    

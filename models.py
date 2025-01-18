@@ -126,10 +126,10 @@ class SerialNumberHistory(db.Model):
 class ForceDataHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary Key
     device_id = db.Column(db.Integer, db.ForeignKey('device_name.id'), nullable=False)  # Foreign Key เชื่อมกับ DeviceName
-    plus_before = db.Column(db.Integer, nullable=False)  # ค่าก่อนการเปลี่ยนแปลง (บวก)
-    minus_before = db.Column(db.Integer, nullable=False)  # ค่าก่อนการเปลี่ยนแปลง (ลบ)
-    plus_after = db.Column(db.Integer, nullable=True)  # ค่าหลังการเปลี่ยนแปลง (บวก)
-    minus_after = db.Column(db.Integer, nullable=True)  # ค่าหลังการเปลี่ยนแปลง (ลบ)
+    plus_before = db.Column(db.String(100), nullable=False)  # ค่าก่อนการเปลี่ยนแปลง (บวก)
+    minus_before = db.Column(db.String(100), nullable=False)  # ค่าก่อนการเปลี่ยนแปลง (ลบ)
+    plus_after = db.Column(db.String(100), nullable=True)  # ค่าหลังการเปลี่ยนแปลง (บวก)
+    minus_after = db.Column(db.String(100), nullable=True)  # ค่าหลังการเปลี่ยนแปลง (ลบ)
     changed_at = db.Column(db.DateTime, default=now_utc, nullable=False)  # เวลาที่เปลี่ยนแปลง
     changed_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Foreign Key เชื่อมกับ User
     remark = db.Column(db.String(255), nullable=True)  # คำอธิบายเพิ่มเติม
@@ -151,3 +151,19 @@ class Comment(db.Model):
     image_url = db.Column(db.String(255), nullable=True)  # URL ของรูปภาพ (สามารถเว้นว่างได้)
     user = db.relationship('User', backref='comments')
     work = db.relationship('Work', backref='comments')
+
+class MacAddressHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    device_id = db.Column(db.Integer, db.ForeignKey('device_name.id'), nullable=False)
+    old_mac_address = db.Column(db.String(17), nullable=True)
+    new_mac_address = db.Column(db.String(17), nullable=True)
+    changed_at = db.Column(db.DateTime, default=now_utc, nullable=False)
+    changed_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    remark = db.Column(db.String(100), nullable=True)
+
+    device = db.relationship('DeviceName', backref=db.backref('mac_address_histories', lazy=True))
+    user = db.relationship('User', backref=db.backref('mac_address_changes', lazy=True))
+
+    def __repr__(self):
+        return f"<MacAddressHistory DeviceID: {self.device_id}, Changed At: {self.changed_at}>"
+        
