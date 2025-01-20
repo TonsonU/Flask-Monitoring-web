@@ -290,6 +290,7 @@ footer {
     border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
     text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
     transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-right: 10px ; /* เพิ่มช่องว่างระหว่างไอคอนกับข้อความ */
 }
 
 /* เปลี่ยนสีเมื่อวางเมาส์ */

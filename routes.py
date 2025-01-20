@@ -495,6 +495,7 @@ def init_app(app):
     @login_required
     def edit_serial_number(device_id):
         device = DeviceName.query.get_or_404(device_id)
+        ref = request.args.get('ref', url_for('inventory'))  # รับค่า ref หรือใช้ default_page
         form = EditSerialNumberForm(obj=device)
 
         if form.validate_on_submit():
@@ -518,15 +519,15 @@ def init_app(app):
                 db.session.commit()
 
                 flash('Serial Number updated successfully!', 'success')
-                return redirect(url_for('inventory'))  # เปลี่ยนเป็น 'inventory'
+                #return redirect(ref)  # เปลี่ยนเป็น 'inventory'
             else:
                 flash('No changes detected.', 'info')
-                return redirect(url_for('inventory'))  # เปลี่ยนเป็น 'inventory'
+                #return redirect(ref)  # เปลี่ยนเป็น 'inventory'
 
         # ดึงประวัติการเปลี่ยนแปลง
         history_records = SerialNumberHistory.query.filter_by(device_id=device.id).order_by(SerialNumberHistory.changed_at.desc()).all()
 
-        return render_template('edit_serial_number.html', form=form, device=device, history=history_records)
+        return render_template('edit_serial_number.html', form=form, device=device, history=history_records,ref=ref)
     
 
     # Route สำหรับแก้ไข force_data

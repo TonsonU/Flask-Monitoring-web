@@ -38,12 +38,12 @@
         <div class="container py-5">
             <div class="card shadow">
                 <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0">Task Detail</h3>
+                    <h3 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Task Detail</h3>
                     <a href="{{ url_for('index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
                 </div>
                 <div class="card-body">
                 <div class="edit-btn-container">
-                    <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class='bx bxs-edit' ></i>Edit</a>
+                    <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
                 </div>
                 <table>
                     <thead>
@@ -116,7 +116,7 @@
                     </div>
                     {% if comment.user_id == current_user.id %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="align-self-end">
-                        <button type="submit" class="btn btn-sm custom-delete-btn">Delete</button>
+                        <button type="submit" class="btn btn-sm custom-delete-btn"><i class="fa-solid fa-trash-can"></i>&nbsp; Delete</button>
                     </form>
                     {% endif %}
                 </div>

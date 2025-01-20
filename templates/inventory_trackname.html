@@ -62,7 +62,7 @@
                 <td>{{ device.bound or ('N/A') }}</td>
                 <td>{{ device.inandout or ('N/A') }}</td>                              
                 <td>
-                    <a href="{{ url_for('edit_serial_number', device_id=device.id) }}">
+                    <a href="{{ url_for('edit_serial_number', device_id=device.id, ref=request.url) }}">
                         {{ device.serial_number or ('N/A') }}
                     </a>
                 </td>
