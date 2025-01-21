@@ -104,6 +104,9 @@ class DeviceName(db.Model):
     vac_yellow = db.Column(db.String(50), nullable=True)
     current_yellow = db.Column(db.String(50), nullable=True)
     f1_f2 = db.Column(db.String(50), nullable=True)
+    red_module = db.Column(db.String(50), nullable=True)
+    white_module = db.Column(db.String(50), nullable=True)
+    yellow_module = db.Column(db.String(50), nullable=True)
     
     def __repr__(self):
         return f'<DeviceName {self.name}>'
@@ -166,4 +169,23 @@ class MacAddressHistory(db.Model):
 
     def __repr__(self):
         return f"<MacAddressHistory DeviceID: {self.device_id}, Changed At: {self.changed_at}>"
+    
+class ModuleHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    device_id = db.Column(db.Integer, db.ForeignKey('device_name.id'), nullable=False)
+    old_red_module = db.Column(db.String(100), nullable=True)
+    new_red_module = db.Column(db.String(100), nullable=True)
+    old_white_module = db.Column(db.String(100), nullable=True)
+    new_white_module = db.Column(db.String(100), nullable=True)
+    old_yellow_module = db.Column(db.String(100), nullable=True)
+    new_yellow_module = db.Column(db.String(100), nullable=True)
+    changed_at = db.Column(db.DateTime, default=now_utc, nullable=False)
+    changed_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    remark = db.Column(db.String(255), nullable=True)
+
+    device = db.relationship('DeviceName', backref=db.backref('module_histories', lazy=True))
+    user = db.relationship('User', backref=db.backref('module_changes', lazy=True))
+
+    def __repr__(self):
+        return f"<ModuleHistory DeviceID: {self.device_id}, Changed At: {self.changed_at}>"
         

@@ -143,4 +143,11 @@ class EditMacAddressForm(FlaskForm):
     remark = StringField('Remark', validators=[Length(max=100)])
     submit = SubmitField('Save')
 
+class EditModuleForm(FlaskForm):
+    red_module = StringField('Red Module', validators=[Optional()])
+    white_module = StringField('White Module', validators=[Optional()])
+    yellow_module = StringField('Yellow Module', validators=[Optional()])
+    remark = TextAreaField('Remark', validators=[Optional()])
+    submit = SubmitField('Save')
+
     

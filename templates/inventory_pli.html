@@ -50,12 +50,9 @@
                 <th data-sortable="true" data-field="location_name">Location</th>
                 <th data-sortable="true" data-field="bound">Bound</th>
                 <th data-sortable="true" data-field="inandout">In/Out</th>
-                <th data-sortable="true" data-field="vac_white"><i class="fas fa-circle icon-bordered" style="color: white;"></i> VAC</th>
-                <th data-sortable="true" data-field="current_white"><i class="fas fa-circle icon-bordered" style="color: white;"></i> Current</th>
-                <th data-sortable="true" data-field="vac_red"><i class="fas fa-circle icon-bordered" style="color: red;"></i> VAC</th>
-                <th data-sortable="true" data-field="current_red"><i class="fas fa-circle icon-bordered" style="color: red;"></i> Current</th>
-                <th data-sortable="true" data-field="vac_yellow"><i class="fas fa-circle icon-bordered" style="color: yellow;"></i> VAC</th>
-                <th data-sortable="true" data-field="current_yellow"><i class="fas fa-circle icon-bordered" style="color: yellow;"></i> Current</th>
+                <th data-sortable="true" data-field="vac_white"><i class="fas fa-circle icon-bordered" style="color: white;"></i> Module</th>                
+                <th data-sortable="true" data-field="vac_red"><i class="fas fa-circle icon-bordered" style="color: red;"></i> Module</th>                
+                <th data-sortable="true" data-field="vac_yellow"><i class="fas fa-circle icon-bordered" style="color: yellow;"></i> Module</th>                
                 <th data-sortable="true" data-field="serial_number">Serial Number</th>
             </tr>
         </thead>
@@ -69,12 +66,22 @@
                 <td>{{ device.location.name if device.location else 'N/A' }}</td>
                 <td>{{ device.bound or ('N/A') }}</td>
                 <td>{{ device.inandout or ('N/A') }}</td>
-                <td>{{ device.vac_white or ('N/A') }}</td>
-                <td>{{ device.current_white or ('N/A') }}</td>
-                <td>{{ device.vac_red or ('N/A') }}</td>
-                <td>{{ device.current_red or ('N/A') }}</td>                
-                <td>{{ device.vac_yellow or ('N/A') }}</td>
-                <td>{{ device.current_yellow or ('N/A') }}</td>
+                <td>
+                    <a href="{{ url_for('edit_pli_module', device_id=device.id) }}">
+                        {{ device.red_module or ('N/A') }}
+                    </a>
+                    
+                </td>
+                <td>
+                    <a href="{{ url_for('edit_pli_module', device_id=device.id) }}">
+                        {{ device.white_module or ('N/A') }}
+                    </a>
+                </td>
+                <td>
+                    <a href="{{ url_for('edit_pli_module', device_id=device.id) }}">
+                        {{ device.yellow_module or ('N/A') }}
+                    </a>                    
+                </td>                
                 <td>
                     <a href="{{ url_for('edit_serial_number', device_id=device.id, ref=request.url) }}">
                         {{ device.serial_number or ('N/A') }}

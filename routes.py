@@ -18,8 +18,8 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import or_
 import os
 from datetime import datetime
-from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory, ForceDataHistory, MacAddressHistory
-from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm,EditForceDataForm,EditMacAddressForm
+from models import db, User, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory, ForceDataHistory, MacAddressHistory,ModuleHistory
+from forms import RegisterForm, LoginForm, CreateForm, EditForm,CommentForm, EditSerialNumberForm,EditForceDataForm,EditMacAddressForm,EditModuleForm
 from pytz import timezone
 import pytz
 
@@ -566,6 +566,7 @@ def init_app(app):
             db.session.commit()
 
             flash('Force Data updated successfully!', 'success')
+            
             return redirect(url_for('edit_force_data', device_id=device.id))
             
 
@@ -606,12 +607,56 @@ def init_app(app):
                 return redirect(url_for('edit_mac_address', device_id=device.id))  # เปลี่ยนเป็น 'inventory'
             else:
                 flash('No changes detected.', 'info')
-                return redirect(url_for('inventory'))  # เปลี่ยนเป็น 'inventory'
+                return redirect(url_for('edit_mac_address', device_id=device.id))  # เปลี่ยนเป็น 'inventory'
 
         # ดึงประวัติการเปลี่ยนแปลง
         history_records = MacAddressHistory.query.filter_by(device_id=device.id).order_by(MacAddressHistory.changed_at.desc()).all()
 
         return render_template('edit_mac_address.html', form=form, device=device, history=history_records)
+    
+    @app.route('/device/<int:device_id>/edit_pli_module', methods=['GET', 'POST'])
+    @login_required
+    def edit_pli_module(device_id):
+        device = DeviceName.query.get_or_404(device_id)
+        form = EditModuleForm(obj=device)
+
+        if form.validate_on_submit():
+            old_red_module = device.red_module
+            old_white_module = device.white_module
+            old_yellow_module = device.yellow_module
+
+            new_red_module = form.red_module.data
+            new_white_module = form.white_module.data
+            new_yellow_module = form.yellow_module.data
+            remark = form.remark.data
+
+            if old_red_module != new_red_module or old_white_module != new_white_module or old_yellow_module != new_yellow_module:
+                history = ModuleHistory(
+                    device_id=device.id,
+                    old_red_module=old_red_module,
+                    new_red_module=new_red_module,
+                    old_white_module=old_white_module,
+                    new_white_module=new_white_module,
+                    old_yellow_module=old_yellow_module,
+                    new_yellow_module=new_yellow_module,
+                    changed_by=current_user.id,
+                    remark=remark
+                )
+                db.session.add(history)
+
+                device.red_module = new_red_module
+                device.white_module = new_white_module
+                device.yellow_module = new_yellow_module
+                db.session.commit()
+
+                flash('PLI Module data updated successfully!', 'success')
+            else:
+                flash('No changes detected.', 'info')
+
+            return redirect(url_for('edit_pli_module', device_id=device.id))
+
+        history_records = ModuleHistory.query.filter_by(device_id=device.id).order_by(ModuleHistory.changed_at.desc()).all()
+        return render_template('edit_pli_module.html', form=form, device=device, history=history_records)
     
 
 
