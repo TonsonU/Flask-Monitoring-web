@@ -177,6 +177,33 @@
                         document.querySelector('.uploaded-image-info').style.display = 'none';
                     });
                 </script>
+                <script>
+                    // เพิ่ม Event Listener ให้ปุ่มปิด (กากบาท)
+                    document.querySelector('.btn-close').addEventListener('click', function(event) {
+                        event.preventDefault(); // ป้องกันการเปลี่ยนหน้าอัตโนมัติ
+                
+                        // ดึงค่าของหน้าก่อนหน้าจาก sessionStorage
+                        const previousPage = sessionStorage.getItem('previousPage');
+                
+                        // ตรวจสอบค่าของ previousPage
+                        if (previousPage === '/open' || previousPage === '/closed' || previousPage === '/') {
+                            // ถ้าหน้าก่อนหน้าเป็น "/open", "/closed" หรือ "/"
+                            window.location.href = previousPage;
+                        } else {
+                            // ถ้าไม่มีค่าใน previousPage ให้เปลี่ยนเส้นทางไปหน้า index
+                            window.location.href = "{{ url_for('index') }}";
+                        }
+                    });
+                
+                    // เก็บค่าของหน้าปัจจุบันใน sessionStorage
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const currentPath = window.location.pathname; // ดึง path ของ URL ปัจจุบัน
+                        // บันทึก URL ของหน้า /open, /closed หรือ / (index) ลงใน sessionStorage
+                        if (currentPath === '/open' || currentPath === '/closed' || currentPath === '/') {
+                            sessionStorage.setItem('previousPage', currentPath); // บันทึก path ปัจจุบันใน sessionStorage
+                        }
+                    });
+                </script>
 
     
     </body>
