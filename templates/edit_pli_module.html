@@ -101,12 +101,12 @@
                 <br>
                     <thead class="table-light">
                         <tr>
-                            <th>Old Red Module</th>
-                            <th>New Red Module</th>
-                            <th>Old White Module</th>
-                            <th>New White Module</th>
-                            <th>Old Yellow Module</th>
-                            <th>New Yellow Module</th>
+                            <th><i class="fas fa-circle icon-bordered" style="color: red;"></i> Old Module</th>
+                            <th><i class="fas fa-circle icon-bordered" style="color: red;"></i> New Module</th>
+                            <th><i class="fas fa-circle icon-bordered" style="color: white;"></i> Old Module</th>
+                            <th><i class="fas fa-circle icon-bordered" style="color: white;"></i> New Module</th>
+                            <th><i class="fas fa-circle icon-bordered" style="color: yellow;"></i> Old Module</th>
+                            <th><i class="fas fa-circle icon-bordered" style="color: yellow;"></i> New Module</th>
                             <th>Remark</th>
                             <th>Edited By</th>
                             <th>Edit Date</th>
@@ -141,7 +141,6 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const serialNumberInput = document.getElementById('serial_number');
             const redModuleInput = document.getElementById('red_module');
             const whiteModuleInput = document.getElementById('white_module');
             const yellowModuleInput = document.getElementById('yellow_module');
@@ -149,7 +148,6 @@
     
             // เก็บค่าดั้งเดิมของแต่ละฟิลด์
             const originalValues = {
-                serialNumber: "{{ device.serial_number }}".trim(),
                 redModule: "{{ device.red_module }}".trim(),
                 whiteModule: "{{ device.white_module }}".trim(),
                 yellowModule: "{{ device.yellow_module }}".trim(),
@@ -158,24 +156,26 @@
             // ฟังก์ชันตรวจสอบว่ามีการเปลี่ยนแปลงในฟิลด์ใดหรือไม่
             const checkFieldChanges = () => {
                 const currentValues = {
-                    //serialNumber: serialNumberInput.value.trim(),
                     redModule: redModuleInput.value.trim(),
                     whiteModule: whiteModuleInput.value.trim(),
                     yellowModule: yellowModuleInput.value.trim(),
                 };
     
+                // ตรวจสอบว่ามีค่าในฟิลด์ใดฟิลด์หนึ่งหรือไม่
+                const hasValues = Object.values(currentValues).some(value => value !== "");
+    
                 // เปิดหรือปิดปุ่ม Submit ตามเงื่อนไข
                 const hasChanges = Object.keys(originalValues).some(
                     key => currentValues[key] !== originalValues[key]
                 );
-                submitButton.disabled = !hasChanges;
+                submitButton.disabled = !(hasValues && hasChanges);
             };
     
             // ตรวจสอบการเปลี่ยนแปลงเริ่มต้น
             checkFieldChanges();
     
             // เพิ่ม Event Listener ให้ทุกฟิลด์
-            [serialNumberInput, redModuleInput, whiteModuleInput, yellowModuleInput].forEach(input => {
+            [redModuleInput, whiteModuleInput, yellowModuleInput].forEach(input => {
                 input.addEventListener('input', checkFieldChanges);
             });
     
@@ -183,17 +183,17 @@
             const form = document.getElementById('editSerialForm');
             form.addEventListener('submit', (e) => {
                 const currentValues = {
-                    //serialNumber: serialNumberInput.value.trim(),
                     redModule: redModuleInput.value.trim(),
                     whiteModule: whiteModuleInput.value.trim(),
                     yellowModule: yellowModuleInput.value.trim(),
                 };
     
+                const hasValues = Object.values(currentValues).some(value => value !== "");
                 const hasChanges = Object.keys(originalValues).some(
                     key => currentValues[key] !== originalValues[key]
                 );
     
-                if (!hasChanges) {
+                if (!(hasValues && hasChanges)) {
                     e.preventDefault();
                     alert('คุณยังไม่ได้เปลี่ยนแปลงข้อมูลในฟอร์ม.');
                 }

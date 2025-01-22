@@ -45,7 +45,7 @@
                 <div class="edit-btn-container">
                     <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive-lg">
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -118,7 +118,7 @@
                     </div>
                     {% if comment.user_id == current_user.id %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="align-self-end">
-                        <button type="submit" class="btn btn-sm custom-delete-btn"><i class="fa-solid fa-trash-can"></i>&nbsp; Delete</button>
+                        <button type="submit" class="btn custom-delete-comment-btn"><i class="fa-solid fa-trash-can"></i></button>
                     </form>
                     {% endif %}
                 </div>

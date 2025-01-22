@@ -41,73 +41,84 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
+
+    <!-- Toolbar -->
     <div id="toolbar">
         <a href="{{ url_for('create') }}" class="custom-index-btn">
             <i class="fa-solid fa-plus"></i>Create
         </a>
     </div>
     
+    <!-- Task Table -->
     {% if works %}
-    <table data-toggle="table"
-           data-toolbar="#toolbar" 
-           data-search="true"
-           data-pagination="true"
-           data-page-list="[10, 25, 50, 100, all]"
-           class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th data-sortable="true" data-field="number">Number</th>
-                <th data-sortable="true" data-field="create_date">Create Date</th>
-                <th data-sortable="true" data-field="location_name">Location</th> <!-- New Column -->
-                <th data-sortable="true" data-field="device_type">Device Type</th> <!-- New Column -->
-                <th data-sortable="true" data-field="device_name">Device Name</th> <!-- New Column -->
-                <th data-sortable="true" data-field="description">Description</th>
-                <th data-sortable="true" data-field="report_by">Report By</th>
-                <th data-sortable="true" data-field="status">Status</th>
-                <th data-field="action">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for work in works %}
-            {# {% if work.status != 'Closed' %} #} <!-- คอมเมนต์เงื่อนไขนี้ -->  
-            <tr>
-                <td>{{ work.number }}</td>
-                <td>{{ work.create_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                <td>{{ work.location.name if work.location else 'N/A' }}</td>  <!-- แสดง Location Name -->
-                <td>{{ work.device_type.name if work.device_type else 'N/A' }}</td>  <!-- แสดง Device Type -->
-                <td>{{ work.device_name.name if work.device_name else 'N/A' }}</td>  <!-- แสดง Device Name -->
-                <td>
-                    {% if work.description|length > 20 %}
-                        <span title="{{ work.description }}" data-bs-toggle="tooltip" data-bs-placement="top">
-                            {{ work.description[:20] }}...
-                        </span>
-                    {% else %}
-                        {{ work.description }}
-                    {% endif %}
-                </td>
-                <td>{{ work.report_by }}</td>
-                <td>
-                    {% if work.status == 'Open' %}  <!-- กำหนด tag สีต่างๆ -->
-                        <span class="status-open">{{ work.status }}</span>
-                    {% elif work.status == 'Closed' %}
-                        <span class="status-closed">{{ work.status }}</span>
-                    {% else %}
-                        <span class="status-other">{{ work.status }}</span> <!-- สำหรับสถานะอื่นๆ -->
-                    {% endif %}
-                </td>
-                
-                
-                <td class="actions">
-                    <a href="{{ url_for('work_detail', number=work.number) }}" class="btn custom-view-btn">View</a>
-                    {% if current_user.role == 'admin' %}
-                        <a href="#" onclick="confirmDelete('{{ work.number }}')" class="btn custom-delete-btn"><i class="fa-solid fa-trash-can"></i>&nbsp; Delete</a>
-                    {% endif %}
-                </td>
-            </tr>
-            {# {% endif %} #}  <!-- คอมเมนต์ส่วนนี้ด้วย -->
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table data-toggle="table"
+            data-toolbar="#toolbar" 
+            data-search="true"
+            data-pagination="true"
+            data-page-list="[10, 25, 50, 100, all]"
+            class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th data-sortable="true" data-field="number">Number</th>
+                    <th data-sortable="true" data-field="create_date">Create Date</th>
+                    <th data-sortable="true" data-field="location_name">Location</th> <!-- New Column -->
+                    <th data-sortable="true" data-field="device_type">Device Type</th> <!-- New Column -->
+                    <th data-sortable="true" data-field="device_name">Device Name</th> <!-- New Column -->
+                    <th data-sortable="true" data-field="description">Description</th>
+                    <th data-sortable="true" data-field="report_by">Report By</th>
+                    <th data-sortable="true" data-field="status">Status</th>
+                    <th data-field="action">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for work in works %}
+                {# {% if work.status != 'Closed' %} #} <!-- คอมเมนต์เงื่อนไขนี้ -->  
+                <tr>
+                    <td>{{ work.number }}</td>
+                    <td>{{ work.create_date.strftime('%Y-%m-%d') }}<br>
+                        {{ work.create_date.strftime('%H:%M:%S') }}</td>
+                    <td>{{ work.location.name if work.location else 'N/A' }}</td>  <!-- แสดง Location Name -->
+                    <td>{{ work.device_type.name if work.device_type else 'N/A' }}</td>  <!-- แสดง Device Type -->
+                    <td>{{ work.device_name.name if work.device_name else 'N/A' }}</td>  <!-- แสดง Device Name -->
+                    <td>
+                        {% if work.description|length > 20 %}
+                            <span title="{{ work.description }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                                {{ work.description[:20] }}...
+                            </span>
+                        {% else %}
+                            {{ work.description }}
+                        {% endif %}
+                    </td>
+                    <td>{{ work.report_by }}</td>
+                    <td>
+                        {% if work.status == 'Open' %}  <!-- กำหนด tag สีต่างๆ -->
+                            <span class="status-open">{{ work.status }}</span>
+                        {% elif work.status == 'Closed' %}
+                            <span class="status-closed">{{ work.status }}</span>
+                        {% else %}
+                            <span class="status-other">{{ work.status }}</span> <!-- สำหรับสถานะอื่นๆ -->
+                        {% endif %}
+                    </td>
+                    
+                    
+                    <td class="actions">
+                        <a href="{{ url_for('work_detail', number=work.number) }}" class="btn custom-view-btn">
+                            <i class="fa-solid fa-eye fa-lg"></i>
+                        </a>
+                        {% if current_user.role == 'admin' %}
+                            <a href="#" onclick="confirmDelete('{{ work.number }}')" class="btn custom-delete-btn">
+                                <i class="fa-solid fa-trash-can fa-lg"></i>
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {# {% endif %} #}  <!-- คอมเมนต์ส่วนนี้ด้วย -->
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
     {% endif %}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
@@ -115,7 +126,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.js"></script>
 <script>
     function confirmDelete(workNumber) {
-        if (confirm('Are you sure you want to delete this work order: ' + workNumber + '?')) {
+        if (confirm('คุณแน่ใจว่าต้องการที่จะลบ work order: ' + workNumber + ' ?')) {
             // สร้างฟอร์มที่ซ่อนอยู่
             var form = document.createElement('form');
             form.method = 'POST';  // ใช้ POST method

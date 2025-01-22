@@ -257,7 +257,7 @@ footer {
 .custom-view-btn {
     display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
     align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
-    padding: 2px 6px;
+    padding: 14px 6px;
     background-color: #335d9c;  /* สีพื้นหลัง */
     color: #ffffff;  /* สีข้อความ */
     font-size: 14px;    
@@ -282,15 +282,14 @@ footer {
 .custom-delete-btn {
     display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
     align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
-    padding: 2px 6px;
+    padding: 14px 8px;
     background-color: #393E46;  /* สีพื้นหลัง */
     color: #ffffff;  /* สีข้อความ */
     font-size: 14px;    
     text-align: center;
     border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
     text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-right: 10px ; /* เพิ่มช่องว่างระหว่างไอคอนกับข้อความ */
+    transition: background-color 0.3s ease, transform 0.2s ease;    
 }
 
 /* เปลี่ยนสีเมื่อวางเมาส์ */
@@ -302,6 +301,32 @@ footer {
 
 /* เปลี่ยนสีเมื่อกดปุ่ม */
 .custom-delete-btn:active {
+    background-color: #EEEEEE;  /* สีพื้นหลังเมื่อคลิก */
+}
+
+/* ปุ่มกำหนดเอง delete*/
+.custom-delete-comment-btn {
+    display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
+    align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */    
+    padding: 8px 12px;
+    background-color: #393E46;  /* สีพื้นหลัง */
+    color: #ffffff;  /* สีข้อความ */
+    font-size: 14px;    
+    text-align: center;
+    border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
+    text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
+    transition: background-color 0.3s ease, transform 0.2s ease;    
+}
+
+/* เปลี่ยนสีเมื่อวางเมาส์ */
+.custom-delete-comment-btn:hover {
+    background-color: #CF0A0A;  /* สีพื้นหลังเมื่อ hover */
+    color: #EEEEEE;  /* สีข้อความ */
+    transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
+}
+
+/* เปลี่ยนสีเมื่อกดปุ่ม */
+.custom-delete-comment-btn:active {
     background-color: #EEEEEE;  /* สีพื้นหลังเมื่อคลิก */
 }
 
@@ -360,8 +385,9 @@ footer {
 /*ใช้สำหรับหน้า work detail*/
 /* ปุ่มกำหนดเอง save edit serial*/
 table {
-    width: 80%;
+    width: 100%;
     margin: 20px auto;
+    max-width: 100%; /* ป้องกันไม่ให้เกินความกว้าง */
     border-collapse: collapse;
 }
 th, td {
