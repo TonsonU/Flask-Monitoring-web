@@ -177,6 +177,31 @@
                         document.querySelector('.uploaded-image-info').style.display = 'none';
                     });
                 </script>
+                <script>
+                    document.querySelector('.btn-close').addEventListener('click', function(event) {
+                        event.preventDefault(); // ป้องกันการเปลี่ยนหน้าอัตโนมัติ
+                
+                        // ดึงค่าของหน้าก่อนหน้าจาก sessionStorage
+                        const previousPage = sessionStorage.getItem('previousPage');
+                
+                        // ตรวจสอบค่าของ previousPage
+                        if (previousPage === '/open' || previousPage === '/closed') {
+                            // ถ้าเป็น open หรือ closed ให้กลับไปยังหน้าก่อนหน้า
+                            window.location.href = previousPage;
+                        } else {
+                            // ถ้าไม่ใช่ ให้กลับไปที่หน้า index
+                            window.location.href = "{{ url_for('index') }}";
+                        }
+                    });
+                
+                    // เก็บค่าของหน้าปัจจุบันใน sessionStorage
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const currentPath = window.location.pathname; // ดึง path ของ URL ปัจจุบัน
+                        if (currentPath === '/open' || currentPath === '/closed') {
+                            sessionStorage.setItem('previousPage', currentPath); // เก็บ path ของหน้าปัจจุบัน
+                        }
+                    });
+                </script>
 
     
     </body>
