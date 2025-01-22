@@ -129,6 +129,12 @@
         }
     }
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname; // ดึง path ของ URL ปัจจุบัน
+        sessionStorage.setItem('previousPage', currentPath); // เก็บ path ของหน้าปัจจุบันใน sessionStorage
+    });
+</script>
 </body>
 </html>
 {% endblock %}
