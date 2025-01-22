@@ -38,43 +38,45 @@
         <div class="container py-5">
             <div class="card shadow">
                 <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0">Task Detail</h3>
+                    <h3 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Task Detail</h3>
                     <a href="{{ url_for('index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
                 </div>
                 <div class="card-body">
                 <div class="edit-btn-container">
-                    <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class='bx bxs-edit' ></i>Edit</a>
+                    <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Number</th>
-                            <th>Create Date</th>
-                            <th>Work Order</th>
-                            <th>Line</th>
-                            <th>Location</th>
-                            <th>Device Type</th>
-                            <th>Device Name</th>
-                            <th>Description</th>
-                            <th>Report By</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="wrap-text">{{ works.number }}</td>
-                            <td class="wrap-text">{{ works.create_date }}</td>
-                            <td class="wrap-text">{{ works.work_order }}</td>
-                            <td class="wrap-text">{{ works.line.name if line else 'N/A' }}</td>
-                            <td class="wrap-text">{{ works.location.name if location else 'N/A' }}</td>
-                            <td class="wrap-text">{{ works.device_type.name if device_type else 'N/A' }}</td>
-                            <td class="wrap-text">{{ works.device_name.name if device_name else 'N/A' }}</td>
-                            <td class="wrap-text">{{ works.description }}</td>
-                            <td class="wrap-text">{{ works.report_by }}</td>
-                            <td class="wrap-text">{{ works.status }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Number</th>
+                                <th>Create Date</th>
+                                <th>Work Order</th>
+                                <th>Line</th>
+                                <th>Location</th>
+                                <th>Device Type</th>
+                                <th>Device Name</th>
+                                <th>Description</th>
+                                <th>Report By</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="wrap-text">{{ works.number }}</td>
+                                <td class="wrap-text">{{ works.create_date }}</td>
+                                <td class="wrap-text">{{ works.work_order }}</td>
+                                <td class="wrap-text">{{ works.line.name if line else 'N/A' }}</td>
+                                <td class="wrap-text">{{ works.location.name if location else 'N/A' }}</td>
+                                <td class="wrap-text">{{ works.device_type.name if device_type else 'N/A' }}</td>
+                                <td class="wrap-text">{{ works.device_name.name if device_name else 'N/A' }}</td>
+                                <td class="wrap-text">{{ works.description }}</td>
+                                <td class="wrap-text">{{ works.report_by }}</td>
+                                <td class="wrap-text">{{ works.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 
                 <!-- การแสดง Flash Message -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -116,7 +118,7 @@
                     </div>
                     {% if comment.user_id == current_user.id %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="align-self-end">
-                        <button type="submit" class="btn btn-sm custom-delete-btn">Delete</button>
+                        <button type="submit" class="btn btn-sm custom-delete-btn"><i class="fa-solid fa-trash-can"></i>&nbsp; Delete</button>
                     </form>
                     {% endif %}
                 </div>

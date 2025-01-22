@@ -1,3 +1,4 @@
 {
-    "editor.linkedEditing": true
+    "editor.linkedEditing": true,
+    "livePreview.defaultPreviewPath": "/templates/edit_serial_number.html"
 }

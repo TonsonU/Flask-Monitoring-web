@@ -20,7 +20,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Serial Number</title>
+    <title>Edit Force Data</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -34,8 +34,8 @@
         <div class="card shadow">
             <!-- Card Header with "Edit" Title and Close Button -->
             <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
-                <h3>Edit Serial Number {{ device.name }}</h3> <!-- Changed heading to "Edit" -->
-                <a href="{{ ref }}" class="btn-close btn-close-white" aria-label="Close"></a>
+                <h3>Edit Force Data {{ device.name }}</h3> <!-- Changed heading to "Edit" -->
+                <a href="{{ url_for('inventory_point') }}" class="btn-close btn-close-white" aria-label="Close"></a>
             </div>
                 <!--<a href="{{ url_for('inventory') }}" class="btn-close btn-close-white" aria-label="Close"></a>
             </div>-->
@@ -54,18 +54,50 @@
                         </div>
                     {% endif %}
                 {% endwith %}
+                
                 <form method="POST" id="editSerialForm">
                     {{ form.hidden_tag() }}
                     
-                    <!-- Serial Number Field -->
+                    <!-- Plus Before Field -->
                     <div class="mb-3">
-                        {{ form.serial_number.label('New serial number', class="form-label fw-bold") }}
-                        {{ form.serial_number(class="form-control", id="serial_number", placeholder="Enter new serial number") }}
-                        {% for error in form.serial_number.errors %}
+                        <!-- แสดงป้ายชื่อ (label) สำหรับฟิลด์ serial_number -->
+                        {{ form.plus_before.label('Plus Before', class="form-label fw-bold") }}
+                        <!-- แสดงฟิลด์ input สำหรับ serial_number -->
+                        {{ form.plus_before(class="form-control", id="serial_number", placeholder="Enter new Plus Before") }}
+                        <!-- แสดงข้อความข้อผิดพลาดถ้ามี -->
+                        {% for error in form.plus_before.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
-                    
+
+                    <!-- Minus Before Field -->
+                    <div class="mb-3">
+                        {{ form.minus_before.label(class="form-label fw-bold") }}
+                        {{ form.minus_before(class="form-control", placeholder="Enter minus before value") }}
+                        {% for error in form.minus_before.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Plus After Field -->
+                    <div class="mb-3">
+                        {{ form.plus_after.label(class="form-label fw-bold") }}
+                        {{ form.plus_after(class="form-control", placeholder="Enter plus after value") }}
+                        {% for error in form.plus_after.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Minus After Field -->
+                    <div class="mb-3">
+                        {{ form.minus_after.label(class="form-label fw-bold") }}
+                        {{ form.minus_after(class="form-control", placeholder="Enter minus after value") }}
+                        {% for error in form.minus_after.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                                        
                     <!-- Remark Field -->
                     <div class="mb-4">
                         {{ form.remark.label(class="form-label fw-bold") }}
@@ -92,8 +124,10 @@
                 <br>
                     <thead class="table-light">
                         <tr>
-                            <th>Old Serial Number</th>
-                            <th>New Serial Number</th>
+                            <th>Plus Before</th>
+                            <th>Minus Before</th>
+                            <th>Plus After</th>
+                            <th>Minus After</th>                            
                             <th>Remark</th>
                             <th>Edited By</th>
                             <th>Edit Date</th>
@@ -102,8 +136,10 @@
                     <tbody>
                         {% for record in history %}
                         <tr>
-                            <td>{{ record.old_serial_number or 'N/A' }}</td>
-                            <td>{{ record.new_serial_number }}</td>
+                            <td>{{ record.plus_before or 'N/A' }}</td>
+                            <td>{{ record.minus_before or 'N/A' }}</td>
+                            <td>{{ record.plus_after or 'N/A' }}</td>
+                            <td>{{ record.minus_after or 'N/A' }}</td>
                             <td>{{ record.remark or 'None' }}</td>
                             <td>{{ record.user.username }}</td>
                             <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>

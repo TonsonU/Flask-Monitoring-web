@@ -20,7 +20,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Serial Number</title>
+    <title>Edit Mac Address</Address></title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -34,8 +34,8 @@
         <div class="card shadow">
             <!-- Card Header with "Edit" Title and Close Button -->
             <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
-                <h3>Edit Serial Number {{ device.name }}</h3> <!-- Changed heading to "Edit" -->
-                <a href="{{ ref }}" class="btn-close btn-close-white" aria-label="Close"></a>
+                <h3>Edit Mac Address {{ device.name }}</h3> <!-- Changed heading to "Edit" -->
+                <a href="{{ url_for('inventory_tap') }}" class="btn-close btn-close-white" aria-label="Close"></a>
             </div>
                 <!--<a href="{{ url_for('inventory') }}" class="btn-close btn-close-white" aria-label="Close"></a>
             </div>-->
@@ -54,14 +54,14 @@
                         </div>
                     {% endif %}
                 {% endwith %}
-                <form method="POST" id="editSerialForm">
+                <form method="POST" id="editMacForm">
                     {{ form.hidden_tag() }}
                     
-                    <!-- Serial Number Field -->
+                    <!-- Mac Address Field -->
                     <div class="mb-3">
-                        {{ form.serial_number.label('New serial number', class="form-label fw-bold") }}
-                        {{ form.serial_number(class="form-control", id="serial_number", placeholder="Enter new serial number") }}
-                        {% for error in form.serial_number.errors %}
+                        {{ form.mac_address.label('New MAC Address', class="form-label fw-bold") }}
+                        {{ form.mac_address(class="form-control", id="mac_address", placeholder="Enter new MAC address") }}
+                        {% for error in form.mac_address.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
@@ -92,8 +92,8 @@
                 <br>
                     <thead class="table-light">
                         <tr>
-                            <th>Old Serial Number</th>
-                            <th>New Serial Number</th>
+                            <th>Old MAC Address</th>
+                            <th>New MAC Address</th>
                             <th>Remark</th>
                             <th>Edited By</th>
                             <th>Edit Date</th>
@@ -102,8 +102,8 @@
                     <tbody>
                         {% for record in history %}
                         <tr>
-                            <td>{{ record.old_serial_number or 'N/A' }}</td>
-                            <td>{{ record.new_serial_number }}</td>
+                            <td>{{ record.old_mac_address or 'N/A' }}</td>
+                            <td>{{ record.new_mac_address }}</td>
                             <td>{{ record.remark or 'None' }}</td>
                             <td>{{ record.user.username }}</td>
                             <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
@@ -125,14 +125,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const serialNumberInput = document.getElementById('serial_number');
+            const macAddressInput = document.getElementById('mac_address');
             const submitButton = document.querySelector('.btn-submit');
-            const originalSerialNumber = "{{ device.serial_number }}";
+            const originalMacAddress = "{{ device.mac_address }}";
 
-            // Function to check if serial number has changed
-            const checkSerialNumberChange = () => {
-                const currentValue = serialNumberInput.value.trim();
-                if (currentValue !== originalSerialNumber.trim()) {
+            // Function to check if MAC address has changed
+            const checkMacAddressChange = () => {
+                const currentValue = macAddressInput.value.trim();
+                if (currentValue !== originalMacAddress.trim()) {
                     submitButton.disabled = false;
                 } else {
                     submitButton.disabled = true;
@@ -140,18 +140,18 @@
             };
 
             // Initial check
-            checkSerialNumberChange();
+            checkMacAddressChange();
 
-            // Add event listener to serial number input
-            serialNumberInput.addEventListener('input', checkSerialNumberChange);
+            // Add event listener to MAC address input
+            macAddressInput.addEventListener('input', checkMacAddressChange);
 
             // Optional: Prevent form submission if no changes
-            const form = document.getElementById('editSerialForm');
+            const form = document.getElementById('editMacForm');
             form.addEventListener('submit', (e) => {
-                const currentValue = serialNumberInput.value.trim();
-                if (currentValue === originalSerialNumber.trim()) {
+                const currentValue = macAddressInput.value.trim();
+                if (currentValue === originalMacAddress.trim()) {
                     e.preventDefault();
-                    alert('คุณยังไม่ได้เปลี่ยนแปลง Serial Number.');
+                    alert('คุณยังไม่ได้เปลี่ยนแปลง MAC Address.');
                 }
             });
         });

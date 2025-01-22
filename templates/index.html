@@ -29,7 +29,7 @@
 <body>
 <div class="container">
     <br>
-    <h2>Task List</h2>
+    <h2><i class="fa-solid fa-list-check" style="color: #74C0FC;"></i> Task List</h2>
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -43,7 +43,7 @@
     {% endwith %}
     <div id="toolbar">
         <a href="{{ url_for('create') }}" class="custom-index-btn">
-            <i class='bx bx-plus'></i>Create
+            <i class="fa-solid fa-plus"></i>Create
         </a>
     </div>
     
@@ -100,7 +100,7 @@
                 <td class="actions">
                     <a href="{{ url_for('work_detail', number=work.number) }}" class="btn custom-view-btn">View</a>
                     {% if current_user.role == 'admin' %}
-                        <a href="#" onclick="confirmDelete('{{ work.number }}')" class="btn custom-delete-btn">Delete</a>
+                        <a href="#" onclick="confirmDelete('{{ work.number }}')" class="btn custom-delete-btn"><i class="fa-solid fa-trash-can"></i>&nbsp; Delete</a>
                     {% endif %}
                 </td>
             </tr>

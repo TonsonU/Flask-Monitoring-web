@@ -100,7 +100,19 @@ def add_device_names_from_excel(file_path, sheet_name='Device_Name'):
         bound = row.get('Bound', None)
         inandout = row.get('InandOut', None)
         serial_number = row.get('Serial_Number', None)
-        
+        ip_address = row.get('IP_Address', None)
+        mac_address = row.get('MAC_Address', None)
+        channel = row.get('Channel', None)
+        device_role = row.get('Device_Role', None)
+        force_data = row.get('Force_Data L=-,R=+', None)
+        vac_white = row.get('VAC_White', None)
+        current_white = row.get('Current_White', None)
+        vac_red = row.get('VAC_Red', None)
+        current_red = row.get('Current_Red', None)
+        vac_yellow = row.get('VAC_Yellow', None)
+        current_yellow = row.get('Current_Yellow', None)
+        f1_f2 = row.get('F1_F2 ', None)
+
         device = DeviceName(
             id=device_id,
             name=device_name,
@@ -108,7 +120,20 @@ def add_device_names_from_excel(file_path, sheet_name='Device_Name'):
             location_id=location_id,
             bound=bound,
             inandout=inandout,
-            serial_number=serial_number
+            serial_number=serial_number,
+            ip_address=ip_address,
+            mac_address=mac_address,
+            channel=channel,
+            device_role=device_role,
+            force_data=force_data,
+            vac_white=vac_white,
+            current_white=current_white,
+            vac_red=vac_red,
+            current_red=current_red,
+            vac_yellow=vac_yellow,
+            current_yellow=current_yellow,
+            f1_f2=f1_f2
+
         )
         db.session.add(device)
     
@@ -120,7 +145,7 @@ def main():
     with app.app_context():
         try:
             # หากไฟล์ Excel รวมชื่อ 'data.xlsx'
-            excel_file_path = 'data/device_name rev11.xlsx'
+            excel_file_path = 'data/device_name rev14.xlsx'
             
             add_lines_from_excel(excel_file_path, sheet_name='Line')
             add_locations_from_excel(excel_file_path, sheet_name='Location')
