@@ -223,7 +223,7 @@ footer {
 .custom-index-btn {
     display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
     align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
-    padding: 10px 20px;
+    padding: 8px 14px;
     background-color: #0D92F4;  /* สีพื้นหลัง */
     color: #fff;  /* สีข้อความ */
     font-size: 16px;

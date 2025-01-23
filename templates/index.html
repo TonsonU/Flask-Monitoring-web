@@ -76,7 +76,7 @@
                 {# {% if work.status != 'Closed' %} #} <!-- คอมเมนต์เงื่อนไขนี้ -->  
                 <tr>
                     <td>{{ work.number }}</td>
-                    <td>{{ work.create_date.strftime('%Y-%m-%d') }}<br>
+                    <td>{{ work.create_date.strftime('%d-%m-%Y') }}<br>
                         {{ work.create_date.strftime('%H:%M:%S') }}</td>
                     <td>{{ work.location.name if work.location else 'N/A' }}</td>  <!-- แสดง Location Name -->
                     <td>{{ work.device_type.name if work.device_type else 'N/A' }}</td>  <!-- แสดง Device Type -->
