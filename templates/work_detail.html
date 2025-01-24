@@ -167,10 +167,25 @@
                     
                     document.querySelector('input[type="file"][name="image"]').addEventListener('change', function(event) {
                         const fileInput = event.target;
-                        const fileName = fileInput.files[0].name;
-                        document.querySelector('.uploaded-image-name').textContent = fileName;
-                        document.querySelector('.uploaded-image-info').style.display = 'inline';
+                        const file = fileInput.files[0]; // เลือกไฟล์แรกที่อัปโหลด
+                        const maxFileSize = 1 * 1024 * 1024; // ขนาดสูงสุด 1MB (หน่วยเป็นไบต์)
+
+                        if (file) {
+                            // ตรวจสอบขนาดไฟล์
+                            if (file.size > maxFileSize) {
+                                alert('ไฟล์มีขนาดใหญ่เกิน 1MB!!. กรุณา upload ไฟล์ใหม่.');
+                                fileInput.value = ''; // ล้างค่าไฟล์ใน input
+                                document.querySelector('.uploaded-image-info').style.display = 'none';
+                                return;
+                            }
+
+                            // แสดงชื่อไฟล์หากขนาดไฟล์ผ่าน
+                            const fileName = file.name;
+                            document.querySelector('.uploaded-image-name').textContent = fileName;
+                            document.querySelector('.uploaded-image-info').style.display = 'inline';
+                        }
                     });
+
 
                     document.querySelector('.remove-uploaded-image').addEventListener('click', function() {
                         document.querySelector('input[type="file"][name="image"]').value = '';
@@ -204,6 +219,8 @@
                         }
                     });
                 </script>
+
+                
 
     
     </body>
