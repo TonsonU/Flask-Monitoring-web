@@ -1,0 +1,101 @@
+<!--
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+-->
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Knowledge Base</title>
+  <!-- Bootstrap CSS -->
+  <link 
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  >
+  <!-- CKEditor (CDN) -->
+  <script 
+    src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js">
+  </script>
+</head>
+<body>
+<div class="container my-4">
+  <h2>Create Knowledge Base</h2>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- ฟอร์ม -->
+  <form method="POST">
+    {{ form.hidden_tag() }}
+
+    <!-- Create Date -->
+    <div class="mb-3">
+      <label for="create_date" class="form-label">{{ form.create_date.label }}</label>
+      {{ form.create_date(class="form-control", id="create_date", placeholder="YYYY-MM-DD HH:MM") }}
+    </div>
+
+    <!-- Device Type -->
+    <div class="mb-3">
+      <label for="device_type" class="form-label">{{ form.device_type.label }}</label>
+      {{ form.device_type(class="form-control", id="device_type", placeholder="Enter Device Type") }}
+    </div>
+
+    <!-- Topic -->
+    <div class="mb-3">
+      <label for="topic" class="form-label">{{ form.topic.label }}</label>
+      {{ form.topic(class="form-control", id="topic", placeholder="Enter Topic") }}
+    </div>
+
+    <!-- Description (ใช้ CKEditor) -->
+    <div class="mb-3">
+      <label for="description" class="form-label">{{ form.description.label }}</label>
+      {{ form.description(class="form-control", id="description") }}
+    </div>
+
+    <div style="display: none;">
+      <label for="create_by" class="form-label">{{ form.create_by.label }}</label>
+      <input type="text" id="create_by" name="create_by" value="{{ current_user.username }}" readonly>
+    </div>
+
+    <!-- Submit Button -->
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script 
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<!-- เรียกใช้ CKEditor กับ textarea ที่มี id="description" -->
+<script>
+  CKEDITOR.replace('description');
+</script>
+
+</body>
+</html>
+
+{% endblock %}
