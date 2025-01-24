@@ -188,4 +188,15 @@ class ModuleHistory(db.Model):
 
     def __repr__(self):
         return f"<ModuleHistory DeviceID: {self.device_id}, Changed At: {self.changed_at}>"
+
+class KnowledgeBase(db.Model):
+    number = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    create_date = db.Column(db.DateTime, default=now_utc)
+    device_type = db.Column(db.String(100))
+    topic = db.Column(db.String(100))
+    description = db.Column(db.String(100))
+    create_by = db.Column(db.String(100))
+
+    def __repr__(self):
+        return f"<KnowledgeBase {self.number}>"
         
