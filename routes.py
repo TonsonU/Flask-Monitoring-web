@@ -742,6 +742,23 @@ def init_app(app):
         create_by=create_by, 
         )
     
+    # Route สำหรับการลบ Work (เฉพาะ admin)    
+    @app.route('/knowledge_base/delete/<int:number>', methods=['POST'])
+    @login_required
+    def deleteknowledge(number):
+        if current_user.role != 'admin':
+            flash("You don't have permission to delete knowledgebase.", "danger")
+            return redirect(url_for('knowledge_base'))
+        items = KnowledgeBase.query.filter_by(number=number).first()
+        if items:
+            db.session.delete(items)
+            db.session.commit()
+            flash("Knowledgebase deleted successfully!", "success")
+        else:
+            flash("Knowledgebase not found.", "danger")
+        #return redirect(url_for('knowledge_base'))
+        return redirect(url_for('knowledge_base'))
+    
 
 
 

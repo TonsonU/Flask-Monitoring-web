@@ -22,14 +22,15 @@
   <meta charset="UTF-8">
   <title>Create Knowledge Base</title>
   <!-- Bootstrap CSS -->
-  <link 
+  <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
   >
-  <!-- CKEditor (CDN) -->
-  <script 
-    src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js">
-  </script>
+  <!-- TinyMCE (CDN) -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/tinymce@6.2.0/tinymce.min.js"
+    referrerpolicy="origin"
+  ></script>
 </head>
 <body>
 <div class="container my-4">
@@ -69,7 +70,7 @@
       {{ form.topic(class="form-control", id="topic", placeholder="Enter Topic") }}
     </div>
 
-    <!-- Description (ใช้ CKEditor) -->
+    <!-- Description (ใช้ TinyMCE) -->
     <div class="mb-3">
       <label for="description" class="form-label">{{ form.description.label }}</label>
       {{ form.description(class="form-control", id="description") }}
@@ -86,13 +87,19 @@
 </div>
 
 <!-- Bootstrap JS -->
-<script 
+<script
   src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
 </script>
 
-<!-- เรียกใช้ CKEditor กับ textarea ที่มี id="description" -->
+<!-- เรียกใช้ TinyMCE กับ textarea ที่มี id="description" -->
 <script>
-  CKEDITOR.replace('description');
+  tinymce.init({
+    selector: '#description',
+    menubar: false,              // ซ่อน/แสดงเมนูบาร์
+    plugins: 'lists link image table code', // ปลั๊กอินเสริม
+    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code',
+    height: 300,                 // ตั้งความสูง Editor ได้ตามต้องการ
+  });
 </script>
 
 </body>

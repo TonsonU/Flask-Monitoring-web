@@ -29,6 +29,19 @@
     <!-- ลิงก์ไปยัง Boxicons -->
 	<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
 
+    <style>
+        .description-content {
+          /* ไม่ใช้ white-space: pre-line เพราะอาจรบกวน HTML */
+          overflow-wrap: break-word; /* หรือ word-wrap: break-word */
+        }
+        
+        .description-content img {
+          max-width: 100%;
+          height: auto;
+          display: block;
+        }
+        </style>
+
 </head>
 <div class="container my-2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -39,7 +52,7 @@
             <div class="card shadow">
                 <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
                     <h3 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Task Detail</h3>
-                    <a href="{{ url_for('index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
+                    <a href="{{ url_for('knowledge_base') }}" class="btn-close btn-close-white" aria-label="Close"></a>
                 </div>
                 <div class="card-body">
            
@@ -78,9 +91,20 @@
                 </div>
                 {% endif %}
                 {% endwith %}
+
+                <div class="mt-4 p-3 border rounded">
+                    <!-- หัวข้อหลัก (Topic) -->
+                    <h4 class="mb-2">{{ items.topic }}</h4>
+    
+                    <!-- ข้อความรายละเอียด -->
+                    <div class="description-content">
+                        {{ items.description|safe }}
+                    </div>
+                </div>
                 
     </body>
 </div>
+
 
 </html>
 {% endblock %}
