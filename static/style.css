@@ -527,3 +527,8 @@ font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่ส
 #backToTopBtn:hover {
     background-color: #333; /* สีพื้นหลังเมื่อชี้ไปที่ปุ่ม */
 }
+
+.bg-danger {
+    background-color: #FB4141 !important;
+    color: white!important; /* เปลี่ยนสีข้อความเป็นสีขาวเพื่อให้อ่านง่ายขึ้น */    
+}

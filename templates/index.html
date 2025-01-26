@@ -73,9 +73,9 @@
             </thead>
             <tbody>
                 {% for work in works %}
-                {# {% if work.status != 'Closed' %} #} <!-- คอมเมนต์เงื่อนไขนี้ -->  
+                {# {% if work.status != 'Closed' %} #} <!-- คอมเมนต์เงื่อนไขนี้ -->                  
                 <tr>
-                    <td>{{ work.number }}</td>
+                    <td>{{ loop.index }}</td><!-- แสดงลำดับหมายเลข -->
                     <td>{{ work.create_date.strftime('%d-%m-%Y') }}<br>
                         {{ work.create_date.strftime('%H:%M:%S') }}</td>
                     <td>{{ work.location.name if work.location else 'N/A' }}</td>  <!-- แสดง Location Name -->
@@ -107,7 +107,7 @@
                             <i class="fa-solid fa-eye fa-lg"></i>
                         </a>
                         {% if current_user.role == 'admin' %}
-                            <a href="#" onclick="confirmDelete('{{ work.number }}')" class="btn custom-delete-btn">
+                            <a href="#" onclick="confirmDelete('{{ loop.index }}', '{{ work.number }}')" class="btn custom-delete-btn">
                                 <i class="fa-solid fa-trash-can fa-lg"></i>
                             </a>
                         {% endif %}
@@ -125,8 +125,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.js"></script>
 <script>
-    function confirmDelete(workNumber) {
-        if (confirm('คุณแน่ใจว่าต้องการที่จะลบ work order: ' + workNumber + ' ?')) {
+    function confirmDelete(index, workNumber) {
+        if (confirm('คุณแน่ใจว่าต้องการที่จะลบ work order: ' + index + ' ?')) {
             // สร้างฟอร์มที่ซ่อนอยู่
             var form = document.createElement('form');
             form.method = 'POST';  // ใช้ POST method

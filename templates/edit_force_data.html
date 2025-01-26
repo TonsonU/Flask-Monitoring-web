@@ -120,9 +120,18 @@
             <!-- Edit History Section -->
             <div class="card-body history-section">
                 <h3 class="mt-4" style="text-align: center;">Edited History</h3>
+                <div class="text-center mb-4">
+                    <button id="showGraphButton" class="btn custom-index-btn">
+                        ดูกราฟข้อมูล
+                    </button>
+                </div>
+                <!-- Section สำหรับแสดงกราฟ -->
+                <div class="chart-container mt-4" style="display:none;">
+                    <canvas id="forceChart"></canvas>
+                </div>
                 <table class="table table-bordered history-table table-striped table-hover">
                 <br>
-                    <thead class="table-light">
+                    <thead class="table-dark">
                         <tr>
                             <th>Plus Before</th>
                             <th>Minus Before</th>
@@ -136,13 +145,14 @@
                     <tbody>
                         {% for record in history %}
                         <tr>
-                            <td>{{ record.plus_before or 'N/A' }}</td>
-                            <td>{{ record.minus_before or 'N/A' }}</td>
+                            <td class="{% if record.plus_after %}bg-danger{% endif %}">{{ record.plus_before or 'N/A' }}</td>
+                            <td class="{% if record.plus_after %}bg-danger{% endif %}">{{ record.minus_before or 'N/A' }}</td>
                             <td>{{ record.plus_after or 'N/A' }}</td>
                             <td>{{ record.minus_after or 'N/A' }}</td>
                             <td>{{ record.remark or 'None' }}</td>
                             <td>{{ record.user.username }}</td>
                             <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
+                            
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -158,12 +168,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- ไฟล์ JavaScript สำหรับการแสดงกราฟ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const serialNumberInput = document.getElementById('serial_number');
             const submitButton = document.querySelector('.btn-submit');
             const originalSerialNumber = "{{ device.serial_number }}";
+            const showGraphButton = document.getElementById('showGraphButton');
+            const chartContainer = document.querySelector('.chart-container');
+            const forceChartCanvas = document.getElementById('forceChart');
+            let forceChart; // ตัวแปรสำหรับ Chart.js
 
             // Function to check if serial number has changed
             const checkSerialNumberChange = () => {
@@ -190,8 +207,104 @@
                     alert('คุณยังไม่ได้เปลี่ยนแปลง Serial Number.');
                 }
             });
+
+            // ฟังก์ชันสำหรับดึงข้อมูลและสร้างกราฟ
+            const fetchAndRenderGraph = async () => {
+                try {
+                    // ใช้ URL ของ API พร้อมส่ง device_id
+                    const deviceId = "{{ device.id }}"; // device.id มาจาก Backend
+                    console.log(`Fetching data for device_id: ${deviceId}`);
+                    const response = await fetch(`/api/get_force_data/${deviceId}`);
+                    console.log('Response Status:', response.status);
+                    if (!response.ok) throw new Error('Error fetching data');
+
+                    const graphData = await response.json(); // แปลงข้อมูลเป็น JSON
+                    console.log('Graph Data:', graphData); // Debugging data
+
+                    // ข้อมูลสำหรับกราฟ
+                    const labels = Object.keys(graphData); // วันที่เป็น labels
+                    const plusBefore = labels.map(date => graphData[date].plus_before);
+                    const minusBefore = labels.map(date => graphData[date].minus_before);
+                    const plusAfter = labels.map(date => graphData[date].plus_after);
+                    const minusAfter = labels.map(date => graphData[date].minus_after);
+
+                    // หากมีกราฟอยู่แล้ว ให้ทำลายก่อนสร้างใหม่
+                    if (forceChart) forceChart.destroy();
+
+                    // สร้างกราฟด้วย Chart.js
+                    forceChart = new Chart(forceChartCanvas, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Plus Before',
+                                    data: plusBefore,
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    fill: true,
+                                },
+                                {
+                                    label: 'Minus Before',
+                                    data: minusBefore,
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    fill: true,
+                                },
+                                {
+                                    label: 'Plus After',
+                                    data: plusAfter,
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    fill: true,
+                                },
+                                {
+                                    label: 'Minus After',
+                                    data: minusAfter,
+                                    borderColor: 'rgba(153, 102, 255, 1)',
+                                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                    fill: true,
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'วันที่'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'ค่า Force'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // แสดงส่วนกราฟ
+                    chartContainer.style.display = 'block';
+                } catch (error) {
+                    console.error('Error rendering graph:', error);
+                    alert('ไม่สามารถดึงข้อมูลสำหรับกราฟได้');
+                }
+            };
+
+            // กดปุ่มเพื่อเรียกแสดงกราฟ
+            showGraphButton.addEventListener('click', fetchAndRenderGraph);
         });
     </script>
+
+    
 </body>
 </html>
 

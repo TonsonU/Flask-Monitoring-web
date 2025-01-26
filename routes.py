@@ -658,6 +658,47 @@ def init_app(app):
         history_records = ModuleHistory.query.filter_by(device_id=device.id).order_by(ModuleHistory.changed_at.desc()).all()
         return render_template('edit_pli_module.html', form=form, device=device, history=history_records)
     
+    @app.route('/api/get_force_data/<int:device_id>', methods=['GET'])
+    @login_required
+    def get_force_graph_data(device_id):
+        try:
+            # Query ข้อมูลจากฐานข้อมูล
+            records = ForceDataHistory.query.filter_by(device_id=device_id).order_by(ForceDataHistory.changed_at).all()
+
+            if not records:
+                app.logger.warning(f"No records found for device_id {device_id}")
+                return jsonify({"error": "No data found"}), 404
+
+            # แปลงข้อมูลจากฐานข้อมูลให้อยู่ในรูปแบบ JSON
+            graph_data = {}
+            for record in records:
+                edit_date = record.changed_at.strftime('%Y-%m-%d')  # เปลี่ยนวันที่เป็น string
+                if edit_date not in graph_data:
+                    graph_data[edit_date] = {
+                        'plus_before': 0,
+                        'minus_before': 0,
+                        'plus_after': 0,
+                        'minus_after': 0
+                    }
+                
+                # แปลงค่าที่ได้จากฐานข้อมูลให้เป็นตัวเลขก่อน
+                graph_data[edit_date]['plus_before'] += int(record.plus_before or 0)
+                graph_data[edit_date]['minus_before'] += int(record.minus_before or 0)
+                graph_data[edit_date]['plus_after'] += int(record.plus_after or 0)
+                graph_data[edit_date]['minus_after'] += int(record.minus_after or 0)
+
+            return jsonify(graph_data)
+        
+        except ValueError as e:
+            app.logger.error(f"Error converting data to int: {e}")
+            return jsonify({"error": "Invalid data type in database"}), 500
+        except Exception as e:
+            app.logger.error(f"Error fetching data for device_id {device_id}: {e}")
+            return jsonify({"error": "Internal Server Error"}), 500
+
+        
+
+    
 
 
 
