@@ -538,42 +538,52 @@ def init_app(app):
         form = EditForceDataForm(obj=device)
 
         if form.validate_on_submit():
-            plus_before = form.plus_before.data
-            minus_before = form.minus_before.data
-            plus_after = form.plus_after.data if form.plus_after.data else None
-            minus_after = form.minus_after.data if form.minus_after.data else None
-            remark = form.remark.data
+            try:
+                plus_before = form.plus_before.data
+                minus_before = form.minus_before.data
+                plus_after = form.plus_after.data if form.plus_after.data else None
+                minus_after = form.minus_after.data if form.minus_after.data else None
+                remark = form.remark.data
 
-            # บันทึกประวัติการเปลี่ยนแปลง
-            force_data_history = ForceDataHistory(
-            device_id=device.id,
-            plus_before=plus_before,
-            minus_before=minus_before,
-            plus_after=plus_after,
-            minus_after=minus_after,
-            changed_by=current_user.id,
-            remark=remark            
-            )
-            db.session.add(force_data_history)
-            # อัปเดตค่า force_data ของ device
-            if plus_after is not None and minus_after is not None:
-                device.force_data = f"{plus_after}, {minus_after}"                
-            else:
-                device.force_data = f"{plus_before}, {minus_before}"
+                # ตั้งค่า Timezone เป็น Asia/Bangkok
+                bangkok_tz = pytz.timezone('Asia/Bangkok')
+                current_time = datetime.now(bangkok_tz)  # ได้เวลาปัจจุบันเป็นเวลาไทย
 
-            print(f"device.force_data: {device.force_data}")            
-                    
-            db.session.commit()
+                # บันทึกประวัติการเปลี่ยนแปลง
+                force_data_history = ForceDataHistory(
+                    device_id=device.id,
+                    plus_before=plus_before,
+                    minus_before=minus_before,
+                    plus_after=plus_after,
+                    minus_after=minus_after,
+                    changed_by=current_user.id,
+                    remark=remark,
+                    changed_at=current_time,  # บันทึกวันที่และเวลาเป็น Bangkok timezone
+                )
+                db.session.add(force_data_history)
 
-            flash('Force Data updated successfully!', 'success')
-            
-            return redirect(url_for('edit_force_data', device_id=device.id))
-            
+                # อัปเดตค่า force_data ของ device
+                force_values = [str(value) for value in [plus_before, minus_before, plus_after, minus_after] if value is not None]
+                device.force_data = ", ".join(force_values)
+
+                print(f"device.force_data: {device.force_data}")
+
+                # บันทึกลงฐานข้อมูล
+                db.session.commit()
+                flash('Force Data updated successfully!', 'success')
+
+                return redirect(url_for('edit_force_data', device_id=device.id))
+
+            except Exception as e:
+                db.session.rollback()
+                app.logger.error(f"Error updating force data: {e}")
+                flash('เกิดข้อผิดพลาดในการอัปเดตข้อมูล', 'danger')
 
         # ดึงประวัติการเปลี่ยนแปลง
         history_force_records = ForceDataHistory.query.filter_by(device_id=device.id).order_by(ForceDataHistory.changed_at.desc()).all()
 
         return render_template('edit_force_data.html', form=form, device=device, history=history_force_records)
+
     
 
     # Route สำหรับแก้ไข mac_address
@@ -614,6 +624,7 @@ def init_app(app):
 
         return render_template('edit_mac_address.html', form=form, device=device, history=history_records)
     
+    # Route สำหรับแก้ไข pli_module
     @app.route('/device/<int:device_id>/edit_pli_module', methods=['GET', 'POST'])
     @login_required
     def edit_pli_module(device_id):
@@ -658,6 +669,7 @@ def init_app(app):
         history_records = ModuleHistory.query.filter_by(device_id=device.id).order_by(ModuleHistory.changed_at.desc()).all()
         return render_template('edit_pli_module.html', form=form, device=device, history=history_records)
     
+    # Route สำหรับแสดงข้อมูล force_data ในรูปแบบกราฟ
     @app.route('/api/get_force_data/<int:device_id>', methods=['GET'])
     @login_required
     def get_force_graph_data(device_id):
@@ -695,6 +707,29 @@ def init_app(app):
         except Exception as e:
             app.logger.error(f"Error fetching data for device_id {device_id}: {e}")
             return jsonify({"error": "Internal Server Error"}), 500
+
+    # Route สำหรับลบ force_data
+    @app.route('/delete_force_data/<int:record_id>', methods=['POST'])
+    @login_required
+    def delete_force_data(record_id):
+        record = ForceDataHistory.query.get_or_404(record_id)
+
+        # ตรวจสอบว่าเป็นเจ้าของข้อมูลหรือไม่
+        if record.changed_by != current_user.id:
+            flash("คุณไม่มีสิทธิ์ลบข้อมูลนี้", "danger")
+            return jsonify({"error": "Unauthorized"}), 403
+
+        try:
+            db.session.delete(record)
+            db.session.commit()
+            flash("ลบข้อมูลสำเร็จ!", "success")
+            return jsonify({"success": True}), 200
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error deleting record {record_id}: {e}")
+            return jsonify({"error": "เกิดข้อผิดพลาดในการลบข้อมูล"}), 500
+
+
 
         
 

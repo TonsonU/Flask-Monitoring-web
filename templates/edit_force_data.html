@@ -140,6 +140,7 @@
                             <th>Remark</th>
                             <th>Edited By</th>
                             <th>Edit Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -152,6 +153,19 @@
                             <td>{{ record.remark or 'None' }}</td>
                             <td>{{ record.user.username }}</td>
                             <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td>
+                                {% if record.changed_by == current_user.id %}
+                                    <button type="button" class="btn btn-sm custom-delete-btn"
+                                        data-record-id="{{ record.id }}">
+                                        <i class="fa-solid fa-trash-can fa-lg"></i>
+                                    </button>
+                                {% else %}
+                                    <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                        <i class="fa-solid fa-trash-can fa-lg"></i>
+                                    </button>
+                                {% endif %}
+                            </td>
+                            
                             
                         </tr>
                         {% endfor %}
@@ -180,6 +194,8 @@
             const showGraphButton = document.getElementById('showGraphButton');
             const chartContainer = document.querySelector('.chart-container');
             const forceChartCanvas = document.getElementById('forceChart');
+            const deleteButtons = document.querySelectorAll('.custom-delete-btn');
+
             let forceChart; // ตัวแปรสำหรับ Chart.js
 
             // Function to check if serial number has changed
@@ -206,6 +222,34 @@
                     e.preventDefault();
                     alert('คุณยังไม่ได้เปลี่ยนแปลง Serial Number.');
                 }
+            });
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const recordId = button.dataset.recordId;
+
+                    if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) return;
+
+                    try {
+                        const response = await fetch(`/delete_force_data/${recordId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            alert("ลบข้อมูลสำเร็จ!");
+                            location.reload(); // รีเฟรชหน้าเพื่ออัปเดตตาราง
+                        } else {
+                            alert("เกิดข้อผิดพลาด: " + result.error);
+                        }
+                    } catch (error) {
+                        console.error("Error deleting data:", error);
+                        alert("ไม่สามารถลบข้อมูลได้");
+                    }
+                });
             });
 
             // ฟังก์ชันสำหรับดึงข้อมูลและสร้างกราฟ
