@@ -68,7 +68,8 @@
             {% if work.status != 'Closed' %}
             <tr>
                 <td>{{ work.number }}</td>
-                <td>{{ work.create_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ work.create_date.strftime('%d-%m-%Y') }}<br>
+                    {{ work.create_date.strftime('%H:%M:%S') }}</td>
                 <td>{{ work.location.name if work.location else 'N/A' }}</td>  <!-- แสดง Location Name -->
                 <td>{{ work.device_type.name if work.device_type else 'N/A' }}</td>  <!-- แสดง Device Type -->
                 <td>{{ work.device_name.name if work.device_name else 'N/A' }}</td>  <!-- แสดง Device Name -->
@@ -93,9 +94,13 @@
                 </td>
                 
                 <td class="actions">
-                    <a href="{{ url_for('work_detail', number=work.number) }}" class="btn custom-view-btn">View</a>
+                    <a href="{{ url_for('work_detail', number=work.number) }}" class="btn custom-view-btn">
+                        <i class="fa-solid fa-eye fa-lg"></i>
+                    </a>
                     {% if current_user.role == 'admin' %}
-                        <a href="#" onclick="confirmDelete('{{ work.number }}')" class="btn custom-delete-btn">Delete</a>
+                        <a href="#" onclick="confirmDelete('{{ work.number }}')" class="btn custom-delete-btn">
+                            <i class="fa-solid fa-trash-can fa-lg"></i>
+                        </a>
                     {% endif %}
                 </td>
             </tr>
@@ -114,6 +119,12 @@
             window.location.href = '/delete/' + workNumber; // ส่งผู้ใช้ไปยัง URL สำหรับการลบ
          }
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname; // ดึง path ของ URL ปัจจุบัน
+        sessionStorage.setItem('previousPage', currentPath); // เก็บ path ของหน้าปัจจุบันใน sessionStorage
+    });
 </script>
 </body>
 </html>

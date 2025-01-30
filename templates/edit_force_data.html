@@ -120,9 +120,18 @@
             <!-- Edit History Section -->
             <div class="card-body history-section">
                 <h3 class="mt-4" style="text-align: center;">Edited History</h3>
+                <div class="text-center mb-4">
+                    <button id="showGraphButton" class="btn custom-graph-btn">
+                        กราฟข้อมูล
+                    </button>
+                </div>
+                <!-- Section สำหรับแสดงกราฟ -->
+                <div class="chart-container mt-4" style="display:none; overflow-x: auto; white-space: nowrap;">
+                    <canvas id="forceChart" style="min-width: 1000px;"></canvas>
+                </div>
                 <table class="table table-bordered history-table table-striped table-hover">
                 <br>
-                    <thead class="table-light">
+                    <thead class="table-dark">
                         <tr>
                             <th>Plus Before</th>
                             <th>Minus Before</th>
@@ -131,18 +140,33 @@
                             <th>Remark</th>
                             <th>Edited By</th>
                             <th>Edit Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for record in history %}
                         <tr>
-                            <td>{{ record.plus_before or 'N/A' }}</td>
-                            <td>{{ record.minus_before or 'N/A' }}</td>
+                            <td class="{% if record.plus_after %}bg-danger{% endif %}">{{ record.plus_before or 'N/A' }}</td>
+                            <td class="{% if record.plus_after %}bg-danger{% endif %}">{{ record.minus_before or 'N/A' }}</td>
                             <td>{{ record.plus_after or 'N/A' }}</td>
                             <td>{{ record.minus_after or 'N/A' }}</td>
                             <td>{{ record.remark or 'None' }}</td>
                             <td>{{ record.user.username }}</td>
                             <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td>
+                                {% if record.changed_by == current_user.id %}
+                                    <button type="button" class="btn btn-sm custom-delete-btn"
+                                        data-record-id="{{ record.id }}">
+                                        <i class="fa-solid fa-trash-can fa-lg"></i>
+                                    </button>
+                                {% else %}
+                                    <button type="button" class="btn btn-sm custom-delete-btn" disabled>
+                                        <i class="fa-solid fa-trash-can fa-lg"></i>
+                                    </button>
+                                {% endif %}
+                            </td>
+                            
+                            
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -158,12 +182,21 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- ไฟล์ JavaScript สำหรับการแสดงกราฟ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const serialNumberInput = document.getElementById('serial_number');
             const submitButton = document.querySelector('.btn-submit');
             const originalSerialNumber = "{{ device.serial_number }}";
+            const showGraphButton = document.getElementById('showGraphButton');
+            const chartContainer = document.querySelector('.chart-container');
+            const forceChartCanvas = document.getElementById('forceChart');
+            const deleteButtons = document.querySelectorAll('.custom-delete-btn');
+
+            let forceChart; // ตัวแปรสำหรับ Chart.js
 
             // Function to check if serial number has changed
             const checkSerialNumberChange = () => {
@@ -190,8 +223,195 @@
                     alert('คุณยังไม่ได้เปลี่ยนแปลง Serial Number.');
                 }
             });
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const recordId = button.dataset.recordId;
+
+                    if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) return;
+
+                    try {
+                        const response = await fetch(`/delete_force_data/${recordId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            alert("ลบข้อมูลสำเร็จ!");
+                            location.reload(); // รีเฟรชหน้าเพื่ออัปเดตตาราง
+                        } else {
+                            alert("เกิดข้อผิดพลาด: " + result.error);
+                        }
+                    } catch (error) {
+                        console.error("Error deleting data:", error);
+                        alert("ไม่สามารถลบข้อมูลได้");
+                    }
+                });
+            });
+
+            // ฟังก์ชันสำหรับดึงข้อมูลและสร้างกราฟ
+            const fetchAndRenderGraph = async () => {
+                try {
+                    // ใช้ URL ของ API พร้อมส่ง device_id
+                    const deviceId = "{{ device.id }}"; // device.id มาจาก Backend
+                    console.log(`Fetching data for device_id: ${deviceId}`);
+                    const response = await fetch(`/api/get_force_data/${deviceId}`);
+                    console.log('Response Status:', response.status);
+                    if (!response.ok) throw new Error('Error fetching data');
+
+                    const graphData = await response.json(); // แปลงข้อมูลเป็น JSON
+                    console.log('Graph Data:', graphData); // Debugging data
+
+                    // ข้อมูลสำหรับกราฟ
+                    let labels = Object.keys(graphData); // วันที่เป็น labels
+                    labels.sort((a, b) => new Date(b) - new Date(a)); // เรียงวันที่จากมากไปน้อย
+
+                    const plusBefore = labels.map(date => graphData[date].plus_before);
+                    const minusBefore = labels.map(date => graphData[date].minus_before);
+                    const plusAfter = labels.map(date => graphData[date].plus_after);
+                    const minusAfter = labels.map(date => graphData[date].minus_after);
+
+                    console.log('Labels (sorted):', labels); // Debugging labels
+
+                    // หากมีกราฟอยู่แล้ว ให้ทำลายก่อนสร้างใหม่
+                    if (forceChart) forceChart.destroy();
+
+                    
+                    // สร้างกราฟด้วย Chart.js
+                    forceChart = new Chart(forceChartCanvas, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Plus Before',
+                                    data: plusBefore,
+                                    borderColor: 'rgba(0, 123, 255, 1)', // ขอบสีฟ้า
+                                    backgroundColor: 'rgba(0, 123, 255, 0.7)', // สีพื้นหลังฟ้า
+                                    borderWidth: 2, // ความกว้างของขอบ
+                                    hoverBackgroundColor: 'rgba(0, 123, 255, 0.9)', // สีเมื่อ hover
+                                    hoverBorderColor: 'rgba(0, 123, 255, 1)',
+                                },
+                                {
+                                    label: 'Minus Before',
+                                    data: minusBefore,
+                                    borderColor: 'rgba(220, 53, 69, 1)', // ขอบสีแดง
+                                    backgroundColor: 'rgba(220, 53, 69, 0.7)', // สีพื้นหลังแดง
+                                    borderWidth: 2,
+                                    hoverBackgroundColor: 'rgba(220, 53, 69, 0.9)',
+                                    hoverBorderColor: 'rgba(220, 53, 69, 1)',
+                                },
+                                {
+                                    label: 'Plus After',
+                                    data: plusAfter,
+                                    borderColor: 'rgba(40, 167, 69, 1)', // ขอบสีเขียว
+                                    backgroundColor: 'rgba(40, 167, 69, 0.7)', // สีพื้นหลังเขียว
+                                    borderWidth: 2,
+                                    hoverBackgroundColor: 'rgba(40, 167, 69, 0.9)',
+                                    hoverBorderColor: 'rgba(40, 167, 69, 1)',
+                                },
+                                {
+                                    label: 'Minus After',
+                                    data: minusAfter,
+                                    borderColor: 'rgba(255, 193, 7, 1)', // ขอบสีเหลือง
+                                    backgroundColor: 'rgba(255, 193, 7, 0.7)', // สีพื้นหลังเหลือง
+                                    borderWidth: 2,
+                                    hoverBackgroundColor: 'rgba(255, 193, 7, 0.9)',
+                                    hoverBorderColor: 'rgba(255, 193, 7, 1)',
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                    labels: {
+                                        font: {
+                                            size: 14, // ขนาดตัวอักษรของ legend
+                                        },
+                                        padding: 20, // ระยะห่างระหว่าง legend
+                                        boxWidth: 20, // ขนาดกล่องสีใน legend
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.7)', // สีพื้นหลังของ tooltip
+                                    titleColor: '#fff', // สีข้อความของหัวข้อ tooltip
+                                    bodyColor: '#fff', // สีข้อความของเนื้อหา tooltip
+                                    cornerRadius: 8, // ความโค้งของ tooltip
+                                    padding: 10, // ระยะห่างภายใน tooltip
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'วันที่',
+                                        font: {
+                                            size: 16, // ขนาดตัวอักษร
+                                            weight: 'bold', // ตัวหนา
+                                        },
+                                        color: '#333', // สีข้อความ
+                                    },
+                                    ticks: {
+                                        autoSkip: false,
+                                        maxRotation: 45,
+                                        minRotation: 0,
+                                        font: {
+                                            size: 12, // ขนาดตัวอักษรของ ticks
+                                        },
+                                        color: '#333', // สี ticks
+                                    },
+                                    grid: {
+                                        display: false, // ซ่อนเส้น grid ของแกน X
+                                    },
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'ค่า Force',
+                                        font: {
+                                            size: 16, // ขนาดตัวอักษร
+                                            weight: 'bold', // ตัวหนา
+                                        },
+                                        color: '#333', // สีข้อความ
+                                    },
+                                    ticks: {
+                                        font: {
+                                            size: 12, // ขนาดตัวอักษรของ ticks
+                                        },
+                                        color: '#333', // สี ticks
+                                    },
+                                    grid: {
+                                        color: 'rgba(200, 200, 200, 0.5)', // สีของเส้น grid
+                                        lineWidth: 1, // ความกว้างของเส้น grid
+                                        drawBorder: true, // แสดงเส้นขอบของแกน
+                                    },
+                                }
+                            }
+                        }
+                    });
+
+
+
+                    // แสดงส่วนกราฟ
+                    chartContainer.style.display = 'block';
+                } catch (error) {
+                    console.error('Error rendering graph:', error);
+                    alert('ไม่สามารถดึงข้อมูลสำหรับกราฟได้');
+                }
+            };
+
+            // กดปุ่มเพื่อเรียกแสดงกราฟ
+            showGraphButton.addEventListener('click', fetchAndRenderGraph);
         });
     </script>
+
+    
 </body>
 </html>
 
