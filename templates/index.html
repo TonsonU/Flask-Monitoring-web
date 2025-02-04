@@ -78,9 +78,9 @@
                     <td>{{ loop.index }}</td><!-- แสดงลำดับหมายเลข -->
                     <td>{{ work.create_date.strftime('%d-%m-%Y') }}<br>
                         {{ work.create_date.strftime('%H:%M:%S') }}</td>
-                    <td>{{ work.location.name if work.location else 'N/A' }}</td>  <!-- แสดง Location Name -->
-                    <td>{{ work.device_type.name if work.device_type else 'N/A' }}</td>  <!-- แสดง Device Type -->
-                    <td>{{ work.device_name.name if work.device_name else 'N/A' }}</td>  <!-- แสดง Device Name -->
+                    <td>{{ work.location.name if work.location else '-' }}</td>  <!-- แสดง Location Name -->
+                    <td>{{ work.device_type.name if work.device_type else '-' }}</td>  <!-- แสดง Device Type -->
+                    <td>{{ work.device_name.name if work.device_name else '-' }}</td>  <!-- แสดง Device Name -->
                     <td>
                         {% if work.description|length > 20 %}
                             <span title="{{ work.description }}" data-bs-toggle="tooltip" data-bs-placement="top">

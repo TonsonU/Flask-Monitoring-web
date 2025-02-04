@@ -146,11 +146,13 @@
                     <tbody>
                         {% for record in history %}
                         <tr>
-                            <td class="{% if record.plus_after %}bg-danger{% endif %}">{{ record.plus_before or 'N/A' }}</td>
-                            <td class="{% if record.plus_after %}bg-danger{% endif %}">{{ record.minus_before or 'N/A' }}</td>
-                            <td>{{ record.plus_after or 'N/A' }}</td>
-                            <td>{{ record.minus_after or 'N/A' }}</td>
-                            <td>{{ record.remark or 'None' }}</td>
+                            <!--td class="{% if record.plus_after %}bg-danger{% endif %}">{{ record.plus_before or 'N/A' }}</td-->
+                            <!--td class="{% if record.plus_after %}bg-danger{% endif %}">{{ record.minus_before or 'N/A' }}</td-->
+                            <td class="{% if record.plus_before|int >= 6000 or record.plus_before|int <= 4000 %}bg-danger{% endif %}">{{ record.plus_before or 'N/A' }}</td>
+                            <td class="{% if record.minus_before|int >= 6000 or record.minus_before|int <= 4000 %}bg-danger{% endif %}">{{ record.minus_before or 'N/A' }}</td>
+                            <td>{{ record.plus_after or '-' }}</td>
+                            <td>{{ record.minus_after or '-' }}</td>
+                            <td>{{ record.remark or '-' }}</td>
                             <td>{{ record.user.username }}</td>
                             <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
                             <td>

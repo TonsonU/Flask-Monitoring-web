@@ -103,8 +103,8 @@
                         {% for record in history %}
                         <tr>
                             <td>{{ record.new_mac_address }}</td>
-                            <td>{{ record.old_mac_address or 'N/A' }}</td>                            
-                            <td>{{ record.remark or 'None' }}</td>
+                            <td>{{ record.old_mac_address or '-' }}</td>                            
+                            <td>{{ record.remark or '-' }}</td>
                             <td>{{ record.user.username }}</td>
                             <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
                         </tr>

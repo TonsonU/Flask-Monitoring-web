@@ -115,13 +115,13 @@
                     <tbody>
                         {% for record in history %}
                         <tr>
-                            <td>{{ record.new_red_module }}</td>
-                            <td>{{ record.old_red_module }}</td>
-                            <td>{{ record.new_white_module }}</td>                    
-                            <td>{{ record.old_white_module }}</td>
-                            <td>{{ record.new_yellow_module }}</td>
-                            <td>{{ record.old_yellow_module }}</td>                            
-                            <td>{{ record.remark or 'None' }}</td>
+                            <td>{{ record.new_red_module or '-' }}</td>
+                            <td>{{ record.old_red_module or '-' }}</td>
+                            <td>{{ record.new_white_module or '-' }}</td>                    
+                            <td>{{ record.old_white_module or '-' }}</td>
+                            <td>{{ record.new_yellow_module or '-' }}</td>
+                            <td>{{ record.old_yellow_module or '-' }}</td>                            
+                            <td>{{ record.remark or '-' }}</td>
                             <td>{{ record.user.username }}</td>
                             <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
                         </tr>
