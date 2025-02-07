@@ -154,7 +154,7 @@
                             <td>{{ record.minus_after or '-' }}</td>
                             <td>{{ record.remark or '-' }}</td>
                             <td>{{ record.user.username }}</td>
-                            <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td>{{ record.changed_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                             <td>
                                 {% if record.changed_by == current_user.id %}
                                     <button type="button" class="btn btn-sm custom-delete-btn"

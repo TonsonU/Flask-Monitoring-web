@@ -3,7 +3,7 @@
 #
 # 
 # Project : Python, Flask, MySQLite, Bootstrap
-# Author  : Thanapoom Sukarin
+# Author  : Thanapoom Sukarin, Tonson Ubonsri
 # Modifier: 
 # Version : 
 # Date    : Dec 01, 2024
@@ -22,7 +22,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from app import app, db
-from models import Line, Location, DeviceType, DeviceName
+from models import Line, Location, DeviceType, DeviceName,ForceDataHistory
 
 
 def add_lines_from_excel(file_path, sheet_name='Line'):
@@ -104,14 +104,18 @@ def add_device_names_from_excel(file_path, sheet_name='Device_Name'):
         mac_address = row.get('MAC_Address', None)
         channel = row.get('Channel', None)
         device_role = row.get('Device_Role', None)
-        force_data = row.get('Force_Data L=-,R=+', None)
+        force_data = row.get('Force_Data', None)
         vac_white = row.get('VAC_White', None)
         current_white = row.get('Current_White', None)
         vac_red = row.get('VAC_Red', None)
         current_red = row.get('Current_Red', None)
         vac_yellow = row.get('VAC_Yellow', None)
         current_yellow = row.get('Current_Yellow', None)
-        f1_f2 = row.get('F1_F2 ', None)
+        f1_f2 = row.get('F1_F2', None)
+        red_module = row.get('Red_Module', None)
+        white_module = row.get('White_Module', None)
+        yellow_module = row.get('Yellow_Module', None)
+     
 
         device = DeviceName(
             id=device_id,
@@ -132,7 +136,10 @@ def add_device_names_from_excel(file_path, sheet_name='Device_Name'):
             current_red=current_red,
             vac_yellow=vac_yellow,
             current_yellow=current_yellow,
-            f1_f2=f1_f2
+            f1_f2=f1_f2,
+            red_module=red_module,
+            white_module = white_module,
+            yellow_module = yellow_module
 
         )
         db.session.add(device)
@@ -140,17 +147,54 @@ def add_device_names_from_excel(file_path, sheet_name='Device_Name'):
     db.session.commit()
     print("Add DeviceName Success")
 
+def add_force_data_from_excel(file_path, sheet_name='Force_Data'):
+    """
+    อ่านข้อมูลจาก Sheet ชื่อ 'Force_Data' แล้วบันทึกลงตาราง Force_Data
+    """
+    df = pd.read_excel(file_path, sheet_name=sheet_name)
+    
+    for _, row in df.iterrows():
+        force_id = row.get('ID', None)
+        force_device_id = row.get('device_id', None)
+        changed_at = row.get('changed_at', None)
+        changed_by = row.get('changed_by', None)
+        remark = row.get('remark', None)
+        plus_before = row.get('plus_before', None)
+        minus_before = row.get('minus_before', None)
+        plus_after = row.get('plus_after', None)
+        minus_after = row.get('minus_after', None)
+        
+
+
+        force = ForceDataHistory(
+            id=force_id,
+            device_id=force_device_id,
+            plus_before=plus_before,
+            minus_before=minus_before,
+            plus_after=plus_after,
+            minus_after=minus_after,
+            changed_at=changed_at,
+            changed_by=changed_by,
+            remark=remark,
+            
+        )
+        db.session.add(force)
+    
+    db.session.commit()
+    print("Add ForceHistory Success")
+
 
 def main():
     with app.app_context():
         try:
             # หากไฟล์ Excel รวมชื่อ 'data.xlsx'
-            excel_file_path = 'data/device_name rev14.xlsx'
+            excel_file_path = 'data/clean_data.xlsx'
             
             add_lines_from_excel(excel_file_path, sheet_name='Line')
             add_locations_from_excel(excel_file_path, sheet_name='Location')
             add_device_types_from_excel(excel_file_path, sheet_name='Device_Type')
             add_device_names_from_excel(excel_file_path, sheet_name='Device_Name')
+            add_force_data_from_excel(excel_file_path, sheet_name='Force_Data')
 
             print("Import Data from Excel Success")
         except Exception as e:
