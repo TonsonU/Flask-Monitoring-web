@@ -103,8 +103,8 @@
                         {% for record in history %}
                         <tr>
                             <td>{{ record.new_serial_number }}</td>
-                            <td>{{ record.old_serial_number or 'N/A' }}</td>                            
-                            <td>{{ record.remark or 'None' }}</td>
+                            <td>{{ record.old_serial_number or '-' }}</td>                            
+                            <td>{{ record.remark or '-' }}</td>
                             <td>{{ record.user.username }}</td>
                             <td>{{ record.changed_at|datetime_bangkok('%Y-%m-%d %H:%M:%S') }}</td>
                         </tr>

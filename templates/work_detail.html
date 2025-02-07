@@ -47,7 +47,7 @@
                 </div>
                 <div class="table-responsive-lg">
                     <table class="table table-striped">
-                        <thead>
+                        <thead class="table-dark">
                             <tr>
                                 <th>Number</th>
                                 <th>Create Date</th>
@@ -66,10 +66,10 @@
                                 <td class="wrap-text">{{ works.number }}</td>
                                 <td class="wrap-text">{{ works.create_date }}</td>
                                 <td class="wrap-text">{{ works.work_order }}</td>
-                                <td class="wrap-text">{{ works.line.name if line else 'N/A' }}</td>
-                                <td class="wrap-text">{{ works.location.name if location else 'N/A' }}</td>
-                                <td class="wrap-text">{{ works.device_type.name if device_type else 'N/A' }}</td>
-                                <td class="wrap-text">{{ works.device_name.name if device_name else 'N/A' }}</td>
+                                <td class="wrap-text">{{ works.line.name if line else '-' }}</td>
+                                <td class="wrap-text">{{ works.location.name if location else '-' }}</td>
+                                <td class="wrap-text">{{ works.device_type.name if device_type else '-' }}</td>
+                                <td class="wrap-text">{{ works.device_name.name if device_name else '-' }}</td>
                                 <td class="wrap-text">{{ works.description }}</td>
                                 <td class="wrap-text">{{ works.report_by }}</td>
                                 <td class="wrap-text">{{ works.status }}</td>
