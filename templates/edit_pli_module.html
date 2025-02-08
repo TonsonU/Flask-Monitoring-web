@@ -54,24 +54,24 @@
                     {{ form.hidden_tag() }}
                     <!-- Red Module Field -->
                     <div class="mb-3">
-                        {{ form.red_module.label('New Serial Red Module',class="form-label fw-bold") }}
-                        {{ form.red_module(class="form-control", placeholder="Enter red module") }}
+                        {{ form.red_module.label('New Serial',class="form-label fw-bold") }} <i class="fas fa-circle icon-bordered" style="color: red;"></i>
+                        {{ form.red_module(class="form-control", placeholder="Enter s/n") }}
                         {% for error in form.red_module.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
                     <!-- White Module Field -->
                     <div class="mb-3">
-                        {{ form.white_module.label('New Serial White Module',class="form-label fw-bold") }}
-                        {{ form.white_module(class="form-control", placeholder="Enter white module") }}
+                        {{ form.white_module.label('New Serial',class="form-label fw-bold") }} <i class="fas fa-circle icon-bordered" style="color: white;"></i>
+                        {{ form.white_module(class="form-control", placeholder="Enter s/n") }}
                         {% for error in form.white_module.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
                     <!-- Yellow Module Field -->
                     <div class="mb-3">
-                        {{ form.yellow_module.label('New Serial Yellow Module',class="form-label fw-bold") }}
-                        {{ form.yellow_module(class="form-control", placeholder="Enter S/N yellow module") }}
+                        {{ form.yellow_module.label('New Serial',class="form-label fw-bold") }} <i class="fas fa-circle icon-bordered" style="color: yellow;"></i>
+                        {{ form.yellow_module(class="form-control", placeholder="Enter s/n") }}
                         {% for error in form.yellow_module.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}

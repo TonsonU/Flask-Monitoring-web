@@ -457,7 +457,22 @@ def init_app(app):
     @login_required
     def inventory_point():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Point').all()
-        return render_template("inventory_point.html", devices=devices)
+        force_data_history = {device.id: ForceDataHistory.query.filter_by(device_id=device.id).order_by(ForceDataHistory.changed_at.desc()).first() for device in devices}
+
+        # อัปเดตค่า force_data ของ device จาก ForceDataHistory
+        for device in devices:
+            if force_data_history[device.id]:
+                force_values = [
+                    str(force_data_history[device.id].plus_before),
+                    str(force_data_history[device.id].minus_before),
+                    str(force_data_history[device.id].plus_after),
+                    str(force_data_history[device.id].minus_after)
+                ]
+                device.force_data = ", ".join([value for value in force_values if value != 'None'])
+
+
+
+        return render_template("inventory_point.html", devices=devices, force_data_history=force_data_history)
     
     @app.route('/inventory/balise', endpoint='inventory_balise')
     @login_required
