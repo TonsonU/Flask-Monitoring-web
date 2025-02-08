@@ -63,7 +63,7 @@
                         <!-- แสดงป้ายชื่อ (label) สำหรับฟิลด์ serial_number -->
                         {{ form.plus_before.label('Plus Before', class="form-label fw-bold") }}
                         <!-- แสดงฟิลด์ input สำหรับ serial_number -->
-                        {{ form.plus_before(class="form-control", id="serial_number", placeholder="Enter new Plus Before") }}
+                        {{ form.plus_before(class="form-control", id="serial_number", placeholder="+ before") }}
                         <!-- แสดงข้อความข้อผิดพลาดถ้ามี -->
                         {% for error in form.plus_before.errors %}
                             <div class="text-danger">{{ error }}</div>
@@ -73,7 +73,7 @@
                     <!-- Minus Before Field -->
                     <div class="mb-3">
                         {{ form.minus_before.label(class="form-label fw-bold") }}
-                        {{ form.minus_before(class="form-control", placeholder="Enter minus before value") }}
+                        {{ form.minus_before(class="form-control", placeholder="- before") }}
                         {% for error in form.minus_before.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}
@@ -81,8 +81,8 @@
 
                     <!-- Plus After Field -->
                     <div class="mb-3">
-                        {{ form.plus_after.label(class="form-label fw-bold") }}
-                        {{ form.plus_after(class="form-control", placeholder="Enter plus after value") }}
+                        {{ form.plus_after.label(class="form-label fw-bold text-primary") }}
+                        {{ form.plus_after(class="form-control", placeholder="+ after") }}
                         {% for error in form.plus_after.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}
@@ -90,8 +90,8 @@
 
                     <!-- Minus After Field -->
                     <div class="mb-3">
-                        {{ form.minus_after.label(class="form-label fw-bold") }}
-                        {{ form.minus_after(class="form-control", placeholder="Enter minus after value") }}
+                        {{ form.minus_after.label(class="form-label fw-bold text-primary") }}
+                        {{ form.minus_after(class="form-control", placeholder="- after") }}
                         {% for error in form.minus_after.errors %}
                             <div class="text-danger">{{ error }}</div>
                         {% endfor %}
