@@ -93,7 +93,7 @@
                 </td>
                 
                 <td class="actions">
-                    <a href="{{ url_for('work_detail', number=work.number) }}" class="btn custom-view-btn">View</a>
+                    <a href="{{ url_for('work.work_detail', number=work.number) }}" class="btn custom-view-btn">View</a>
                     {% if current_user.role == 'admin' %}
                         <a href="#" onclick="confirmDelete('{{ work.number }}')" class="btn custom-delete-btn">Delete</a>
                     {% endif %}

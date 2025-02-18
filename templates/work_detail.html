@@ -39,11 +39,11 @@
             <div class="card shadow">
                 <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
                     <h3 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Task Detail</h3>
-                    <a href="{{ url_for('index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
+                    <a href="{{ url_for('main.index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
                 </div>
                 <div class="card-body">
                 <div class="edit-btn-container">
-                    <a href="{{ url_for('edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
+                    <a href="{{ url_for('work.edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
                 </div>
                 <div class="table-responsive-lg">
                     <table class="table table-striped">
@@ -117,7 +117,7 @@
                         {% endif %}
                     </div>
                     {% if comment.user_id == current_user.id %}
-                    <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="align-self-end">
+                    <form method="POST" action="{{ url_for('work.delete_comment', comment_id=comment.id) }}" class="align-self-end">
                         <button type="submit" class="btn custom-delete-comment-btn"><i class="fa-solid fa-trash-can"></i></button>
                     </form>
                     {% endif %}
@@ -129,7 +129,7 @@
                 <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
                 <div class="comment-box">
                     <h3>Post Your Comment</h3>
-                    <form method="POST" action="{{ url_for('work_detail', number=works.number) }}"enctype="multipart/form-data">
+                    <form method="POST" action="{{ url_for('work.work_detail', number=works.number) }}"enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
                         <div class="form-group position-relative">
                             
@@ -186,12 +186,12 @@
                         const previousPage = sessionStorage.getItem('previousPage');
                 
                         // ตรวจสอบค่าของ previousPage
-                        if (previousPage === '/open' || previousPage === '/closed' || previousPage === '/') {
+                        if (previousPage === '/work/open' || previousPage === '/work/closed' || previousPage === '/') {
                             // ถ้าหน้าก่อนหน้าเป็น "/open", "/closed" หรือ "/"
                             window.location.href = previousPage;
                         } else {
                             // ถ้าไม่มีค่าใน previousPage ให้เปลี่ยนเส้นทางไปหน้า index
-                            window.location.href = "{{ url_for('index') }}";
+                            window.location.href = "{{ url_for('main.index') }}";
                         }
                     });
                 
@@ -199,7 +199,7 @@
                     document.addEventListener('DOMContentLoaded', function() {
                         const currentPath = window.location.pathname; // ดึง path ของ URL ปัจจุบัน
                         // บันทึก URL ของหน้า /open, /closed หรือ / (index) ลงใน sessionStorage
-                        if (currentPath === '/open' || currentPath === '/closed' || currentPath === '/') {
+                        if (currentPath === '/work/open' || currentPath === '/work/closed' || currentPath === '/') {
                             sessionStorage.setItem('previousPage', currentPath); // บันทึก path ปัจจุบันใน sessionStorage
                         }
                     });

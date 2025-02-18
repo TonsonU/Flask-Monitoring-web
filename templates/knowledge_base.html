@@ -59,7 +59,7 @@
     
         <!-- Toolbar ที่มีปุ่มเปล่า ๆ -->
         <div id="toolbar">
-            <a href="{{ url_for('create_knowledge_base') }}" class="custom-index-btn">
+            <a href="{{ url_for('knowledge_base.create_knowledge_base') }}" class="custom-index-btn">
                 <i class="fa-solid fa-plus"></i>Create
             </a>
         </div>
@@ -94,7 +94,7 @@
                         <td>{{ item.create_by }}</td> 
 
                         <td class="actions">
-                            <a href="{{ url_for('knowledge_base_detail', number=item.number) }}" class="btn custom-view-btn">
+                            <a href="{{ url_for('knowledge_base.knowledge_base_detail', number=item.number) }}" class="btn custom-view-btn">
                                 <i class="fa-solid fa-eye fa-lg"></i>
                             </a>
                             {% if current_user.role == 'admin' %}

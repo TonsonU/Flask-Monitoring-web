@@ -44,7 +44,7 @@
 
     <!-- Toolbar -->
     <div id="toolbar">
-        <a href="{{ url_for('create') }}" class="custom-index-btn">
+        <a href="{{ url_for('work.create') }}" class="custom-index-btn">
             <i class="fa-solid fa-plus"></i>Create
         </a>
     </div>
@@ -103,7 +103,7 @@
                     
                     
                     <td class="actions">
-                        <a href="{{ url_for('work_detail', number=work.number) }}" class="btn custom-view-btn">
+                        <a href="{{ url_for('work.work_detail', number=work.number) }}" class="btn custom-view-btn">
                             <i class="fa-solid fa-eye fa-lg"></i>
                         </a>
                         {% if current_user.role == 'admin' %}

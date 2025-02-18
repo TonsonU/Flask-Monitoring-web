@@ -54,8 +54,8 @@
 							Task List
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<li><a class="dropdown-item" href="{{ url_for('open') }}"><i class="fa-regular fa-folder-open" style="color: #FFD43B;"></i> Open</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('closed') }}"><i class="fa-regular fa-folder-open" style="color: #FFD43B;"></i> Closed</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('work.open') }}"><i class="fa-regular fa-folder-open" style="color: #FFD43B;"></i> Open</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('work.closed') }}"><i class="fa-regular fa-folder-open" style="color: #FFD43B;"></i> Closed</a></li>
 							
 						</ul>
 					</li>
@@ -66,25 +66,25 @@
 							Inventory
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<li><a class="dropdown-item" href="{{ url_for('inventory') }}">All</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_il') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; IL</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_tap') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; TAP</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_emp') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; EMP</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_pid') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; PID</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_obc') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; OBC</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_tel') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; TEL</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_ups') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; UPS</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_point') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Point</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_balise') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Balise</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_mitrac') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Mitrac</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_pli') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; PLI/H/RI</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_axle') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Axle Counter</a></li>
-							<li><a class="dropdown-item" href="{{ url_for('inventory_trackname') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Track Name Plate</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory') }}">All</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_il') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; IL</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_tap') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; TAP</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_emp') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; EMP</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_pid') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; PID</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_obc') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; OBC</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_tel') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; TEL</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_ups') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; UPS</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_point') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Point</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_balise') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Balise</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_mitrac') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Mitrac</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_pli') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; PLI/H/RI</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_axle') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Axle Counter</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_trackname') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Track Name Plate</a></li>
 						</ul>
 					</li>
 					<!-- เพิ่มเมนู Knowledge Base -->
 					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('knowledge_base') }}">
+						<a class="nav-link" href="{{ url_for('knowledge_base.knowledge_base') }}">
 							Knowledge Base
 						</a>
 					</li>
@@ -94,10 +94,10 @@
 				<ul class="navbar-nav ms-auto"> <!-- ms-auto สำหรับให้เมนู Login/Logout อยู่ทางขวา -->
 					{% if current_user.is_authenticated %}
 						<span class="navbar-text text-light me-3 navbar-text"><i class="fa-solid fa-user"></i> {{ current_user.username }}</span>
-						<a class="nav-link custom-login-btn" href="{{ url_for('logout') }}">Sign Out</a>
+						<a class="nav-link custom-login-btn" href="{{ url_for('auth.logout') }}">Sign Out</a>
 					{% else %}
 						<!-- ใช้คลาส custom-login-btn สำหรับปุ่ม Login -->
-						<a class="nav-link custom-login-btn" href="{{ url_for('login') }}">Sign In</a>
+						<a class="nav-link custom-login-btn" href="{{ url_for('auth.login') }}">Sign In</a>
 					{% endif %}
 				</ul>
 			</div>

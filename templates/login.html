@@ -58,7 +58,7 @@
             <!-- ช่องสำหรับ "Forgot password" -->
             <div class="d-flex justify-content-center align-items-center mb-3">
                 <!-- ลิงก์สำหรับ "Forgot password" -->
-                <a href="{{ url_for('forgot_password') }}" class="text-decoration-none small custom-text">Forgot password?</a>
+                <a href="{{ url_for('auth.forgot_password') }}" class="text-decoration-none small custom-text">Forgot password?</a>
             </div>
 
             <!-- ปุ่ม Login -->
@@ -69,7 +69,7 @@
         <hr class="my-4">
 
         <!-- ลิงก์สำหรับผู้ที่ยังไม่มีบัญชี -->
-        <p class="text-center text-muted custom-subheader">Don't have an account? <a href="{{ url_for('register') }}" class="text-primary text-decoration-none">Register</a></p>
+        <p class="text-center text-muted custom-subheader">Don't have an account? <a href="{{ url_for('auth.register') }}" class="text-primary text-decoration-none">Register</a></p>
     </div>
 </div>
 

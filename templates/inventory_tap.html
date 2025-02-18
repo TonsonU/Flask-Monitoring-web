@@ -67,7 +67,7 @@
                 <td>{{ device.inandout or ('N/A') }}</td>
                 <td>{{ device.ip_address or ('N/A') }}</td>
                 <td>
-                    <a href="{{ url_for('edit_mac_address', device_id=device.id) }}">
+                    <a href="{{ url_for('inventory.edit_mac_address', device_id=device.id) }}">
                         {{ device.mac_address or ('N/A') }}
                     </a>
                     
@@ -75,7 +75,7 @@
                 <td>{{ device.device_role or ('N/A') }}</td>
                 <td>{{ device.channel or ('N/A') }}</td>
                 <td>
-                    <a href="{{ url_for('edit_serial_number', device_id=device.id, ref=request.url) }}">
+                    <a href="{{ url_for('inventory.edit_serial_number', device_id=device.id, ref=request.url) }}">
                         {{ device.serial_number or ('N/A') }}
                     </a>
                 </td>
