@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
 from models import DeviceName, DeviceType, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory
+from sqlalchemy import or_
 
 inventory_bp = Blueprint('inventory', __name__)
 
@@ -74,7 +75,7 @@ def inventory_mitrac():
 @inventory_bp.route('/inventory_pli', endpoint='inventory_pli')
 @login_required
 def inventory_pli():
-        devices = DeviceName.query.join(DeviceType).filter((DeviceType.name == 'PLI', DeviceType.name == 'Depot Area Signal', DeviceType.name == 'Route Indicator') ).all()
+        devices = DeviceName.query.join(DeviceType).filter(or_(DeviceType.name == 'PLI', DeviceType.name == 'Depot Area Signal', DeviceType.name == 'Route Indicator') ).all()
         return render_template("inventory_pli.html", devices=devices)
     
 @inventory_bp.route('/inventory_axle', endpoint='inventory_axle')
