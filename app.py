@@ -20,7 +20,7 @@ from flask_migrate import Migrate
 from config import Config
 from models import db, User
 from filters import datetime_bangkok
-from Blueprints import init_app
+from Routes import init_app
 
 def create_app():
     app = Flask(__name__)
