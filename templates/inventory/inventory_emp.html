@@ -1,0 +1,103 @@
+<!--
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+-->
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout/layout.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.css">
+    <!-- เชื่อมต่อไฟล์ CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+    
+</head>
+<body>
+<div class="container">
+    <br>
+    <h2>Inventory EMP</h2>
+
+    {% if devices %}
+    <table data-toggle="table"
+           data-search="true"
+           data-pagination="true"
+           data-page-list="[20, 50, 100, 150, all]"
+           data-page-size="20"
+           class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th data-sortable="true" data-field="number">Number</th>
+                <th data-sortable="true" data-field="name">Name</th>
+                <th data-sortable="true" data-field="device_type">Device Type</th>
+                <th data-sortable="true" data-field="location_name">Location</th>
+                <th data-sortable="true" data-field="bound">Bound</th>
+                <th data-sortable="true" data-field="inandout">In/Out</th>
+                <th data-sortable="true" data-field="serial_number">Serial Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for device in devices %}
+            <tr>
+                <td>{{ loop.index }}</td> <!-- ใช้ loop.index เพื่อแสดงลำดับหมายเลขโดยไม่ขึ้นกับ device.id ที่มาจากฐานข้อมูล -->
+                <!-- <td>{{ device.id }}</td> -->
+                <td>{{ device.name }}</td>
+                <td>{{ device.device_type.name if device.device_type else 'N/A' }}</td>
+                <td>{{ device.location.name if device.location else 'N/A' }}</td>
+                <td>{{ device.bound or ('N/A') }}</td>
+                <td>{{ device.inandout or ('N/A') }}</td>
+                <td>
+                    <a href="{{ url_for('inventory.edit_serial_number', device_id=device.id, ref=request.url) }}">
+                        {{ device.serial_number or ('N/A') }}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<!-- ปุ่มกลับไปบนสุด -->
+<button onclick="topFunction()" id="backToTopBtn" title="Go to top"><i class="fas fa-arrow-up"></i></button>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.js"></script>
+<script>
+    // เมื่อผู้ใช้เลื่อนหน้าลงมา 20px จากด้านบนของเอกสาร ให้แสดงปุ่ม
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("backToTopBtn").style.display = "block";
+        } else {
+            document.getElementById("backToTopBtn").style.display = "none";
+        }
+    }
+
+    // เมื่อผู้ใช้คลิกที่ปุ่ม ให้เลื่อนกลับไปด้านบนของเอกสาร
+    function topFunction() {
+        document.body.scrollTop = 0; // สำหรับ Safari
+        document.documentElement.scrollTop = 0; // สำหรับ Chrome, Firefox, IE และ Opera
+    }
+</script>
+
+</body>
+</html>
+{% endblock %}

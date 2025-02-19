@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify
 from flask_login import login_required, current_user
-from models import db, Work, Comment
+from models import db, Work, Comment, Line, Location, DeviceType, DeviceName
 from forms import CreateForm, CommentForm, EditForm
 import pytz
 from pytz import timezone
@@ -41,7 +41,7 @@ def create():
                 create_date = thailand_tz.localize(create_date_naive)
             except ValueError:
                 flash('รูปแบบวันที่และเวลาไม่ถูกต้อง', 'danger')
-                return render_template("create.html", form=form)
+                return render_template("work/create.html", form=form)
 
             # สร้างอ็อบเจกต์ใหม่เพื่อบันทึกข้อมูล
             new_work = Work(
@@ -63,15 +63,15 @@ def create():
             flash('บันทึกข้อมูลสำเร็จ', "success")
 
             # หลังจากบันทึกข้อมูลเสร็จแล้ว ให้รีไดเรกต์ไปที่หน้า index
-            return redirect(url_for('index'))
-        return render_template("create.html", form=form)
+            return redirect(url_for('main.index'))
+        return render_template("work/create.html", form=form)
 
 # Route สำหรับจัดการ Work ที่ปิดแล้ว
 @work_bp.route('/closed',methods=['GET','POST'])
 @login_required
 def closed():
         works = Work.query.all()  
-        return render_template("closed.html", works=works)
+        return render_template("work/closed.html", works=works)
     
     
     # Route สำหรับจัดการ Work ที่ปิดแล้ว
@@ -79,7 +79,7 @@ def closed():
 @login_required
 def open():
         works = Work.query.all()  
-        return render_template("open.html", works=works)
+        return render_template("work/open.html", works=works)
     
 
     # Route สำหรับการลบ Work (เฉพาะ admin)    
@@ -88,7 +88,7 @@ def open():
 def deleteWork(number):
         if current_user.role != 'admin':
             flash("You don't have permission to delete work orders.", "danger")
-            return redirect(url_for('index'))
+            return redirect(url_for('main.index'))
         works = Work.query.filter_by(number=number).first()
         if works:
             db.session.delete(works)
@@ -97,7 +97,7 @@ def deleteWork(number):
         else:
             flash("Work not found.", "danger")
         #return redirect(url_for('index'))
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     
     
     # Route สำหรับทำการแก้ไขข้อมูล 
@@ -158,10 +158,10 @@ def editWork(number):
             if has_changed:
                 db.session.commit()
                 flash("Work updated successfully!", "success")
-                return redirect(url_for('index'))
+                return redirect(url_for('main.index'))
             else:
                 flash("ไม่มีการเปลี่ยนแปลงข้อมูลใดๆ.", "info")
-                return redirect(url_for('edit', number=number))
+                return redirect(url_for('work.edit', number=number))
 
         elif request.method == 'GET':
             form.create_date.data = works.create_date.strftime("%Y-%m-%d %H:%M") if works.create_date else None
@@ -177,7 +177,7 @@ def editWork(number):
             form.device_type_name.data = works.device_type
             form.device_name.data = works.device_name
 
-        return render_template("edit.html", form=form, works=works)
+        return render_template("work/edit.html", form=form, works=works)
     
     
 # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
@@ -231,14 +231,14 @@ def work_detail(number):
             db.session.commit()
             print("Comment added to DB:", comment)
             flash('Your comment has been posted.', 'success')
-            return redirect(url_for('work_detail', number=number))
+            return redirect(url_for('work.work_detail', number=number))
 
         # ดึงคอมเมนต์ที่เกี่ยวข้องกับ Work
         comments = Comment.query.filter_by(work_id=number).order_by(Comment.timestamp.desc()).all()
 
         # ส่งข้อมูลไปยัง template
         return render_template(
-        "work_detail.html", 
+        "work/work_detail.html", 
         works=works, 
         line=line, 
         location=location, 
@@ -266,7 +266,7 @@ def delete_comment(comment_id):
     db.session.delete(comment)
     db.session.commit()
     flash('Your comment has been deleted.', 'info')
-    return redirect(url_for('work_detail', number=work_id))
+    return redirect(url_for('work.work_detail', number=work_id))
     
 
 # Endpoint สำหรับ AJAX ดึง Location ตาม Line

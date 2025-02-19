@@ -8,4 +8,4 @@ main_bp = Blueprint('main', __name__)
 @login_required
 def index():
     works = Work.query.all()
-    return render_template("index.html", works=works)
+    return render_template("main/index.html", works=works)

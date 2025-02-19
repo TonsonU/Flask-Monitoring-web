@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
 from models import db, KnowledgeBase
 from forms import KnowledgeBaseForm
 import pytz
@@ -11,7 +11,7 @@ knowledge_bp = Blueprint('knowledge_base', __name__)
 @knowledge_bp.route('/knowledge_base')
 def knowledge_base():
         items = KnowledgeBase.query.all()
-        return render_template('knowledge_base.html', items=items) 
+        return render_template('knowledge_base/knowledge_base.html', items=items) 
     
 @knowledge_bp.route('/create_knowledge_base', methods=['GET', 'POST'])
 @login_required
@@ -43,7 +43,7 @@ def create_knowledge_base():
                 create_date = thailand_tz.localize(create_date_naive)
             except ValueError:
                 flash('รูปแบบวันที่และเวลาไม่ถูกต้อง', 'danger')
-                return render_template("create_knowledge_base.html", form=form)
+                return render_template("knowledge_base/create_knowledge_base.html", form=form)
 
             # สร้างอ็อบเจกต์ใหม่เพื่อบันทึกข้อมูล
             new_item = KnowledgeBase(
@@ -60,11 +60,11 @@ def create_knowledge_base():
             flash('บันทึกข้อมูลสำเร็จ', "success")
 
             # หลังจากบันทึกข้อมูลเสร็จแล้ว ให้รีไดเรกต์ไปที่หน้า index
-            return redirect(url_for('knowledge_base'))
-        return render_template("create_knowledge_base.html", form=form)
+            return redirect(url_for('knowledge_base.knowledge_base'))
+        return render_template("knowledge_base/create_knowledge_base.html", form=form)
     
     # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
-@knowledge_bp.route('/knowledge_base/<int:number>', methods=['GET', 'POST'])
+@knowledge_bp.route('/knowledge_basenumber/<int:number>', methods=['GET', 'POST'])
 @login_required
 def knowledge_base_detail(number):
         # ดึงข้อมูลจากตาราง Work โดยใช้ number
@@ -84,7 +84,7 @@ def knowledge_base_detail(number):
 
         # ส่งข้อมูลไปยัง template
         return render_template(
-        "knowledge_base_detail.html", 
+        "knowledge_base/knowledge_base_detail.html", 
         items=items, 
         create_date=create_date, 
         topic=topic, 
@@ -93,12 +93,12 @@ def knowledge_base_detail(number):
         )
     
     # Route สำหรับการลบ Work (เฉพาะ admin)    
-@knowledge_bp.route('/knowledge_base/delete/<int:number>', methods=['POST'])
+@knowledge_bp.route('/delete/<int:number>', methods=['POST'])
 @login_required
 def deleteknowledge(number):
         if current_user.role != 'admin':
             flash("You don't have permission to delete knowledgebase.", "danger")
-            return redirect(url_for('knowledge_base'))
+            return redirect(url_for('knowledge_base.knowledge_base'))
         items = KnowledgeBase.query.filter_by(number=number).first()
         if items:
             db.session.delete(items)
@@ -107,4 +107,4 @@ def deleteknowledge(number):
         else:
             flash("Knowledgebase not found.", "danger")
         #return redirect(url_for('knowledge_base'))
-        return redirect(url_for('knowledge_base'))
+        return redirect(url_for('knowledge_base.knowledge_base'))
