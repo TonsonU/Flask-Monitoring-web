@@ -46,15 +46,35 @@ class Work(db.Model):
     status = db.Column(db.String(20), nullable=False, default="open")  # สถานะ (ค่าเริ่มต้น: open)
     #action = db.Column(db.Text, nullable=True)                     # รายละเอียดของการดำเนินการ
     link = db.Column(db.String(255), nullable=True)           # URL ของไฟล์
+    cause_id = db.Column(db.Integer, db.ForeignKey('cause.id'), nullable=True)  # ForeignKey เชื่อมกับ Cause
+    point_casedetail_id = db.Column(db.Integer, db.ForeignKey('point_case_detail.id'), nullable=True)  # ForeignKey เชื่อมกับ PointCaseDetail
+
 
     # สร้างความสัมพันธ์
     line = db.relationship('Line', backref='works')
     location = db.relationship('Location', backref='works')
     device_type = db.relationship('DeviceType', backref='works')
     device_name = db.relationship('DeviceName', backref='works')
+    cause = db.relationship('Cause', backref='works')
+    point_casedetail = db.relationship('PointCaseDetail', backref='works')
+
 
     def __repr__(self):
         return f"<Work {self.number}>"
+    
+class Cause(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f"<Cause {self.name}>"
+
+class PointCaseDetail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f"<PointCaseDetail {self.name}>"
 
 
 class Line(db.Model):

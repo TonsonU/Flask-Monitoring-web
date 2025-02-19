@@ -152,6 +152,16 @@ def init_app(app):
             except ValueError:
                 flash('รูปแบบวันที่และเวลาไม่ถูกต้อง', 'danger')
                 return render_template("create.html", form=form)
+            
+            # ตรวจสอบว่า device_type เป็น "Point" หรือไม่
+            selected_device_type = form.device_type_name.data.name.lower() if form.device_type_name.data else ""
+
+            if selected_device_type == "point":
+                cause_id = form.cause.data.id if form.cause.data else None
+                point_casedetail_id = form.point_casedetail.data.id if form.point_casedetail.data else None
+            else:
+                cause_id = None
+                point_casedetail_id = None
 
             # สร้างอ็อบเจกต์ใหม่เพื่อบันทึกข้อมูล
             new_work = Work(
@@ -164,7 +174,9 @@ def init_app(app):
                 description=description,
                 report_by=report_by,
                 status=status,
-                link=link
+                link=link,
+                cause_id=cause_id,
+                point_casedetail_id=point_casedetail_id
             )
 
             # บันทึกข้อมูลลงในฐานข้อมูล

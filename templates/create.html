@@ -82,6 +82,19 @@
                             <label for="link" class="form-label">{{ form.link.label }}</label>
                             {{ form.link(class="form-control", id="link", placeholder="Example: ..\02%20Corrective%20Maintenance\2024\07\KK-2024-07-21%20CM%20IL11%20replace%20lan%20cable%20port%20Gi101%20.pdf") }}
                         </div>
+
+                        <!-- ฟิลด์ Cause และ Point Case Detail (จะแสดงเมื่อ Device Type เป็น 'Point') -->
+                        <div id="pointFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="cause" class="form-label">Cause</label>
+                                {{ form.cause(class="form-control", id="cause") }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="point_casedetail" class="form-label">Point Case Detail</label>
+                                {{ form.point_casedetail(class="form-control", id="point_casedetail") }}
+                            </div>
+                        </div>
+
                         <div class="text-center">
                             {{ form.submit(class="btn btn-success custom-save-btn") }}
                         </div>
@@ -109,6 +122,9 @@
                 const locationSelect = document.getElementById('location_name');
                 const deviceTypeSelect = document.getElementById('device_type_name');
                 const deviceNameSelect = document.getElementById('device_name');
+                const pointFields = document.getElementById('pointFields');
+                const causeField = document.getElementById('cause');
+                const pointCaseDetailField = document.getElementById('point_casedetail');
         
                 lineSelect.addEventListener('change', () => {
                     const lineId = lineSelect.value;
@@ -140,7 +156,8 @@
                           });
                     }
                 });
-        
+
+                   
                 locationSelect.addEventListener('change', () => {
                     updateDeviceNames();
                 });
@@ -167,6 +184,32 @@
                           });
                     }
                 }
+
+                function togglePointFields() {
+                    if (!deviceTypeSelect || !pointFields || !causeField || !pointCaseDetailField) return;
+                    if (deviceTypeSelect.selectedIndex === -1) return;
+                    
+                    const selectedDeviceType = deviceTypeSelect.options[deviceTypeSelect.selectedIndex].text.toLowerCase();
+                    
+                    if (selectedDeviceType === 'point') {
+                        pointFields.style.display = 'block';
+                        setTimeout(() => pointFields.style.opacity = '1', 10);
+                        causeField.disabled = false;
+                        pointCaseDetailField.disabled = false;
+                    } else {
+                        pointFields.style.opacity = '0';
+                        setTimeout(() => pointFields.style.display = 'none', 300);
+                        causeField.disabled = true;
+                        pointCaseDetailField.disabled = true;
+                        causeField.selectedIndex = 0;
+                        pointCaseDetailField.selectedIndex = 0;
+                    }
+                }
+
+                deviceTypeSelect.addEventListener('change', togglePointFields);
+                togglePointFields();
+
+
             });
         </script>
     </body>
