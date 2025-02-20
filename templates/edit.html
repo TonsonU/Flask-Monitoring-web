@@ -97,6 +97,20 @@
                     <label for="report_by" class="form-label">{{ form.report_by.label }}</label>
                     {{ form.report_by(class="form-control", id="report_by", placeholder="Example: ThanapoomS") }}
                 </div>
+
+                <!-- ฟิลด์ Cause และ Point Case Detail (จะแสดงเมื่อ Device Type เป็น 'Point') -->
+                <div id="pointFields" style="display: none;">
+                    <div class="mb-3">
+                        <label for="point_casedetail" class="form-label">Point Case Detail</label>
+                        {{ form.point_casedetail(class="form-control", id="point_casedetail") }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="cause" class="form-label">Cause</label>
+                        {{ form.cause(class="form-control", id="cause") }}
+                    </div>                            
+                </div>
+
+
                 <div class="mb-3">
                     <label for="status" class="form-label">{{ form.status.label }}</label>
                     {{ form.status(class="form-select", id="status") }}
@@ -132,111 +146,165 @@
         dateFormat: "Y-m-d H:i",  // รูปแบบวันที่และเวลา
     });
 </script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const lineSelect = document.getElementById('line_name');
-        const locationSelect = document.getElementById('location_name');
-        const deviceTypeSelect = document.getElementById('device_type_name');
-        const deviceNameSelect = document.getElementById('device_name');
 
-        lineSelect.addEventListener('change', () => {
-            const lineId = lineSelect.value;
-            locationSelect.innerHTML = '<option value="">Select Location</option>';
-            deviceTypeSelect.innerHTML = '<option value="">Select Device Type</option>';
-            deviceNameSelect.innerHTML = '<option value="">Select Device Name</option>';
-
-            if(lineId) {
-                fetch(`/get_locations/${lineId}`)
-                  .then(res => res.json())
-                  .then(data => {
-                      data.forEach(l => {
-                          const opt = document.createElement('option');
-                          opt.value = l.id;
-                          opt.textContent = l.name;
-                          locationSelect.appendChild(opt);
-                      });
-                  });
-
-                fetch(`/get_device_types/${lineId}`)
-                  .then(res => res.json())
-                  .then(data => {
-                      data.forEach(d => {
-                          const opt = document.createElement('option');
-                          opt.value = d.id;
-                          opt.textContent = d.name;
-                          deviceTypeSelect.appendChild(opt);
-                      });
-                  });
-            }
-        });
-
-        locationSelect.addEventListener('change', () => {
-            updateDeviceNames();
-        });
-
-        deviceTypeSelect.addEventListener('change', () => {
-            updateDeviceNames();
-        });
-
-        function updateDeviceNames() {
-            const locationId = locationSelect.value;
-            const deviceTypeId = deviceTypeSelect.value;
-            deviceNameSelect.innerHTML = '<option value="">Select Device Name</option>';
-
-            if(locationId && deviceTypeId) {
-                fetch(`/get_device_names/${locationId}/${deviceTypeId}`)
-                  .then(res => res.json())
-                  .then(data => {
-                      data.forEach(dn => {
-                          const opt = document.createElement('option');
-                          opt.value = dn.id;
-                          opt.textContent = dn.name;
-                          deviceNameSelect.appendChild(opt);
-                      });
-                  });
-            }
-        }
-    });
-</script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('editForm');
         const submitButton = document.getElementById('submitBtn');
         const initialFormData = new FormData(form);
-        let isChanged = false;
+        
+        const lineSelect = document.getElementById('line_name');
+        const locationSelect = document.getElementById('location_name');
+        const deviceTypeSelect = document.getElementById('device_type_name');
+        const deviceNameSelect = document.getElementById('device_name');
+        const pointFields = document.getElementById('pointFields');
+        const causeField = document.getElementById('cause');
+        const pointCaseDetailField = document.getElementById('point_casedetail');
 
-        // ฟังก์ชันเปรียบเทียบค่าปัจจุบันกับค่าเริ่มต้น
-        const checkFormChange = () => {
+        let currentDeviceName = deviceNameSelect.value;  // ✅ เก็บค่า Device Name เดิมของ Edit
+
+        // ✅ ฟังก์ชันเปิด/ปิดฟิลด์ Cause และ Point Case Detail
+        function togglePointFields() {
+            if (!deviceTypeSelect || deviceTypeSelect.selectedIndex === -1) return;
+
+            const selectedDeviceType = deviceTypeSelect.options[deviceTypeSelect.selectedIndex].text.toLowerCase();
+            
+            if (selectedDeviceType === 'point') {
+                pointFields.style.display = 'block';
+                causeField.disabled = false;
+                pointCaseDetailField.disabled = false;
+            } else {
+                pointFields.style.display = 'none';
+                causeField.disabled = true;
+                pointCaseDetailField.disabled = true;
+                causeField.value = "";
+                pointCaseDetailField.value = "";
+            }
+
+            // ✅ ตรวจสอบการเปลี่ยนแปลงหลังจากเปิด/ปิดฟิลด์
+            checkFormChange();
+        }
+
+        // ✅ ตรวจสอบว่าค่าถูกโหลดถูกต้องหรือไม่
+        setTimeout(togglePointFields, 100);
+
+        // ✅ ฟังก์ชันตรวจสอบการเปลี่ยนแปลงของฟอร์ม
+        function checkFormChange() {
             const currentFormData = new FormData(form);
+            let isChanged = false;
+
             for (let [key, value] of currentFormData.entries()) {
                 if (value !== initialFormData.get(key)) {
                     isChanged = true;
-                    submitButton.disabled = false;
-                    return;
+                    break;
                 }
             }
-            isChanged = false;
-            submitButton.disabled = true;
-        };
 
-        // ตรวจสอบการเปลี่ยนแปลงในทุกฟิลด์
+            // ✅ ตรวจสอบค่า Cause และ Point Case Detail ด้วย
+            if (!causeField.disabled && causeField.value !== initialFormData.get("cause")) {
+                isChanged = true;
+            }
+            if (!pointCaseDetailField.disabled && pointCaseDetailField.value !== initialFormData.get("point_casedetail")) {
+                isChanged = true;
+            }
+
+            submitButton.disabled = !isChanged;
+        }
+
+        // ✅ ตรวจสอบเมื่อมีการเปลี่ยนแปลงค่าในฟอร์ม
         form.querySelectorAll('input, select, textarea').forEach(element => {
             element.addEventListener('input', checkFormChange);
             element.addEventListener('change', checkFormChange);
         });
 
-        // ตรวจสอบการเปลี่ยนแปลงเมื่อโหลดหน้า
+        // ✅ ตรวจสอบการเปลี่ยนแปลงของ Cause และ Point Case Detail
+        causeField.addEventListener('input', checkFormChange);
+        pointCaseDetailField.addEventListener('input', checkFormChange);
+
+        // ✅ ตรวจสอบการเปลี่ยนแปลงเมื่อโหลดหน้า
         checkFormChange();
 
-        // ป้องกันการส่งฟอร์มถ้าไม่มีการเปลี่ยนแปลง
+        // ✅ ป้องกันไม่ให้ส่งค่าที่ไม่จำเป็นไปยังเซิร์ฟเวอร์
         form.addEventListener('submit', (e) => {
-            if (!isChanged) {
+            if (causeField.disabled) {
+                causeField.value = "";
+            }
+            if (pointCaseDetailField.disabled) {
+                pointCaseDetailField.value = "";
+            }
+
+            if (submitButton.disabled) {
                 e.preventDefault();
                 alert('คุณยังไม่ได้ทำการเปลี่ยนแปลงข้อมูลใดๆ.');
             }
         });
+
+        // ✅ เมื่อเปลี่ยนค่า Device Type ให้เรียก togglePointFields()
+        deviceTypeSelect.addEventListener('change', togglePointFields);
+
+        // ✅ ฟังก์ชันอัปเดต Device Name ตาม Location และ Device Type
+        function updateDeviceNames() {
+            const locationId = locationSelect.value;
+            const deviceTypeId = deviceTypeSelect.value;
+            deviceNameSelect.innerHTML = '<option value="">Loading...</option>';
+
+            if (locationId && deviceTypeId) {
+                fetch(`/get_device_names/${locationId}/${deviceTypeId}`)
+                  .then(res => res.json())
+                  .then(data => {
+                      deviceNameSelect.innerHTML = '<option value="">Select Device Name</option>';
+                      if (data.length === 0) {
+                          const opt = document.createElement('option');
+                          opt.textContent = 'No devices available';
+                          opt.disabled = true;
+                          deviceNameSelect.appendChild(opt);
+                      } else {
+                          data.forEach(dn => {
+                              const opt = document.createElement('option');
+                              opt.value = dn.id;
+                              opt.textContent = dn.name;
+                              deviceNameSelect.appendChild(opt);
+                          });
+
+                          // ✅ ตรวจสอบว่าค่าก่อนหน้านี้อยู่ในรายการหรือไม่
+                          if (currentDeviceName) {
+                              const matchingOption = [...deviceNameSelect.options].find(opt => opt.value === currentDeviceName);
+                              if (matchingOption) {
+                                  matchingOption.selected = true;
+                              }
+                          }
+                      }
+                  })
+                  .catch(error => console.error("Error fetching device names:", error));
+            }
+        }
+
+        // ✅ โหลดค่าเริ่มต้นให้ถูกต้องตอนเปิดหน้า
+        updateDeviceNames();
+
+        // ✅ อัปเดต Device Name ทุกครั้งที่ Location หรือ Device Type เปลี่ยน
+        locationSelect.addEventListener('change', () => {
+            deviceNameSelect.innerHTML = '<option value="">Loading...</option>';
+            currentDeviceName = ""; // ✅ ล้างค่าที่เลือกไว้ก่อนหน้า
+            updateDeviceNames();
+        });
+
+        deviceTypeSelect.addEventListener('change', () => {
+            deviceNameSelect.innerHTML = '<option value="">Loading...</option>';
+            currentDeviceName = ""; // ✅ ล้างค่าที่เลือกไว้ก่อนหน้า
+            updateDeviceNames();
+        });
+
+        // ✅ เมื่อเลือก Device Name ใหม่ให้ตรวจสอบว่ามีการเปลี่ยนแปลงหรือไม่
+        deviceNameSelect.addEventListener('change', () => {
+            checkFormChange();
+        });
+
     });
 </script>
+
+
+    
 </body>
 </html>
 {% endblock %}
