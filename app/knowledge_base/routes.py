@@ -12,11 +12,12 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import db, KnowledgeBase
-from forms import KnowledgeBaseForm
+from app.models import db, KnowledgeBase
+from .forms import KnowledgeBaseForm
 import pytz
 from pytz import timezone
 from datetime import datetime
+from app.extensions import db
 
 knowledge_bp = Blueprint('knowledge_base', __name__)
 

@@ -12,9 +12,10 @@
 
 from flask import Blueprint, render_template,request, url_for, flash, redirect
 from flask_login import login_required,current_user
-from models import DeviceName, DeviceType, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db
+from app.models import DeviceName, DeviceType, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db
 from sqlalchemy import or_
-from forms import EditForceDataForm, EditSerialNumberForm, EditMacAddressForm, EditModuleForm
+from .forms import EditForceDataForm, EditSerialNumberForm, EditMacAddressForm, EditModuleForm
+from app.extensions import db
 
 inventory_bp = Blueprint('inventory', __name__)
 
