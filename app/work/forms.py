@@ -20,23 +20,6 @@ from models import Line, Location, DeviceType, DeviceName
 from datetime import datetime
 import re
 
-# Register Form
-class RegisterForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=50)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), Length(min=6)])
-    submit = SubmitField('Register')
-
-    def validate_password(self, password):
-        if self.password.data != self.confirm_password.data:
-            raise ValidationError('Passwords must match.')
-
-# Login Form
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Login')
-
 # Comment Form
 class CommentForm(FlaskForm):
     comment = TextAreaField('Comment', validators=[DataRequired()])
@@ -124,39 +107,3 @@ class EditForm(FlaskForm):
     status = SelectField("Status", choices=[("Open", "Open"), ("Closed", "Closed")], validators=[DataRequired()])  # สถานะ
     link = StringField("Link", validators=[DataRequired(),])                       # URL ของไฟล์
     submit = SubmitField("Submit")
-
-class EditSerialNumberForm(FlaskForm):
-    serial_number = StringField('Serial Number', validators=[DataRequired(), Length(max=100)])
-    remark = StringField('Remark', validators=[Length(max=100)])
-    submit = SubmitField('Save')
-
-class EditForceDataForm(FlaskForm):
-    plus_before = StringField('Plus Before', validators=[DataRequired(), Length(max=100)])
-    minus_before = StringField('Minus Before', validators=[DataRequired(), Length(max=100)])
-    plus_after = StringField('Plus After', validators=[Optional(), Length(max=100)])
-    minus_after = StringField('Minus After', validators=[Optional(), Length(max=100)])
-    remark = TextAreaField('Remark', validators=[Optional()])
-    submit = SubmitField('Save')
-
-class EditMacAddressForm(FlaskForm):
-    mac_address = StringField('MAC Address', validators=[DataRequired(), Length(max=100)])
-    remark = StringField('Remark', validators=[Length(max=100)])
-    submit = SubmitField('Save')
-
-class EditModuleForm(FlaskForm):
-    red_module = StringField('Red Module', validators=[Optional()])
-    white_module = StringField('White Module', validators=[Optional()])
-    yellow_module = StringField('Yellow Module', validators=[Optional()])
-    remark = TextAreaField('Remark', validators=[Optional()])
-    submit = SubmitField('Save')
-
-class KnowledgeBaseForm(FlaskForm):
-    create_date = StringField('Create Date', validators=[DataRequired()])
-    device_type = StringField('Device Type', validators=[DataRequired()])
-    topic = StringField('Topic')
-    description = StringField('Description')
-    create_by = StringField('Create By', validators=[DataRequired()])
-    
-    submit = SubmitField('Create')
-
-    

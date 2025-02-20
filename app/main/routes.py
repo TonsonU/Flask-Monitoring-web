@@ -12,7 +12,7 @@
 
 from flask import Blueprint, render_template
 from flask_login import login_required
-from models import Work
+from app.models import Work
 
 main_bp = Blueprint('main', __name__)
 

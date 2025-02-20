@@ -12,8 +12,9 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify
 from flask_login import login_required, current_user
-from models import db, Work, Comment, Line, Location, DeviceType, DeviceName
-from forms import CreateForm, CommentForm, EditForm
+from app.extensions import db
+from app.models import Work, Comment, Line, Location, DeviceType, DeviceName
+from .forms import CreateForm, CommentForm, EditForm
 import pytz
 from pytz import timezone
 from datetime import datetime
