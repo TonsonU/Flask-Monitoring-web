@@ -74,6 +74,19 @@
                             <label for="report_by" class="form-label">{{ form.report_by.label }}</label>
                             <input type="text" id="report_by" name="report_by" value="{{ current_user.username }}" readonly>
                         </div>
+
+                        <!-- ฟิลด์ Cause และ Point Case Detail (จะแสดงเมื่อ Device Type เป็น 'Point') -->
+                        <div id="pointFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="point_casedetail" class="form-label">Point Case Detail</label>
+                                {{ form.point_casedetail(class="form-control", id="point_casedetail") }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="cause" class="form-label">Cause</label>
+                                {{ form.cause(class="form-control", id="cause") }}
+                            </div>                            
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="status" class="form-label">{{ form.status.label }}</label>
                             {{ form.status(class="form-select", id="status") }}
@@ -83,17 +96,7 @@
                             {{ form.link(class="form-control", id="link", placeholder="Example: ..\02%20Corrective%20Maintenance\2024\07\KK-2024-07-21%20CM%20IL11%20replace%20lan%20cable%20port%20Gi101%20.pdf") }}
                         </div>
 
-                        <!-- ฟิลด์ Cause และ Point Case Detail (จะแสดงเมื่อ Device Type เป็น 'Point') -->
-                        <div id="pointFields" style="display: none;">
-                            <div class="mb-3">
-                                <label for="cause" class="form-label">Cause</label>
-                                {{ form.cause(class="form-control", id="cause") }}
-                            </div>
-                            <div class="mb-3">
-                                <label for="point_casedetail" class="form-label">Point Case Detail</label>
-                                {{ form.point_casedetail(class="form-control", id="point_casedetail") }}
-                            </div>
-                        </div>
+                        
 
                         <div class="text-center">
                             {{ form.submit(class="btn btn-success custom-save-btn") }}

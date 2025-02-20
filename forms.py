@@ -140,6 +140,24 @@ class EditForm(FlaskForm):
         allow_blank=False,
         blank_text="Select Device Name"
     )
+
+     # ✅ เพิ่ม Cause และ Point Case Detail
+    cause = QuerySelectField(
+        "Cause",
+        query_factory=lambda: Cause.query.all(),
+        get_label="name",
+        allow_blank=True,
+        blank_text="Select Cause"
+    )
+
+    point_casedetail = QuerySelectField(
+        "Point Case Detail",
+        query_factory=lambda: PointCaseDetail.query.all(),
+        get_label="name",
+        allow_blank=True,
+        blank_text="Select Point Case Detail"
+    )
+    
     description = TextAreaField("Description", validators=[DataRequired()])           # รายละเอียด
     report_by = StringField("Report By", validators=[DataRequired()])                 # ผู้รายงาน
     status = SelectField("Status", choices=[("Open", "Open"), ("Closed", "Closed")], validators=[DataRequired()])  # สถานะ

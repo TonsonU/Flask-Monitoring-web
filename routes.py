@@ -278,6 +278,15 @@ def init_app(app):
                 works.device_name = form.device_name.data
                 has_changed = True
 
+            # ✅ อัปเดต Cause และ Point Case Detail
+            if form.cause.data != works.cause:
+                works.cause = form.cause.data
+                has_changed = True
+
+            if form.point_casedetail.data != works.point_casedetail:
+                works.point_casedetail = form.point_casedetail.data
+                has_changed = True
+
             if has_changed:
                 db.session.commit()
                 flash("Work updated successfully!", "success")
