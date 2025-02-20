@@ -10,12 +10,8 @@
 #
 ####################################################
 
-# app.py: เป็นไฟล์หลักที่รวมทุกอย่าง
+from flask import Blueprint
 
-from app import create_app
+inventory_bp = Blueprint('inventory', __name__, template_folder='templates')
 
-app = create_app()
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
+from . import routes  # Import routes.py
