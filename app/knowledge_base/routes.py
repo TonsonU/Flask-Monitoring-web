@@ -24,7 +24,7 @@ knowledge_bp = Blueprint('knowledge_base', __name__)
 @knowledge_bp.route('/knowledge_base')
 def knowledge_base():
         items = KnowledgeBase.query.all()
-        return render_template('knowledge_base/knowledge_base.html', items=items) 
+        return render_template('knowledge_base.html', items=items) 
     
 @knowledge_bp.route('/create_knowledge_base', methods=['GET', 'POST'])
 @login_required
@@ -56,7 +56,7 @@ def create_knowledge_base():
                 create_date = thailand_tz.localize(create_date_naive)
             except ValueError:
                 flash('รูปแบบวันที่และเวลาไม่ถูกต้อง', 'danger')
-                return render_template("knowledge_base/create_knowledge_base.html", form=form)
+                return render_template("create_knowledge_base.html", form=form)
 
             # สร้างอ็อบเจกต์ใหม่เพื่อบันทึกข้อมูล
             new_item = KnowledgeBase(
@@ -74,7 +74,7 @@ def create_knowledge_base():
 
             # หลังจากบันทึกข้อมูลเสร็จแล้ว ให้รีไดเรกต์ไปที่หน้า index
             return redirect(url_for('knowledge_base.knowledge_base'))
-        return render_template("knowledge_base/create_knowledge_base.html", form=form)
+        return render_template("create_knowledge_base.html", form=form)
     
     # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
 @knowledge_bp.route('/knowledge_basenumber/<int:number>', methods=['GET', 'POST'])
@@ -97,7 +97,7 @@ def knowledge_base_detail(number):
 
         # ส่งข้อมูลไปยัง template
         return render_template(
-        "knowledge_base/knowledge_base_detail.html", 
+        "knowledge_base_detail.html", 
         items=items, 
         create_date=create_date, 
         topic=topic, 

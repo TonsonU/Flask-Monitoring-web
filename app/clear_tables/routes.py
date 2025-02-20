@@ -12,7 +12,7 @@
 
 from flask import flash, redirect, url_for
 from flask_login import login_required, current_user
-from models import db, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory, ForceDataHistory, MacAddressHistory
+from app.models import db, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory, ForceDataHistory, MacAddressHistory
 from flask import Blueprint
 
 clear_tables_bp = Blueprint('clear_tables', __name__)

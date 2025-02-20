@@ -54,7 +54,7 @@ def create():
                 create_date = thailand_tz.localize(create_date_naive)
             except ValueError:
                 flash('รูปแบบวันที่และเวลาไม่ถูกต้อง', 'danger')
-                return render_template("work/create.html", form=form)
+                return render_template("create.html", form=form)
 
             # สร้างอ็อบเจกต์ใหม่เพื่อบันทึกข้อมูล
             new_work = Work(
@@ -77,14 +77,14 @@ def create():
 
             # หลังจากบันทึกข้อมูลเสร็จแล้ว ให้รีไดเรกต์ไปที่หน้า index
             return redirect(url_for('main.index'))
-        return render_template("work/create.html", form=form)
+        return render_template("create.html", form=form)
 
 # Route สำหรับจัดการ Work ที่ปิดแล้ว
 @work_bp.route('/closed',methods=['GET','POST'])
 @login_required
 def closed():
         works = Work.query.all()  
-        return render_template("work/closed.html", works=works)
+        return render_template("closed.html", works=works)
     
     
     # Route สำหรับจัดการ Work ที่ปิดแล้ว
@@ -92,7 +92,7 @@ def closed():
 @login_required
 def open():
         works = Work.query.all()  
-        return render_template("work/open.html", works=works)
+        return render_template("open.html", works=works)
     
 
     # Route สำหรับการลบ Work (เฉพาะ admin)    
@@ -190,7 +190,7 @@ def editWork(number):
             form.device_type_name.data = works.device_type
             form.device_name.data = works.device_name
 
-        return render_template("work/edit.html", form=form, works=works)
+        return render_template("edit.html", form=form, works=works)
     
     
 # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
@@ -251,7 +251,7 @@ def work_detail(number):
 
         # ส่งข้อมูลไปยัง template
         return render_template(
-        "work/work_detail.html", 
+        "work_detail.html", 
         works=works, 
         line=line, 
         location=location, 

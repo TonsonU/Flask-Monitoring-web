@@ -12,6 +12,6 @@
 
 from flask import Blueprint
 
-inventory_bp = Blueprint('inventory', __name__, template_folder='templates')
+inventory_bp = Blueprint('inventory', __name__, template_folder='templates/inventory')
 
 from . import routes  # Import routes.py

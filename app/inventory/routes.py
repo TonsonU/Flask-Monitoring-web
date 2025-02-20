@@ -23,86 +23,86 @@ inventory_bp = Blueprint('inventory', __name__)
 @login_required
 def inventory():
         devices = DeviceName.query.all()
-        return render_template("inventory/inventory.html", devices=devices)
+        return render_template("inventory.html", devices=devices)
     
 @inventory_bp.route('/inventory_IL', endpoint='inventory_il')
 @login_required
 def inventory_il():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'IL').all()
-        return render_template("inventory/inventory_il.html", devices=devices)
+        return render_template("inventory_il.html", devices=devices)
     
 @inventory_bp.route('/inventory_tap', endpoint='inventory_tap')
 @login_required
 def inventory_tap():
         # กรองข้อมูลเพื่อแสดงเฉพาะ Device Type ที่เป็น TAP
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'TAP').all()
-        return render_template("inventory/inventory_tap.html", devices=devices)
+        return render_template("inventory_tap.html", devices=devices)
     
 @inventory_bp.route('/inventory_emp', endpoint='inventory_emp')
 @login_required
 def inventory_emp():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'EMP').all()
-        return render_template("inventory/inventory_emp.html", devices=devices)
+        return render_template("inventory_emp.html", devices=devices)
     
 @inventory_bp.route('/inventory_pid', endpoint='inventory_pid')
 @login_required
 def inventory_pid():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'PID').all()
-        return render_template("inventory/inventory_pid.html", devices=devices)
+        return render_template("inventory_pid.html", devices=devices)
     
 @inventory_bp.route('/inventory_obc', endpoint='inventory_obc')
 @login_required
 def inventory_obc():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'OBC').all()
-        return render_template("inventory/inventory_obc.html", devices=devices)
+        return render_template("inventory_obc.html", devices=devices)
     
 @inventory_bp.route('/inventory_tel', endpoint='inventory_tel')
 @login_required
 def inventory_tel():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'TEL').all()
-        return render_template("inventory/inventory_tel.html", devices=devices)
+        return render_template("inventory_tel.html", devices=devices)
     
 @inventory_bp.route('/inventory_ups', endpoint='inventory_ups')
 @login_required
 def inventory_ups():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'UPS').all()
-        return render_template("inventory/inventory_ups.html", devices=devices)
+        return render_template("inventory_ups.html", devices=devices)
     
 @inventory_bp.route('/inventory_point', endpoint='inventory_point')
 @login_required
 def inventory_point():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Point').all()
-        return render_template("inventory/inventory_point.html", devices=devices)
+        return render_template("inventory_point.html", devices=devices)
     
 @inventory_bp.route('/inventory_balise', endpoint='inventory_balise')
 @login_required
 def inventory_balise():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Balise').all()
-        return render_template("inventory/inventory_balise.html", devices=devices)
+        return render_template("inventory_balise.html", devices=devices)
     
 @inventory_bp.route('/inventory_mitrac', endpoint='inventory_mitrac')
 @login_required
 def inventory_mitrac():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Mitrac').all()
-        return render_template("inventory/inventory_mitrac.html", devices=devices)
+        return render_template("inventory_mitrac.html", devices=devices)
     
 @inventory_bp.route('/inventory_pli', endpoint='inventory_pli')
 @login_required
 def inventory_pli():
         devices = DeviceName.query.join(DeviceType).filter(or_(DeviceType.name == 'PLI', DeviceType.name == 'Depot Area Signal', DeviceType.name == 'Route Indicator') ).all()
-        return render_template("inventory/inventory_pli.html", devices=devices)
+        return render_template("inventory_pli.html", devices=devices)
     
 @inventory_bp.route('/inventory_axle', endpoint='inventory_axle')
 @login_required
 def inventory_axle():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Axle Counter').all()
-        return render_template("inventory/inventory_axle.html", devices=devices)
+        return render_template("inventory_axle.html", devices=devices)
     
 @inventory_bp.route('/inventory_trackname', endpoint='inventory_trackname')
 @login_required
 def inventory_trackname():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Track Name Plate').all()
-        return render_template("inventory/inventory_trackname.html", devices=devices)
+        return render_template("inventory_trackname.html", devices=devices)
 
 
     # Route สำหรับแก้ไข serial_number
@@ -142,7 +142,7 @@ def edit_serial_number(device_id):
         # ดึงประวัติการเปลี่ยนแปลง
         history_records = SerialNumberHistory.query.filter_by(device_id=device.id).order_by(SerialNumberHistory.changed_at.desc()).all()
 
-        return render_template('inventory/edit_serial_number.html', form=form, device=device, history=history_records,ref=ref)
+        return render_template('edit_serial_number.html', form=form, device=device, history=history_records,ref=ref)
     
 
     # Route สำหรับแก้ไข force_data
@@ -188,7 +188,7 @@ def edit_force_data(device_id):
         # ดึงประวัติการเปลี่ยนแปลง
         history_force_records = ForceDataHistory.query.filter_by(device_id=device.id).order_by(ForceDataHistory.changed_at.desc()).all()
 
-        return render_template('inventory/edit_force_data.html', form=form, device=device, history=history_force_records)
+        return render_template('edit_force_data.html', form=form, device=device, history=history_force_records)
     
 
     # Route สำหรับแก้ไข mac_address
@@ -227,7 +227,7 @@ def edit_mac_address(device_id):
         # ดึงประวัติการเปลี่ยนแปลง
         history_records = MacAddressHistory.query.filter_by(device_id=device.id).order_by(MacAddressHistory.changed_at.desc()).all()
 
-        return render_template('inventory/edit_mac_address.html', form=form, device=device, history=history_records)
+        return render_template('edit_mac_address.html', form=form, device=device, history=history_records)
     
 @inventory_bp.route('/device/<int:device_id>/edit_pli_module', methods=['GET', 'POST'])
 @login_required
@@ -271,4 +271,4 @@ def edit_pli_module(device_id):
             return redirect(url_for('inventory.edit_pli_module', device_id=device.id))
 
         history_records = ModuleHistory.query.filter_by(device_id=device.id).order_by(ModuleHistory.changed_at.desc()).all()
-        return render_template('inventory/edit_pli_module.html', form=form, device=device, history=history_records)
+        return render_template('edit_pli_module.html', form=form, device=device, history=history_records)

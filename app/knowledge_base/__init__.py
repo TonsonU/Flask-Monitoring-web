@@ -12,6 +12,6 @@
 
 from flask import Blueprint
 
-knowledge_bp = Blueprint('knowledge_base', __name__, template_folder='templates')
+knowledge_bp = Blueprint('knowledge_base', __name__, template_folder='templates/knowledge_base')
 
 from . import routes  # Import routes.py

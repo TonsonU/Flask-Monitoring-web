@@ -40,7 +40,7 @@ def register():
         flash("Registration successful!", "success")
         return redirect(url_for('auth.login'))
 
-    return render_template('auth/register.html')
+    return render_template('register.html')
 
 @auth_bp.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
@@ -66,7 +66,7 @@ def forgot_password():
                 user_found = False
                 #flash("User not found. Please register.", "danger")
 
-        return render_template('auth/forgot_password.html', user_found=user_found)
+        return render_template('forgot_password.html', user_found=user_found)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -84,7 +84,7 @@ def login():
         else:
             flash("Invalid username or password.", "danger")
 
-    return render_template('auth/login.html')
+    return render_template('login.html')
 
 @auth_bp.route('/logout')
 @login_required

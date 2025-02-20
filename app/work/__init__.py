@@ -12,6 +12,6 @@
 
 from flask import Blueprint
 
-work_bp = Blueprint('work', __name__, template_folder='templates')
+work_bp = Blueprint('work', __name__, template_folder='templates/work')
 
 from . import routes  # Import routes.py
