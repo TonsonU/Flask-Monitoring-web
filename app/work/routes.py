@@ -18,8 +18,9 @@ from .forms import CreateForm, CommentForm, EditForm
 import pytz
 from pytz import timezone
 from datetime import datetime
+from . import work_bp
 
-work_bp = Blueprint('work', __name__)
+
 
 @work_bp.route('/create', methods=['GET', 'POST'])
 @login_required

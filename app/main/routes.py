@@ -13,8 +13,7 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
 from app.models import Work
-
-main_bp = Blueprint('main', __name__)
+from . import main_bp
 
 @main_bp.route('/')
 @login_required

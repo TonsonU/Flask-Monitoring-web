@@ -16,8 +16,9 @@ from app.models import DeviceName, DeviceType, SerialNumberHistory, ForceDataHis
 from sqlalchemy import or_
 from .forms import EditForceDataForm, EditSerialNumberForm, EditMacAddressForm, EditModuleForm
 from app.extensions import db
+from . import inventory_bp
 
-inventory_bp = Blueprint('inventory', __name__)
+
 
 @inventory_bp.route('/inventory_all')
 @login_required

@@ -14,8 +14,9 @@ from flask import flash, redirect, url_for
 from flask_login import login_required, current_user
 from app.models import db, Work, Comment, Line, Location, DeviceType, DeviceName, SerialNumberHistory, ForceDataHistory, MacAddressHistory
 from flask import Blueprint
+from . import clear_tables_bp
 
-clear_tables_bp = Blueprint('clear_tables', __name__)
+
 
 # ลบข้อมูลทั้งหมดในตาราง Work
 @clear_tables_bp.route('/clear-tables', methods=['GET'])

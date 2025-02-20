@@ -18,8 +18,9 @@ import pytz
 from pytz import timezone
 from datetime import datetime
 from app.extensions import db
+from . import knowledge_bp
 
-knowledge_bp = Blueprint('knowledge_base', __name__)
+
 
 @knowledge_bp.route('/knowledge_base')
 def knowledge_base():
