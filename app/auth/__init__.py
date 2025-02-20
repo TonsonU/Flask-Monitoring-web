@@ -3,19 +3,15 @@
 #
 # 
 # Project : Python, Flask, MySQLite, Bootstrap
-# Author  : Thanapoom Sukarin, Tonson Ubonsri
+# Author  : Tonson Ubonsri
 # Modifier: 
 # Version : 
 # Date    : Dec 01, 2024
 #
 ####################################################
 
-# app.py: เป็นไฟล์หลักที่รวมทุกอย่าง
+from flask import Blueprint
 
-from app import create_app
+auth_bp = Blueprint('auth', __name__, template_folder='templates/auth')
 
-app = create_app()
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
+from . import routes  # Import routes.py

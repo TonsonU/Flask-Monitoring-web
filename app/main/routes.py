@@ -10,12 +10,13 @@
 #
 ####################################################
 
-# app.py: เป็นไฟล์หลักที่รวมทุกอย่าง
+from flask import Blueprint, render_template
+from flask_login import login_required
+from app.models import Work
+from . import main_bp
 
-from app import create_app
-
-app = create_app()
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
+@main_bp.route('/')
+@login_required
+def index():
+    works = Work.query.all()
+    return render_template("index.html", works=works)

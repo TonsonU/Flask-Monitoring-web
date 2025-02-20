@@ -1,0 +1,230 @@
+<!--
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+-->
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+     <!-- Add Font Awesome -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+     <!-- เชื่อมต่อไฟล์ CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+    <!-- ลิงก์ไปยัง Boxicons -->
+	<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+
+</head>
+<div class="container my-2">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <body class="bg-light">
+        <div class="container py-5">
+            <div class="card shadow">
+                <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Task Detail</h3>
+                    <a href="{{ url_for('main.index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
+                </div>
+                <div class="card-body">
+                <div class="edit-btn-container">
+                    <a href="{{ url_for('work.edit', number=works.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
+                </div>
+                <div class="table-responsive-lg">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Number</th>
+                                <th>Create Date</th>
+                                <th>Work Order</th>
+                                <th>Line</th>
+                                <th>Location</th>
+                                <th>Device Type</th>
+                                <th>Device Name</th>
+                                <th>Description</th>
+                                <th>Report By</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="wrap-text">{{ works.number }}</td>
+                                <td class="wrap-text">{{ works.create_date }}</td>
+                                <td class="wrap-text">{{ works.work_order }}</td>
+                                <td class="wrap-text">{{ works.line.name if line else '-' }}</td>
+                                <td class="wrap-text">{{ works.location.name if location else '-' }}</td>
+                                <td class="wrap-text">{{ works.device_type.name if device_type else '-' }}</td>
+                                <td class="wrap-text">{{ works.device_name.name if device_name else '-' }}</td>
+                                <td class="wrap-text">{{ works.description }}</td>
+                                <td class="wrap-text">{{ works.report_by }}</td>
+                                <td class="wrap-text">{{ works.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- การแสดง Flash Message -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="alert-container">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mt-2" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <!-- การแสดงคอมเม้นต์ที่โพสต์ไปแล้ว -->
+                <div class="comment-card">
+                    <p><strong>{{ works.report_by }}</strong> <small class="text-muted">on {{ works.create_date.strftime('%d/%m/%Y at %H:%M') }}</small></p>
+                    <p>{{ works.description }}</p>
+                    <a href="{{ works.link }}" target="_blank">{{ works.link }}</a>
+                </div>
+
+                {% for comment in comments %}
+                <div class="comment-card d-flex flex-column">
+                    <div>
+                        <p><strong>{{ comment.user.username }}</strong> <small class="text-muted">on {{ comment.timestamp.strftime('%d/%m/%Y at %H:%M') }}</small></p>
+                        <p>{{ comment.content }}</p>
+                        {% if comment.pdf_url %}
+                        <p>
+                            <a href="{{ comment.pdf_url }}" target="_blank">
+                                <i class="fas fa-file-pdf"></i> {{ comment.pdf_url }}
+                            </a>
+                        </p>
+                        {% endif %}
+                        {% if comment.image_url %}
+                        <p>
+                            <img src="{{ comment.image_url }}" alt="Comment Image" class="comment-image">
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% if comment.user_id == current_user.id %}
+                    <form method="POST" action="{{ url_for('work.delete_comment', comment_id=comment.id) }}" class="align-self-end">
+                        <button type="submit" class="btn custom-delete-comment-btn"><i class="fa-solid fa-trash-can"></i></button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <hr>
+
+                <!-- ฟอร์มสำหรับโพสต์ข้อความ -->
+                <div class="comment-box">
+                    <h3>Post Your Comment</h3>
+                    <form method="POST" action="{{ url_for('work.work_detail', number=works.number) }}"enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group position-relative">
+                            
+                            <div class="position-relative">
+                                {{ form.comment(class="form-control", rows=4, placeholder="Post your comment here...") }}
+                                <i class="fas fa-image upload-image-icon" style="cursor: pointer;"></i>
+                                {{ form.image(class="form-control-file", style="display: none;") }}
+                                <div class="uploaded-image-info" style="display: none;">
+                                    <span class="uploaded-image-name"></span>
+                                    <i class="fas fa-times remove-uploaded-image" style="cursor: pointer; color: red;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="pdf_url">
+                                <i class="fas fa-file-pdf"></i> Add PDF Link
+                            </label>
+                            {{ form.pdf_url(class="form-control", placeholder="Enter PDF link (optional)") }}
+                            {% if form.pdf_url.errors %}  <!-- ตรวจสอบว่ามีข้อผิดพลาด -->
+                            <div class="text-danger mt-1">
+                                {{ form.pdf_url.errors[0] }}  <!-- แสดงข้อความเตือน -->
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mt-2">
+                            {{ form.submit(class="btn btn-primary custom-login-btn") }}
+                        </div>
+                    </form>
+                </div>
+
+                <script>
+                    document.querySelector('.upload-image-icon').addEventListener('click', function() {
+                        document.querySelector('input[type="file"][name="image"]').click();
+                    });
+                    
+                    document.querySelector('input[type="file"][name="image"]').addEventListener('change', function(event) {
+                        const fileInput = event.target;
+                        const file = fileInput.files[0]; // เลือกไฟล์แรกที่อัปโหลด
+                        const maxFileSize = 1 * 1024 * 1024; // ขนาดสูงสุด 1MB (หน่วยเป็นไบต์)
+
+                        if (file) {
+                            // ตรวจสอบขนาดไฟล์
+                            if (file.size > maxFileSize) {
+                                alert('ไฟล์มีขนาดใหญ่เกิน 1MB!!. กรุณา upload ไฟล์ใหม่.');
+                                fileInput.value = ''; // ล้างค่าไฟล์ใน input
+                                document.querySelector('.uploaded-image-info').style.display = 'none';
+                                return;
+                            }
+
+                            // แสดงชื่อไฟล์หากขนาดไฟล์ผ่าน
+                            const fileName = file.name;
+                            document.querySelector('.uploaded-image-name').textContent = fileName;
+                            document.querySelector('.uploaded-image-info').style.display = 'inline';
+                        }
+                    });
+
+
+                    document.querySelector('.remove-uploaded-image').addEventListener('click', function() {
+                        document.querySelector('input[type="file"][name="image"]').value = '';
+                        document.querySelector('.uploaded-image-info').style.display = 'none';
+                    });
+                </script>
+                <script>
+                    // เพิ่ม Event Listener ให้ปุ่มปิด (กากบาท)
+                    document.querySelector('.btn-close').addEventListener('click', function(event) {
+                        event.preventDefault(); // ป้องกันการเปลี่ยนหน้าอัตโนมัติ
+                
+                        // ดึงค่าของหน้าก่อนหน้าจาก sessionStorage
+                        const previousPage = sessionStorage.getItem('previousPage');
+                
+                        // ตรวจสอบค่าของ previousPage
+                        if (previousPage === '/work/open' || previousPage === '/work/closed' || previousPage === '/') {
+                            // ถ้าหน้าก่อนหน้าเป็น "/open", "/closed" หรือ "/"
+                            window.location.href = previousPage;
+                        } else {
+                            // ถ้าไม่มีค่าใน previousPage ให้เปลี่ยนเส้นทางไปหน้า index
+                            window.location.href = "{{ url_for('main.index') }}";
+                        }
+                    });
+                
+                    // เก็บค่าของหน้าปัจจุบันใน sessionStorage
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const currentPath = window.location.pathname; // ดึง path ของ URL ปัจจุบัน
+                        // บันทึก URL ของหน้า /open, /closed หรือ / (index) ลงใน sessionStorage
+                        if (currentPath === '/work/open' || currentPath === '/work/closed' || currentPath === '/') {
+                            sessionStorage.setItem('previousPage', currentPath); // บันทึก path ปัจจุบันใน sessionStorage
+                        }
+                    });
+                </script>
+
+                
+
+    
+    </body>
+</div>
+
+</html>
+{% endblock %}
