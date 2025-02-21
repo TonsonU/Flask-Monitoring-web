@@ -9,7 +9,7 @@
 # Date    : Dec 01, 2024
 #
 ####################################################
-# models.py: เก็บโมเดลที่เกี่ยวข้องกับฐานข้อมูล
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime, timezone

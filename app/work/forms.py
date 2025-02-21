@@ -10,8 +10,6 @@
 #
 ####################################################
 
-# forms.py: เก็บฟอร์มทั้งหมดที่ใช้ในแอป
-
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, TextAreaField, SelectField, FileField,IntegerField
 from wtforms.validators import DataRequired, Length, ValidationError, Optional, URL
