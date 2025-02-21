@@ -15,6 +15,9 @@ from flask_login import UserMixin
 from datetime import datetime, timezone
 from app.extensions import db
 
+# สร้างตัวแปร db เพื่อใช้ในการสร้างฐานข้อมูล
+db = SQLAlchemy()
+
 def now_utc():
     return datetime.now(timezone.utc)
 

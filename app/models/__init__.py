@@ -23,6 +23,8 @@ from .KnowledgeBase import KnowledgeBase
 from .MacAddressHistory import MacAddressHistory
 from .ModuleHistory import ModuleHistory
 from .SerialNumberHistory import SerialNumberHistory
+from .Cause import Cause
+from .PointCaseDetail import PointCaseDetail
 
 
 

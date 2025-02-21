@@ -223,7 +223,7 @@ footer {
 .custom-index-btn {
     display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
     align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
-    padding: 10px 20px;
+    padding: 8px 14px;
     background-color: #0D92F4;  /* สีพื้นหลัง */
     color: #fff;  /* สีข้อความ */
     font-size: 16px;
@@ -526,4 +526,35 @@ font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่ส
 
 #backToTopBtn:hover {
     background-color: #333; /* สีพื้นหลังเมื่อชี้ไปที่ปุ่ม */
+}
+
+.bg-danger {
+    background-color: #FB4141 !important;
+    color: white!important; /* เปลี่ยนสีข้อความเป็นสีขาวเพื่อให้อ่านง่ายขึ้น */    
+}
+
+/* ปุ่มกำหนดเอง create */
+.custom-graph-btn {
+    display: inline-flex;            /* ใช้ inline-flex เพื่อจัดการไอคอนและข้อความในแถวเดียวกัน */
+    align-items: center;             /* จัดตำแหน่งไอคอนและข้อความให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 8px 14px;
+    background-color: #0D92F4;  /* สีพื้นหลัง */
+    color: #fff;  /* สีข้อความ */
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 1.25rem;  /* ให้ปุ่มมีมุมโค้ง */
+    text-decoration: none;  /* ลบเส้นใต้จากลิงก์ */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* เปลี่ยนสีเมื่อวางเมาส์ */
+.custom-graph-btn:hover {
+    background-color: #77CDFF;  /* สีพื้นหลังเมื่อ hover */
+    transform: scale(1.05);  /* ขยายขนาดปุ่มเมื่อ hover */
+}
+
+/* เปลี่ยนสีเมื่อกดปุ่ม */
+.custom-graph-btn:active {
+    background-color: #F95454;  /* สีพื้นหลังเมื่อคลิก */
 }

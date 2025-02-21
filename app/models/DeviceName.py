@@ -15,6 +15,8 @@ from flask_login import UserMixin
 from datetime import datetime, timezone
 from app.extensions import db
 
+
+
 def now_utc():
     return datetime.now(timezone.utc)
 

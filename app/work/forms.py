@@ -15,7 +15,7 @@ from wtforms import StringField, SubmitField, PasswordField, TextAreaField, Sele
 from wtforms.validators import DataRequired, Length, ValidationError, Optional, URL
 from flask_wtf.file import FileAllowed  # เพิ่มการนำเข้า FileAllowed
 from wtforms_sqlalchemy.fields import QuerySelectField
-from app.models import Line, Location, DeviceType, DeviceName
+from app.models import Line, Location, DeviceType, DeviceName,Cause, PointCaseDetail
 from datetime import datetime
 import re
 
@@ -62,6 +62,27 @@ class CreateForm(FlaskForm):
         blank_text="Select Device Name",
         validators=[DataRequired()]
     )
+
+    # เพิ่มฟิลด์ Cause และ Point Case Detail
+    cause = QuerySelectField(
+        "Cause",
+        query_factory=lambda: Cause.query.all(),
+        get_label="name",
+        allow_blank=True,
+        blank_text="Select Cause",
+        validators=[Optional()]
+    )
+
+    point_casedetail = QuerySelectField(
+        "Point Case Detail",
+        query_factory=lambda: PointCaseDetail.query.all(),
+        get_label="name",
+        allow_blank=True,
+        blank_text="Select Point Case Detail",
+        validators=[Optional()]
+    )
+
+
     description = TextAreaField("Description", validators=[DataRequired()])           # รายละเอียด
     report_by = StringField("Report By", validators=[DataRequired()])                 # ผู้รายงาน
     status = SelectField("Status", choices=[("Open", "Open"), ("Closed", "Closed")], validators=[DataRequired()])  # สถานะ
@@ -101,6 +122,24 @@ class EditForm(FlaskForm):
         allow_blank=False,
         blank_text="Select Device Name"
     )
+
+     # ✅ เพิ่ม Cause และ Point Case Detail
+    cause = QuerySelectField(
+        "Cause",
+        query_factory=lambda: Cause.query.all(),
+        get_label="name",
+        allow_blank=True,
+        blank_text="Select Cause"
+    )
+
+    point_casedetail = QuerySelectField(
+        "Point Case Detail",
+        query_factory=lambda: PointCaseDetail.query.all(),
+        get_label="name",
+        allow_blank=True,
+        blank_text="Select Point Case Detail"
+    )
+    
     description = TextAreaField("Description", validators=[DataRequired()])           # รายละเอียด
     report_by = StringField("Report By", validators=[DataRequired()])                 # ผู้รายงาน
     status = SelectField("Status", choices=[("Open", "Open"), ("Closed", "Closed")], validators=[DataRequired()])  # สถานะ
