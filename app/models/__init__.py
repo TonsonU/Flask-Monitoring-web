@@ -10,6 +10,7 @@ from .Location import Location
 from .MacAddressHistory import MacAddressHistory
 from .ModuleHistory import ModuleHistory
 from .SerialNumberHistory import SerialNumberHistory
+from .Comment import Comment
 from .Cause import Cause
 from .PointCaseDetail import PointCaseDetail
 

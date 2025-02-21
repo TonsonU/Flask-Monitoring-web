@@ -20,6 +20,7 @@ from app.work import work_bp
 from app.inventory import inventory_bp
 from app.knowledge_base import knowledge_bp
 from app.clear_tables import clear_tables_bp
+from filters import datetime_bangkok
 
 def create_app():
     app = Flask(__name__)
@@ -36,6 +37,9 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+    
+    # ✅ ลงทะเบียน filter
+    app.jinja_env.filters['datetime_bangkok'] = datetime_bangkok
 
     # ลงทะเบียน Blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')
