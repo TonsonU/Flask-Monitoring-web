@@ -249,7 +249,7 @@
             deviceNameSelect.innerHTML = '<option value="">Loading...</option>';
 
             if (locationId && deviceTypeId) {
-                fetch(`/get_device_names/${locationId}/${deviceTypeId}`)
+                fetch(`/work/get_device_names/${locationId}/${deviceTypeId}`)
                   .then(res => res.json())
                   .then(data => {
                       deviceNameSelect.innerHTML = '<option value="">Select Device Name</option>';
