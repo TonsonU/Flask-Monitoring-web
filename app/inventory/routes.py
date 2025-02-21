@@ -10,7 +10,7 @@
 #
 ####################################################
 
-from flask import Blueprint, render_template,request, url_for, flash, redirect
+from flask import Blueprint, render_template,request, url_for, flash, redirect, jsonify, current_app
 from flask_login import login_required,current_user
 from app.models import DeviceName, DeviceType, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db
 from sqlalchemy import or_
@@ -71,7 +71,22 @@ def inventory_ups():
 @login_required
 def inventory_point():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Point').all()
-        return render_template("inventory_point.html", devices=devices)
+        force_data_history = {device.id: ForceDataHistory.query.filter_by(device_id=device.id).order_by(ForceDataHistory.changed_at.desc()).first() for device in devices}
+
+        # อัปเดตค่า force_data ของ device จาก ForceDataHistory
+        for device in devices:
+            if force_data_history[device.id]:
+                force_values = [
+                    str(force_data_history[device.id].plus_before),
+                    str(force_data_history[device.id].minus_before),
+                    str(force_data_history[device.id].plus_after),
+                    str(force_data_history[device.id].minus_after)
+                ]
+                device.force_data = ", ".join([value for value in force_values if value != 'None'])
+
+
+
+        return render_template("inventory_point.html", devices=devices, force_data_history=force_data_history)
     
 @inventory_bp.route('/inventory_balise', endpoint='inventory_balise')
 @login_required
@@ -144,7 +159,8 @@ def edit_serial_number(device_id):
         return render_template('edit_serial_number.html', form=form, device=device, history=history_records,ref=ref)
     
 
-    # Route สำหรับแก้ไข force_data
+
+# Route สำหรับแก้ไข force_data
 @inventory_bp.route('/device/<int:device_id>/edit_force_data', methods=['GET', 'POST'])
 @login_required
 def edit_force_data(device_id):
@@ -152,42 +168,114 @@ def edit_force_data(device_id):
         form = EditForceDataForm(obj=device)
 
         if form.validate_on_submit():
-            plus_before = form.plus_before.data
-            minus_before = form.minus_before.data
-            plus_after = form.plus_after.data if form.plus_after.data else None
-            minus_after = form.minus_after.data if form.minus_after.data else None
-            remark = form.remark.data
+            try:
+                plus_before = form.plus_before.data
+                minus_before = form.minus_before.data
+                plus_after = form.plus_after.data if form.plus_after.data else None
+                minus_after = form.minus_after.data if form.minus_after.data else None
+                remark = form.remark.data
 
-            # บันทึกประวัติการเปลี่ยนแปลง
-            force_data_history = ForceDataHistory(
-            device_id=device.id,
-            plus_before=plus_before,
-            minus_before=minus_before,
-            plus_after=plus_after,
-            minus_after=minus_after,
-            changed_by=current_user.id,
-            remark=remark            
-            )
-            db.session.add(force_data_history)
-            # อัปเดตค่า force_data ของ device
-            if plus_after is not None and minus_after is not None:
-                device.force_data = f"{plus_after}, {minus_after}"                
-            else:
-                device.force_data = f"{plus_before}, {minus_before}"
+                # ตั้งค่า Timezone เป็น Asia/Bangkok
+                bangkok_tz = pytz.timezone('Asia/Bangkok')
+                current_time = datetime.now(bangkok_tz)  # ได้เวลาปัจจุบันเป็นเวลาไทย
 
-            print(f"device.force_data: {device.force_data}")            
-                    
-            db.session.commit()
+                # บันทึกประวัติการเปลี่ยนแปลง
+                force_data_history = ForceDataHistory(
+                    device_id=device.id,
+                    plus_before=plus_before,
+                    minus_before=minus_before,
+                    plus_after=plus_after,
+                    minus_after=minus_after,
+                    changed_by=current_user.id,
+                    remark=remark,
+                    changed_at=current_time,  # บันทึกวันที่และเวลาเป็น Bangkok timezone
+                )
+                db.session.add(force_data_history)
 
-            flash('Force Data updated successfully!', 'success')
-            
-            return redirect(url_for('inventory.edit_force_data', device_id=device.id))
-            
+                # อัปเดตค่า force_data ของ device
+                force_values = [str(value) for value in [plus_before, minus_before, plus_after, minus_after] if value is not None]
+                device.force_data = ", ".join(force_values)
+
+                print(f"device.force_data: {device.force_data}")
+
+                # บันทึกลงฐานข้อมูล
+                db.session.commit()
+                flash('Force Data updated successfully!', 'success')
+
+                return redirect(url_for('edit_force_data', device_id=device.id))
+
+            except Exception as e:
+                db.session.rollback()
+                current_app.logger.error(f"Error updating force data: {e}")
+                flash('เกิดข้อผิดพลาดในการอัปเดตข้อมูล', 'danger')
 
         # ดึงประวัติการเปลี่ยนแปลง
         history_force_records = ForceDataHistory.query.filter_by(device_id=device.id).order_by(ForceDataHistory.changed_at.desc()).all()
 
         return render_template('edit_force_data.html', form=form, device=device, history=history_force_records)
+
+
+# Route สำหรับแสดงข้อมูล force_data ในรูปแบบกราฟ
+@inventory_bp.route('/api/get_force_data/<int:device_id>', methods=['GET'])
+@login_required
+def get_force_graph_data(device_id):
+        try:
+                # Query ข้อมูลจากฐานข้อมูล
+                records = ForceDataHistory.query.filter_by(device_id=device_id).order_by(ForceDataHistory.changed_at).all()
+
+                if not records:
+                        current_app.logger.warning(f"No records found for device_id {device_id}")
+                        return jsonify({"error": "No data found"}), 404
+
+                # แปลงข้อมูลจากฐานข้อมูลให้อยู่ในรูปแบบ JSON
+                graph_data = {}
+                for record in records:
+                        edit_date = record.changed_at.strftime('%Y-%m-%d')  # เปลี่ยนวันที่เป็น string
+                        if edit_date not in graph_data:
+                                graph_data[edit_date] = {
+                                'plus_before': 0,
+                                'minus_before': 0,
+                                'plus_after': 0,
+                                'minus_after': 0
+                                }
+                        
+                        # แปลงค่าที่ได้จากฐานข้อมูลให้เป็นตัวเลขก่อน
+                        graph_data[edit_date]['plus_before'] += int(record.plus_before or 0)
+                        graph_data[edit_date]['minus_before'] += int(record.minus_before or 0)
+                        graph_data[edit_date]['plus_after'] += int(record.plus_after or 0)
+                        graph_data[edit_date]['minus_after'] += int(record.minus_after or 0)
+
+                return jsonify(graph_data)
+
+        except ValueError as e:
+                current_app.logger.error(f"Error converting data to int: {e}")
+                return jsonify({"error": "Invalid data type in database"}), 500
+        except Exception as e:
+                current_app.logger.error(f"Error fetching data for device_id {device_id}: {e}")
+                return jsonify({"error": "Internal Server Error"}), 500
+        
+# Route สำหรับลบ force_data
+@inventory_bp.route('/delete_force_data/<int:record_id>', methods=['POST'])
+@login_required
+def delete_force_data(record_id):
+        record = ForceDataHistory.query.get_or_404(record_id)
+
+        # ตรวจสอบว่าเป็นเจ้าของข้อมูลหรือไม่
+        if record.changed_by != current_user.id:
+            flash("คุณไม่มีสิทธิ์ลบข้อมูลนี้", "danger")
+            return jsonify({"error": "Unauthorized"}), 403
+
+        try:
+            db.session.delete(record)
+            db.session.commit()
+            flash("ลบข้อมูลสำเร็จ!", "success")
+            return jsonify({"success": True}), 200
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error deleting record {record_id}: {e}")
+            return jsonify({"error": "เกิดข้อผิดพลาดในการลบข้อมูล"}), 500
+
+
     
 
     # Route สำหรับแก้ไข mac_address
