@@ -18,8 +18,6 @@ from .forms import EditForceDataForm, EditSerialNumberForm, EditMacAddressForm, 
 from app.extensions import db
 from . import inventory_bp
 
-
-
 @inventory_bp.route('/inventory_all')
 @login_required
 def inventory():
