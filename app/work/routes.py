@@ -240,10 +240,23 @@ def work_detail(number):
             if form.image.data:
                 image_file = form.image.data
                 filename = secure_filename(image_file.filename)
-                image_path = os.path.join('static/uploads', filename)
-                image_file.save(image_path)
-                image_url = url_for('static', filename='uploads/' + filename)
+
+                # ✅ ใช้ os.path.abspath() เพื่อสร้างพาธ Absolute Path ที่ปลอดภัย
+                upload_folder = os.path.abspath(os.path.join(os.getcwd(), 'app', 'static', 'uploads'))
                 
+                # ✅ ตรวจสอบและสร้างโฟลเดอร์หากไม่มีอยู่
+                if not os.path.exists(upload_folder):
+                    os.makedirs(upload_folder)
+
+                # ✅ กำหนดพาธที่ถูกต้อง
+                image_path = os.path.join(upload_folder, filename)
+                
+                # ✅ บันทึกไฟล์ลงในพาธที่กำหนด
+                image_file.save(image_path)
+
+                # ✅ สร้าง URL สำหรับแสดงภาพ
+                image_url = url_for('static', filename='uploads/' + filename, _external=True)
+                    
             # แปลง PDF Path เป็น URL หากจำเป็น
             pdf_url = form.pdf_url.data.strip() if form.pdf_url.data else None
 

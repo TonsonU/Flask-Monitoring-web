@@ -22,9 +22,9 @@ import re
 # Comment Form
 class CommentForm(FlaskForm):
     comment = TextAreaField('Comment', validators=[DataRequired()])
-    pdf_url = StringField('PDF Link', validators=[Optional(),])
-    image = FileField('Image', validators=[Optional(), FileAllowed(['jpg', 'png', 'gif'], 'Images only!')])
-    submit = SubmitField('Post Comment')
+    pdf_url = StringField('PDF URL')
+    image = FileField('Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Only images are allowed!')])
+    submit = SubmitField('Post')
 
 # Create Form
 class CreateForm(FlaskForm):

@@ -20,6 +20,7 @@ from app.work import work_bp
 from app.inventory import inventory_bp
 from app.knowledge_base import knowledge_bp
 from app.clear_tables import clear_tables_bp
+from app.dashboard import dashboard_bp
 from app.filters import datetime_bangkok
 
 def create_app():
@@ -48,6 +49,7 @@ def create_app():
     app.register_blueprint(inventory_bp, url_prefix='/inventory')
     app.register_blueprint(knowledge_bp, url_prefix='/knowledge_base')
     app.register_blueprint(clear_tables_bp, url_prefix='/clear_tables')
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.add_template_filter(datetime_bangkok, 'datetime_bangkok')
 
     return app

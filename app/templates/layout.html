@@ -82,6 +82,14 @@
 							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_trackname') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Track Name Plate</a></li>
 						</ul>
 					</li>
+
+					<!-- เพิ่มเมนู Dashboard -->
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">
+							Dashboard
+						</a>
+					</li>
+
 					<!-- เพิ่มเมนู Knowledge Base -->
 					<li class="nav-item">
 						<a class="nav-link" href="{{ url_for('knowledge_base.knowledge_base') }}">
@@ -104,7 +112,7 @@
 		</div>
 	</nav>
 
-	<main class="container">
+	<main class="{% if 'dashboard' in request.path %}container-fluid{% else %}container{% endif %}">
 		{% block content %}
 		{% endblock %}
 	</main>
