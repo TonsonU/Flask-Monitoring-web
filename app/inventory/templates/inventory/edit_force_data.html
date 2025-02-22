@@ -233,7 +233,7 @@
                     if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?")) return;
 
                     try {
-                        const response = await fetch(`/delete_force_data/${recordId}`, {
+                        const response = await fetch(`/inventory/delete_force_data/${recordId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -260,7 +260,7 @@
                     // ใช้ URL ของ API พร้อมส่ง device_id
                     const deviceId = "{{ device.id }}"; // device.id มาจาก Backend
                     console.log(`Fetching data for device_id: ${deviceId}`);
-                    const response = await fetch(`/api/get_force_data/${deviceId}`);
+                    const response = await fetch(`/inventory/api/get_force_data/${deviceId}`);
                     console.log('Response Status:', response.status);
                     if (!response.ok) throw new Error('Error fetching data');
 
