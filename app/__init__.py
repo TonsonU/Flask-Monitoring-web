@@ -20,7 +20,7 @@ from app.work import work_bp
 from app.inventory import inventory_bp
 from app.knowledge_base import knowledge_bp
 from app.clear_tables import clear_tables_bp
-from filters import datetime_bangkok
+from app.filters import datetime_bangkok
 
 def create_app():
     app = Flask(__name__)
