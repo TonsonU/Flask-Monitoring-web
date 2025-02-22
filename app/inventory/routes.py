@@ -161,7 +161,7 @@ def edit_serial_number(device_id):
 
 
 # Route สำหรับแก้ไข force_data
-@inventory_bp.route('/device/<int:device_id>/edit_force_data', methods=['GET', 'POST'])
+@inventory_bp.route('/force_id/<int:device_id>/edit_force_data', methods=['GET', 'POST'])
 @login_required
 def edit_force_data(device_id):
         device = DeviceName.query.get_or_404(device_id)
@@ -279,7 +279,7 @@ def delete_force_data(record_id):
     
 
     # Route สำหรับแก้ไข mac_address
-@inventory_bp.route('/device/<int:device_id>/edit_mac', methods=['GET', 'POST'])
+@inventory_bp.route('/tap_mac_id/<int:device_id>/edit_mac', methods=['GET', 'POST'])
 @login_required
 def edit_mac_address(device_id):
         device = DeviceName.query.get_or_404(device_id)

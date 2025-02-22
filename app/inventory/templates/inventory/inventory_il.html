@@ -60,7 +60,7 @@
                 <td>{{ device.location.name if device.location else '-' }}</td>                
                 <td>{{ device.ip_address or ('-') }}</td>                
                 <td>
-                    <a href="{{ url_for('inventory.edit_serial_number', device_id=device.id, ref=request.url) }}">
+                    <a href="{{ url_for('inventory.edit_serial_number', device_id=device.id) }}">
                         {{ device.serial_number or ('-') }}
                     </a>
                 </td>

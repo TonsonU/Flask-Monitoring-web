@@ -75,7 +75,7 @@
                 <td>{{ device.device_role or ('-') }}</td>
                 <td>{{ device.channel or ('-') }}</td>
                 <td>
-                    <a href="{{ url_for('inventory.edit_serial_number', device_id=device.id, ref=request.url) }}">
+                    <a href="{{ url_for('inventory.edit_serial_number', device_id=device.id) }}">
                         {{ device.serial_number or ('-') }}
                     </a>
                 </td>
