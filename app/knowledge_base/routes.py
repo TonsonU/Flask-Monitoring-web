@@ -70,7 +70,7 @@ def create_knowledge_base():
                 create_date=create_date,
                 device_type=device_type,
                 topic=topic,
-                description=description,
+                description = form.description.data.replace('../static/', '/static/'),
                 create_by=create_by,
             )
 
