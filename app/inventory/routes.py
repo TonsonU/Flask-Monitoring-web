@@ -118,47 +118,104 @@ def inventory_trackname():
         devices = DeviceName.query.join(DeviceType).filter(DeviceType.name == 'Track Name Plate').all()
         return render_template("inventory_trackname.html", devices=devices)
 
+def edit_serial(device_id, template_name):
+    """ฟังก์ชันกลางสำหรับแก้ไข Serial Number"""
+    device = DeviceName.query.get_or_404(device_id)
+    ref = request.args.get('ref', url_for('inventory.inventory'))  # รับค่า ref หรือ default_page
+    form = EditSerialNumberForm(obj=device)  # ใช้ WTForms
 
-    # Route สำหรับแก้ไข serial_number
-@inventory_bp.route('/device/<int:device_id>/edit_serial', methods=['GET', 'POST'])
-@login_required
-def edit_serial_number(device_id):
-        device = DeviceName.query.get_or_404(device_id)
-        ref = request.args.get('ref', url_for('inventory.inventory'))  # รับค่า ref หรือใช้ default_page
-        form = EditSerialNumberForm(obj=device)
+    # โหลดประวัติ Serial Number ก่อน return เพื่อป้องกัน UnboundLocalError
+    history_records = SerialNumberHistory.query.filter_by(device_id=device.id).order_by(SerialNumberHistory.changed_at.desc()).all()
 
-        if form.validate_on_submit():
-            old_serial = device.serial_number
-            new_serial = form.serial_number.data
-            remark = form.remark.data  # ใช้ฟิลด์จากฟอร์มตรงๆ
+    if form.validate_on_submit():
+        new_serial = form.serial_number.data
+        remark = form.remark.data
 
-            if old_serial != new_serial:
-                # บันทึกประวัติการเปลี่ยนแปลง
-                history = SerialNumberHistory(
-                    device_id=device.id,
-                    old_serial_number=old_serial,
-                    new_serial_number=new_serial,
-                    changed_by=current_user.id,
-                    remark=remark  # บันทึก remark
-                )
-                db.session.add(history)
+        if device.serial_number != new_serial:
+            history = SerialNumberHistory(
+                device_id=device.id,
+                old_serial_number=device.serial_number,
+                new_serial_number=new_serial,
+                changed_by=current_user.id,  # ✅ ใช้ current_user.id แทน request.user.id
+                remark=remark
+            )
+            db.session.add(history)
+            device.serial_number = new_serial
+            db.session.commit()
+            flash('Serial Number updated successfully!', 'success')
 
-                # อัปเดต serial_number
-                device.serial_number = new_serial
-                db.session.commit()
+            # โหลดข้อมูลใหม่หลังจากอัปเดต
+            history_records = SerialNumberHistory.query.filter_by(device_id=device.id).order_by(SerialNumberHistory.changed_at.desc()).all()
+        else:
+            flash('No changes detected.', 'info')
 
-                flash('Serial Number updated successfully!', 'success')
-                #return redirect(ref)  # เปลี่ยนเป็น 'inventory'
-            else:
-                flash('No changes detected.', 'info')
-                #return redirect(ref)  # เปลี่ยนเป็น 'inventory'
-
-        # ดึงประวัติการเปลี่ยนแปลง
-        history_records = SerialNumberHistory.query.filter_by(device_id=device.id).order_by(SerialNumberHistory.changed_at.desc()).all()
-
-        return render_template('edit_serial_number.html', form=form, device=device, history=history_records,ref=ref)
+    return render_template(f'edit_serial/{template_name}', form=form, device=device, history=history_records, ref=ref)
     
 
+@inventory_bp.route('/device/<int:device_id>/edit_serial_axle', methods=['GET', 'POST'])
+@login_required
+def edit_serial_axle(device_id):
+    return edit_serial(device_id, "axle.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_balise', methods=['GET', 'POST'])
+@login_required
+def edit_serial_balise(device_id):
+    return edit_serial(device_id, "balise.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_emp', methods=['GET', 'POST'])
+@login_required
+def edit_serial_emp(device_id):
+    return edit_serial(device_id, "emp.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_il', methods=['GET', 'POST'])
+@login_required
+def edit_serial_il(device_id):
+    return edit_serial(device_id, "il.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_mitrac', methods=['GET', 'POST'])
+@login_required
+def edit_serial_mitrac(device_id):
+    return edit_serial(device_id, "mitrac.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_obc', methods=['GET', 'POST'])
+@login_required
+def edit_serial_obc(device_id):
+    return edit_serial(device_id, "obc.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_pid', methods=['GET', 'POST'])
+@login_required
+def edit_serial_pid(device_id):
+    return edit_serial(device_id, "pid.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_pli', methods=['GET', 'POST'])
+@login_required
+def edit_serial_pli(device_id):
+    return edit_serial(device_id, "pli.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_point', methods=['GET', 'POST'])
+@login_required
+def edit_serial_point(device_id):
+    return edit_serial(device_id, "point.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_tap', methods=['GET', 'POST'])
+@login_required
+def edit_serial_tap(device_id):
+    return edit_serial(device_id, "tap.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_tel', methods=['GET', 'POST'])
+@login_required
+def edit_serial_tel(device_id):
+    return edit_serial(device_id, "tel.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_trackname', methods=['GET', 'POST'])
+@login_required
+def edit_serial_trackname(device_id):
+    return edit_serial(device_id, "trackname.html")
+
+@inventory_bp.route('/device/<int:device_id>/edit_serial_ups', methods=['GET', 'POST'])
+@login_required
+def edit_serial_ups(device_id):
+    return edit_serial(device_id, "ups.html")
 
 # Route สำหรับแก้ไข force_data
 @inventory_bp.route('/force_id/<int:device_id>/edit_force_data', methods=['GET', 'POST'])

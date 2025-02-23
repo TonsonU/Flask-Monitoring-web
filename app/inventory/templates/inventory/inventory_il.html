@@ -60,7 +60,7 @@
                 <td>{{ device.location.name if device.location else '-' }}</td>                
                 <td>{{ device.ip_address or ('-') }}</td>                
                 <td>
-                    <a href="{{ url_for('inventory.edit_serial_number', device_id=device.id) }}">
+                    <a href="{{ url_for('inventory.edit_serial_il', device_id=device.id) }}">
                         {{ device.serial_number or ('-') }}
                     </a>
                 </td>
@@ -94,6 +94,12 @@
         document.body.scrollTop = 0; // สำหรับ Safari
         document.documentElement.scrollTop = 0; // สำหรับ Chrome, Firefox, IE และ Opera
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname; // ดึง path ของ URL ปัจจุบัน
+        sessionStorage.setItem('previousPage', currentPath); // บันทึก path ปัจจุบันลงใน sessionStorage
+    });
 </script>
 
 </body>

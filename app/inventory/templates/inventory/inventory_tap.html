@@ -75,9 +75,10 @@
                 <td>{{ device.device_role or ('-') }}</td>
                 <td>{{ device.channel or ('-') }}</td>
                 <td>
-                    <a href="{{ url_for('inventory.edit_serial_number', device_id=device.id) }}">
+                    <a href="{{ url_for('inventory.edit_serial_tap', device_id=device.id) }}">
                         {{ device.serial_number or ('-') }}
                     </a>
+                    
                 </td>
             </tr>
             {% endfor %}
@@ -108,6 +109,12 @@
         document.body.scrollTop = 0; // สำหรับ Safari
         document.documentElement.scrollTop = 0; // สำหรับ Chrome, Firefox, IE และ Opera
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname; // ดึง path ของ URL ปัจจุบัน
+        sessionStorage.setItem('previousPage', currentPath); // บันทึก path ปัจจุบันลงใน sessionStorage
+    });
 </script>
 
 </body>

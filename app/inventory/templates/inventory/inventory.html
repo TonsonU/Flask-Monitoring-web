@@ -60,12 +60,7 @@
                 <td>{{ device.location.name if device.location else '-' }}</td>
                 <td>{{ device.bound or ('-') }}</td>
                 <td>{{ device.inandout or ('-') }}</td>
-                <td>
-                    <a href="{{ url_for('inventory.edit_serial_number', device_id=device.id) }}">
-                        {{ device.serial_number or ('N/A') }}
-
-                    </a>
-                </td>
+                <td>{{ device.serial_number or ('N/A') }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -95,6 +90,12 @@
         document.body.scrollTop = 0; // สำหรับ Safari
         document.documentElement.scrollTop = 0; // สำหรับ Chrome, Firefox, IE และ Opera
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname; // ดึง path ของ URL ปัจจุบัน
+        sessionStorage.setItem('previousPage', currentPath); // บันทึก path ปัจจุบันลงใน sessionStorage
+    });
 </script>
 
 </body>
