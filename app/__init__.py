@@ -53,3 +53,5 @@ def create_app():
     app.add_template_filter(datetime_bangkok, 'datetime_bangkok')
 
     return app
+
+
