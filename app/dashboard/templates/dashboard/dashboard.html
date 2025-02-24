@@ -2,157 +2,114 @@
 {% block content %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Sidebar ใหญ่กึ่งกลางข้างจอ</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome (Icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Custom CSS -->
+
     <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-
-        .wrapper {
-            display: flex;
-            flex: 1;
-            width: 100%;
-        }
-
-        /* 🔹 Sidebar */
+        /* กำหนด Sidebar เป็นกล่องใหญ่และเว้นระยะห่างขอบบน-ล่าง 20% */
         .sidebar {
-            width: 250px;
-            background: #343a40;
-            color: white;
-            padding: 15px;
+            width: 200px; /* กำหนดความกว้าง */
+            height: 60vh; /* ใช้ 60% ของความสูงหน้าจอ */
             position: fixed;
-            height: 100%;
-            transition: all 0.3s ease-in-out;
-            z-index: 1000;
+            top: 10vh; /* เว้นระยะห่างจากขอบบน 20% */
+            left: 0;
+            background-color: #343a40;
+            color: white;
+            border-radius: 10px; /* ทำให้มีมุมโค้ง */
+            padding: 20px;
+            text-align: left;
+            transition: 0.3s;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
         }
 
+        /* ปุ่ม Toggle Sidebar */
+        #toggleSidebar {
+            position: fixed;
+            top: 50%;
+            left: 290px; /* ปุ่มอยู่ถัดจาก Sidebar */
+            transform: translateY(-50%);
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* ปรับเมนูให้ดูดีขึ้น */
         .sidebar a {
             color: white;
-            text-decoration: none;
             display: block;
-            padding: 10px;
-            margin: 5px 0;
+            padding: 12px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            transition: 0.2s;
             border-radius: 5px;
         }
 
-        .sidebar a:hover, .sidebar .active {
-            background: #495057;
+        .sidebar a:hover {
+            background-color: #495057;
         }
 
-        /* 🔹 Main Content */
-        .content {
-            flex-grow: 1; /* ✅ ปรับให้ Content เต็มพื้นที่ */
-            padding: 20px;
-            margin-left: 250px; /* ✅ ป้องกัน Sidebar ทับ */
-            width: 100%;
-            transition: margin-left 0.3s ease-in-out;
+        /* เมื่อ Sidebar ถูกซ่อน */
+        .sidebar.closed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
         }
 
-        /* 🔹 Responsive Design */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 0;
-                overflow: hidden;
-            }
-            .content {
-                margin-left: 0;
-            }
+        /* ปรับตำแหน่งปุ่มเมื่อ Sidebar ถูกซ่อน */
+        .sidebar.closed + #toggleSidebar {
+            left: 10px;
         }
-
     </style>
 </head>
 <body>
 
-    <!-- 🔹 Navbar ด้านบน -->
-    <nav class="navbar navbar-dark bg-dark px-3">
-        <a class="navbar-brand" href="#"><i class="fas fa-chart-line"></i> Dashboard</a>
-        <button class="btn btn-outline-light" id="toggleSidebar"><i class="fas fa-bars"></i></button>
-    </nav>
-
-    <div class="wrapper">
-        <!-- 🔹 Sidebar ด้านข้าง -->
-        <div class="sidebar" id="sidebar">
-            <a href="#" class="active"><i class="fas fa-home"></i> Home</a>
-            <a href="#"><i class="fas fa-chart-pie"></i> Analytics</a>
-            <a href="#"><i class="fas fa-cogs"></i> Settings</a>
-            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </div>
-
-        <!-- 🔹 เนื้อหาหลัก -->
-        <div class="content">
-            <h2>Work Overview</h2>
-            <p>ข้อมูลภาพรวมเกี่ยวกับงานของคุณ</p>
-
-            <!-- 🔹 กราฟข้อมูล -->
-            <div class="chart-container">
-                <canvas id="workChart"></canvas>
-            </div>
-        </div>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h4><i class="fa-solid fa-bars"></i> เมนูหลัก</h4>
+        <a href="#"><i class="fa-solid fa-house"></i> หน้าแรก</a>
+        <a href="#"><i class="fa-solid fa-chart-line"></i> รายงาน</a>
+        <a href="#"><i class="fa-solid fa-box"></i> สินค้า</a>
+        <a href="#"><i class="fa-solid fa-user"></i> โปรไฟล์</a>
+        <a href="#"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a>
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
+    <!-- ปุ่ม Toggle -->
+    <button id="toggleSidebar">☰</button>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // Toggle Sidebar
-        document.getElementById("toggleSidebar").addEventListener("click", function() {
-            const sidebar = document.getElementById("sidebar");
-            if (sidebar.style.width === "250px") {
-                sidebar.style.width = "0";
+        document.getElementById("toggleSidebar").addEventListener("click", function () {
+            let sidebar = document.getElementById("sidebar");
+            let toggleBtn = document.getElementById("toggleSidebar");
+
+            // ถ้า Sidebar เปิดอยู่ ให้ซ่อน
+            if (!sidebar.classList.contains("closed")) {
+                sidebar.classList.add("closed");
             } else {
-                sidebar.style.width = "250px";
-            }
-        });
-
-        // Chart.js Example
-        const ctx = document.getElementById('workChart').getContext('2d');
-        const workChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
-                datasets: [{
-                    label: 'Work Status',
-                    data: [12, 19, 7, 5], // ✅ **ต้องดึงข้อมูลจาก DB มาใส่แทน**
-                    backgroundColor: ['#28a745', '#ffc107', '#17a2b8', '#dc3545']
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-
-        document.getElementById("toggleSidebar").addEventListener("click", function() {
-            const sidebar = document.getElementById("sidebar");
-            const content = document.querySelector(".content");
-
-            if (sidebar.style.width === "250px") {
-                sidebar.style.width = "0";
-                content.style.marginLeft = "0";
-            } else {
-                sidebar.style.width = "250px";
-                content.style.marginLeft = "250px";
+                sidebar.classList.remove("closed");
             }
         });
     </script>
 
 </body>
 </html>
+
 
 {% endblock %}

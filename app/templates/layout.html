@@ -46,7 +46,7 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav me-auto"> <!-- me-auto ใช้ให้เมนูอยู่ทางซ้ายสุด -->
-					
+										
 					
 					<!-- Dropdown Task List-->
 					<li class="nav-item dropdown">
@@ -112,7 +112,7 @@
 		</div>
 	</nav>
 
-	<main class="{% if 'dashboard' in request.path %}container-fluid{% else %}container{% endif %}">
+	<main class="container">
 		{% block content %}
 		{% endblock %}
 	</main>
