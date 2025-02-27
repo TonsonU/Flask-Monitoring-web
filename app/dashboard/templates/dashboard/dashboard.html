@@ -1,112 +1,102 @@
 {% extends "layout.html" %}
 {% block content %}
 
+
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar ใหญ่กึ่งกลางข้างจอ</title>
-
-    <!-- Bootstrap CSS -->
+    <title>Bootstrap5 Sidebar Full Height</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome (Icons) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* กำหนด Sidebar เป็นกล่องใหญ่และเว้นระยะห่างขอบบน-ล่าง 20% */
-        .sidebar {
-            width: 200px; /* กำหนดความกว้าง */
-            height: 60vh; /* ใช้ 60% ของความสูงหน้าจอ */
+        /* ทำให้ Sidebar สูงเต็มจอ */
+        #bdSidebar {
+            height: 100vh;
             position: fixed;
-            top: 10vh; /* เว้นระยะห่างจากขอบบน 20% */
+            top: 0;
             left: 0;
-            background-color: #343a40;
+            width: 250px;
+            background-color: #363636; /* เปลี่ยนสีพื้นหลังเป็นสีเขียว */
             color: white;
-            border-radius: 10px; /* ทำให้มีมุมโค้ง */
-            padding: 20px;
-            text-align: left;
-            transition: 0.3s;
-            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
+            padding: 15px;
+            overflow-y: auto; /* ให้เลื่อนลงได้ถ้าเมนูเยอะ */
+            display: flex; /* เพิ่ม display: flex; */
+            flex-direction: column; /* เพิ่ม flex-direction: column; */
         }
 
-        /* ปุ่ม Toggle Sidebar */
-        #toggleSidebar {
-            position: fixed;
-            top: 50%;
-            left: 290px; /* ปุ่มอยู่ถัดจาก Sidebar */
-            transform: translateY(-50%);
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        /* ปรับเมนูให้ดูดีขึ้น */
-        .sidebar a {
-            color: white;
-            display: block;
-            padding: 12px 15px;
+        /* ปรับแต่ง Sidebar Menu */
+        .mynav li a {
+            color: #fff;
             text-decoration: none;
-            font-size: 18px;
-            transition: 0.2s;
+            width: 100%;
+            display: block;
             border-radius: 5px;
+            padding: 15px 10px; /* เพิ่ม padding top-bottom and left-right*/
         }
 
-        .sidebar a:hover {
-            background-color: #495057;
+        /* เพิ่ม CSS ตัวนี้ */
+        .mynav {
+            margin-top: 60px; /* ปรับค่าตามต้องการ */
+            
         }
 
-        /* เมื่อ Sidebar ถูกซ่อน */
-        .sidebar.closed {
-            width: 0;
-            padding: 0;
-            overflow: hidden;
+        /* Add space between menu items */
+        .mynav li {
+            margin-bottom: 10px; /* Adjust this value to change the spacing */
         }
 
-        /* ปรับตำแหน่งปุ่มเมื่อ Sidebar ถูกซ่อน */
-        .sidebar.closed + #toggleSidebar {
-            left: 10px;
+        .mynav li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+         /* เพิ่ม CSS ตัวนี้ */
+        .mynav {
+            margin-top: 60px; /* ปรับค่าตามต้องการ */
+            
+        }
+
+        /* ปรับแต่งเนื้อหาหลักให้เหลือพื้นที่จาก Sidebar */
+        .content {
+            margin-left: 260px; /* ทำให้เนื้อหาไม่ซ้อนทับ Sidebar */
+            padding: 20px;
+        }
+
+        /* เพิ่ม margin-top: auto; ให้กับ li ของเมนูออกจากระบบ */
+        .mynav li:last-child {
+            margin-top: auto;
         }
     </style>
 </head>
 <body>
 
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h4><i class="fa-solid fa-bars"></i> เมนูหลัก</h4>
-        <a href="#"><i class="fa-solid fa-house"></i> หน้าแรก</a>
-        <a href="#"><i class="fa-solid fa-chart-line"></i> รายงาน</a>
-        <a href="#"><i class="fa-solid fa-box"></i> สินค้า</a>
-        <a href="#"><i class="fa-solid fa-user"></i> โปรไฟล์</a>
-        <a href="#"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a>
+    <div id="bdSidebar">
+        
+        <ul class="mynav nav flex-column">
+            <li class="nav-item mb-1">
+                <a href="#"><i class="fa-solid fa-house"></i> Overview</a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="#"><i class="fa-solid fa-chart-line"></i> Location</a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="#"><i class="fa-solid fa-box"></i> Equipment</a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="#"><i class="fa-solid fa-user"></i> Tracking</a>
+            </li>
+            
+        </ul>
     </div>
 
-    <!-- ปุ่ม Toggle -->
-    <button id="toggleSidebar">☰</button>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        document.getElementById("toggleSidebar").addEventListener("click", function () {
-            let sidebar = document.getElementById("sidebar");
-            let toggleBtn = document.getElementById("toggleSidebar");
-
-            // ถ้า Sidebar เปิดอยู่ ให้ซ่อน
-            if (!sidebar.classList.contains("closed")) {
-                sidebar.classList.add("closed");
-            } else {
-                sidebar.classList.remove("closed");
-            }
-        });
-    </script>
+    <!-- เนื้อหาหลัก -->
+    <div class="content">
+        <h2>Dashboard Content</h2>
+        <p>เนื้อหาของ Dashboard จะแสดงในพื้นที่นี้</p>
+    </div>
 
 </body>
 </html>

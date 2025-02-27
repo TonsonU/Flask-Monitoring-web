@@ -1,3 +1,4 @@
+# app/dashboard/routes.py
 ####################################################
 # Flask Monitoring Web
 #
@@ -19,9 +20,10 @@ from . import dashboard_bp
 
 
 @dashboard_bp.route('/dashboard')
+@login_required
 def dashboard():
     """ แสดงหน้า Dashboard """
-    return render_template('dashboard.html')
+    return render_template('dashboard.html') # แก้ไขตรงนี้
 
 @dashboard_bp.route('/api/work_data')
 def work_data():

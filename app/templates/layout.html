@@ -1,3 +1,4 @@
+<!-- app/templates/layout.html -->
 <!--
 ####################################################
 # Flask Monitoring Web
@@ -33,6 +34,22 @@
 
 	<!-- ลิงก์ไปยัง Boxicons -->
 	<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex-grow: 1; /* เพิ่ม flex-grow: 1; ให้ main */
+            padding: 20px;
+        }
+        footer{
+            flex-shrink: 0;
+        }
+
+    </style>
 
 </head>
 <body>
@@ -112,10 +129,10 @@
 		</div>
 	</nav>
 
-	<main class="container">
-		{% block content %}
-		{% endblock %}
-	</main>
+     <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
 	<!-- Footer as a Gray Line -->
 	<footer>
