@@ -17,6 +17,9 @@ from sqlalchemy import or_
 from .forms import EditForceDataForm, EditSerialNumberForm, EditMacAddressForm, EditModuleForm
 from app.extensions import db
 from . import inventory_bp
+import pytz
+from pytz import timezone
+from datetime import datetime
 
 @inventory_bp.route('/inventory_all')
 @login_required

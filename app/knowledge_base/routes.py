@@ -29,6 +29,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
 @knowledge_bp.route('/knowledge_base')
+@login_required
 def knowledge_base():
         items = KnowledgeBase.query.all()
         return render_template('knowledge_base.html', items=items) 
