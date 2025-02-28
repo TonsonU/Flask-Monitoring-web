@@ -10,7 +10,7 @@
 #
 ####################################################
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify, current_app
 from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Work, Comment, Line, Location, DeviceType, DeviceName
@@ -19,6 +19,8 @@ import pytz
 from pytz import timezone
 from datetime import datetime
 from . import work_bp
+from werkzeug.utils import secure_filename
+import os
 
 
 
@@ -239,10 +241,23 @@ def work_detail(number):
             # จัดการอัปโหลดรูปภาพ
             if form.image.data:
                 image_file = form.image.data
-                filename = secure_filename(image_file.filename)
-                image_path = os.path.join('static/uploads', filename)
+                filename = secure_filename(image_file.filename)  # ป้องกันชื่อไฟล์อันตราย
+                
+                # ใช้ path ที่ถูกต้อง และรองรับทุกระบบปฏิบัติการ
+                upload_folder = os.path.join(current_app.root_path, 'static/uploads')
+                
+                # ตรวจสอบว่ามีโฟลเดอร์หรือไม่ ถ้าไม่มีให้สร้าง
+                if not os.path.exists(upload_folder):
+                    os.makedirs(upload_folder)
+
+                # กำหนด path ไฟล์ที่จะบันทึก
+                image_path = os.path.join(upload_folder, filename)
+                
+                # บันทึกไฟล์ลงเซิร์ฟเวอร์
                 image_file.save(image_path)
-                image_url = url_for('static', filename='uploads/' + filename)
+                
+                # สร้าง URL ที่ถูกต้องสำหรับการแสดงผล
+                image_url = url_for('static', filename=f'uploads/{filename}', _external=True)
                 
             # แปลง PDF Path เป็น URL หากจำเป็น
             pdf_url = form.pdf_url.data.strip() if form.pdf_url.data else None
