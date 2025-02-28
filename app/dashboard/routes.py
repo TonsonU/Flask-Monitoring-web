@@ -23,33 +23,53 @@ from . import dashboard_bp
 @login_required
 def dashboard():
     """ แสดงหน้า Dashboard """
-    return render_template('dashboard.html') # แก้ไขตรงนี้
+    total_cm = Work.query.count()  # นับจำนวนงานทั้งหมด
+    open_cm = Work.query.filter_by(status="Open").count()  # งานที่กำลังดำเนินการ
+    close_cm = Work.query.filter_by(status="Close").count()  # งานที่เสร็จแล้ว
 
-@dashboard_bp.route('/api/work_data')
-def work_data():
-    """ ดึงข้อมูล Work และสามารถกรองตามวันที่ """
-    start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
+    return render_template("dashboard/dashboard.html", 
+                           total_cm=total_cm,
+                           open_cm=open_cm,
+                           close_cm=close_cm)
 
-    query = Work.query
-    if start_date and end_date:
-        query = query.filter(Work.create_date.between(start_date, end_date))
-    
-    works = query.all()
+@dashboard_bp.route("/api/overview_data")
+def overview_data():
+    """ API ส่งข้อมูลจำนวนงานซ่อม CM """
+    data = {
+        "total_cm": Work.query.count(),
+        "open_cm": Work.query.filter_by(status="Open").count(),
+        "close_cm": Work.query.filter_by(status="Close").count(),
+    }
+    return jsonify(data)
+
+
+@dashboard_bp.route("/api/equipment_failure", methods=["GET"])
+def equipment_failure():
+    """API: นับจำนวนงานซ่อมที่เสียบ่อยที่สุดตามอุปกรณ์"""
+    device_counts = db.session.query(
+        Work.device_type_id, db.func.count(Work.device_type_id)
+    ).group_by(Work.device_type_id).order_by(db.func.count(Work.device_type_id).desc()).limit(10).all()
+
+    print("🔍 DEBUG: Equipment Failure Data:", device_counts)  # ✅ Debug API
 
     data = {
-        "labels": [],
-        "values": []
+        "labels": [f"อุปกรณ์ {device_id}" for device_id, count in device_counts],
+        "values": [count for device_id, count in device_counts],
     }
-
-    work_status_count = {}
-    for work in works:
-        status = work.status
-        if status not in work_status_count:
-            work_status_count[status] = 0
-        work_status_count[status] += 1
-
-    data["labels"] = list(work_status_count.keys())
-    data["values"] = list(work_status_count.values())
-
     return jsonify(data)
+
+
+
+@dashboard_bp.route("/api/pending_tasks_location")
+def pending_tasks_location():
+    """API: นับจำนวนงานที่ค้างอยู่ในแต่ละสถานที่"""
+    location_counts = db.session.query(
+        Work.location_id, db.func.count(Work.location_id)
+    ).filter(Work.status == "Open").group_by(Work.location_id).order_by(db.func.count(Work.location_id).desc()).limit(15).all()
+
+    data = {
+        "labels": [f"สถานที่ {location_id}" for location_id, count in location_counts],
+        "values": [count for location_id, count in location_counts],
+    }
+    return jsonify(data)
+
