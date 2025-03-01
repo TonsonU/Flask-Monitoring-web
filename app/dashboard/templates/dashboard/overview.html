@@ -64,42 +64,5 @@
             </div>
         </div>
     </div>
-    <script>
-            // Example data for charts and tables (replace with your actual data)
-            const equipmentFailureData = {
-                labels: ['อุปกรณ์ A', 'อุปกรณ์ B', 'อุปกรณ์ C', 'อุปกรณ์ D','อุปกรณ์ E','อุปกรณ์ F','อุปกรณ์ G','อุปกรณ์ H','อุปกรณ์ I','อุปกรณ์ J','อุปกรณ์ K','อุปกรณ์ L','อุปกรณ์ M','อุปกรณ์ N','อุปกรณ์ O','อุปกรณ์ P','อุปกรณ์ Q'],
-                data: [30, 25, 20, 15, 10, 5,4,3,2,1,1,1,1,1,1,1,1]
-            };
-            const pendingTaskData = {
-                labels: ['สถานที่ A', 'สถานที่ B', 'สถานที่ C','สถานที่ D','สถานที่ E','สถานที่ F','สถานที่ G','สถานที่ H','สถานที่ I','สถานที่ J','สถานที่ K','สถานที่ L','สถานที่ M','สถานที่ N','สถานที่ O','สถานที่ P','สถานที่ Q','สถานที่ R','สถานที่ S','สถานที่ T','สถานที่ U','สถานที่ V','สถานที่ W','สถานที่ X','สถานที่ Y','สถานที่ Z','สถานที่ AA','สถานที่ BB','สถานที่ CC','สถานที่ DD','สถานที่ EE','สถานที่ FF','สถานที่ GG','สถานที่ HH','สถานที่ II','สถานที่ JJ','สถานที่ KK','สถานที่ LL','สถานที่ MM','สถานที่ NN','สถานที่ OO','สถานที่ PP','สถานที่ QQ','สถานที่ RR'],
-                data: [30, 25, 20, 15, 10, 5,4,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-            };
-             // Render the charts
-            const equipmentFailurePieChart = new Chart(document.getElementById('equipment-failure-pie-chart'), {
-                type: 'pie',
-                data: {
-                    labels: equipmentFailureData.labels,
-                    datasets: [{
-                        label: 'จำนวนงาน',
-                        data: equipmentFailureData.data,
-                        backgroundColor: ['rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)','rgba(54, 162, 235, 0.8)', 'rgba(255, 99, 132, 0.8)']
-                    }]
-                }
-            });
-
-            const pendingTasksBarChart = new Chart(document.getElementById('pending-tasks-by-location-bar-chart'), {
-            type: 'bar',
-            data: {
-                labels: pendingTaskData.labels,
-                datasets: [{
-                    label: 'จำนวนงานค้าง',
-                    data: pendingTaskData.data,
-                    backgroundColor: 'rgba(75, 192, 192, 0.8)'
-                }]
-            },
-            options:{
-                indexAxis:'y'
-            }
-        });
-        </script>
+    
 </div>

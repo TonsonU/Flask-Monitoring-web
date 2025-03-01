@@ -3,7 +3,7 @@ window.onload = async function () {
 
     try {
         // 📌 ดึงข้อมูล "อุปกรณ์ที่เสียบ่อยที่สุด"
-        let equipResponse = await fetch("/api/equipment_failure");
+        let equipResponse = await fetch("/dashboard/api/equipment_failure");
         let equipData = await equipResponse.json();
         console.log("📊 Equipment Data:", equipData);  // ✅ Debugging JSON
 
@@ -35,7 +35,7 @@ window.onload = async function () {
         });
 
         // 📌 ดึงข้อมูล "งานซ่อมที่ค้างในแต่ละสถานที่"
-        let locationResponse = await fetch("/api/pending_tasks_location");
+        let locationResponse = await fetch("/dashboard/api/pending_tasks_location");
         let locationData = await locationResponse.json();
         console.log("📊 Location Data:", locationData);  // ✅ Debugging JSON
 
@@ -50,19 +50,23 @@ window.onload = async function () {
         window.locationChart = new Chart(locationCtx, {
             type: "bar",
             data: {
-                labels: locationData.labels,
+                labels: locationData.labels,       // 📌 ใช้ชื่อสถานที่
                 datasets: [{
                     label: "งานที่ค้างอยู่",
-                    data: locationData.values,
+                    data: locationData.values,     // 📌 จำนวนงานที่ค้างอยู่
                     backgroundColor: "#36a2eb"
                 }]
             },
             options: {
                 responsive: true,
-                indexAxis: 'y',
+                indexAxis: 'y',  // ✅ แสดงแนวแกนนอน
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1, // ✅ บังคับให้เพิ่มทีละ 1 (ไม่มีเลขทศนิยม)
+                            precision: 0  // ✅ บังคับให้แสดงเฉพาะจำนวนเต็ม
+                        }
                     }
                 }
             }

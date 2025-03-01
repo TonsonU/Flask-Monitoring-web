@@ -13,7 +13,7 @@
 
 from flask import Blueprint, render_template,request, url_for, flash, redirect, jsonify, current_app
 from flask_login import login_required,current_user
-from app.models import DeviceName, DeviceType, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db, Work
+from app.models import DeviceName, DeviceType, Location, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db, Work
 from sqlalchemy import or_
 from app.extensions import db
 from . import dashboard_bp
@@ -45,31 +45,47 @@ def overview_data():
 
 @dashboard_bp.route("/api/equipment_failure", methods=["GET"])
 def equipment_failure():
-    """API: นับจำนวนงานซ่อมที่เสียบ่อยที่สุดตามอุปกรณ์"""
-    device_counts = db.session.query(
-        Work.device_type_id, db.func.count(Work.device_type_id)
-    ).group_by(Work.device_type_id).order_by(db.func.count(Work.device_type_id).desc()).limit(10).all()
+    """API: นับจำนวนงานซ่อมที่เสียบ่อยที่สุดตามอุปกรณ์ และแสดงชื่ออุปกรณ์"""
+    
+    device_counts = (
+        db.session.query(DeviceType.name, db.func.count(Work.device_type_id))
+        .join(DeviceType, DeviceType.id == Work.device_type_id)  # ✅ JOIN DeviceType
+        .group_by(DeviceType.name)
+        .order_by(db.func.count(Work.device_type_id).desc())
+        .limit(10)  # ดึงแค่ 10 อันดับแรก
+        .all()
+    )
 
     print("🔍 DEBUG: Equipment Failure Data:", device_counts)  # ✅ Debug API
 
     data = {
-        "labels": [f"อุปกรณ์ {device_id}" for device_id, count in device_counts],
-        "values": [count for device_id, count in device_counts],
+        "labels": [device_name for device_name, count in device_counts],  # ✅ ใช้ชื่ออุปกรณ์แทน ID
+        "values": [count for device_name, count in device_counts],
     }
     return jsonify(data)
 
 
 
-@dashboard_bp.route("/api/pending_tasks_location")
+
+@dashboard_bp.route("/api/pending_tasks_location", methods=["GET"])
 def pending_tasks_location():
-    """API: นับจำนวนงานที่ค้างอยู่ในแต่ละสถานที่"""
-    location_counts = db.session.query(
-        Work.location_id, db.func.count(Work.location_id)
-    ).filter(Work.status == "Open").group_by(Work.location_id).order_by(db.func.count(Work.location_id).desc()).limit(15).all()
+    """API: นับจำนวนงานที่ค้างอยู่ในแต่ละสถานที่ พร้อมดึงชื่อสถานที่"""
+    
+    location_counts = (
+        db.session.query(Location.name, db.func.count(Work.location_id))
+        .join(Location, Location.id == Work.location_id)  # ✅ JOIN Location
+        .filter(Work.status == "Open")  # ✅ กรองเฉพาะงานที่ยังไม่เสร็จ
+        .group_by(Location.name)
+        .order_by(db.func.count(Work.location_id).desc())
+        .limit(15)  # ✅ ดึงแค่ 15 อันดับแรก
+        .all()
+    )
+
+    print("🔍 DEBUG: Pending Tasks by Location Data:", location_counts)  # ✅ Debug API
 
     data = {
-        "labels": [f"สถานที่ {location_id}" for location_id, count in location_counts],
-        "values": [count for location_id, count in location_counts],
+        "labels": [location_name for location_name, count in location_counts],  # ✅ ใช้ชื่อสถานที่แทน ID
+        "values": [count for location_name, count in location_counts],
     }
     return jsonify(data)
 
