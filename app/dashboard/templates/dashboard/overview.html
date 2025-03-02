@@ -2,67 +2,97 @@
 <div id="overview" class="container-fluid">
     <div class="row mb-4">
         <div class="col-md-12">
-            <h2>ภาพรวมงาน CM</h2>
+            <h2 class="mb-3 fw-bold">Overview CM</h2>
         </div>
+
         <!-- Summary Cards -->
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <h5 class="card-title">จำนวนงาน CM ทั้งหมด</h5>
-                    <p class="card-text" id="total-cm-tasks">{{ total_cm }}</p>
+        <div class="row g-3">
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card card-summary bg-primary-light shadow-sm rounded-3">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-container bg-primary">
+                            <i class="fas fa-list-check"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold text-primary">จำนวนงาน CM ทั้งหมด</h6>
+                            <p class="fs-3 fw-bold text-dark" id="total-cm-tasks">{{ total_cm }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card card-summary bg-warning-light shadow-sm rounded-3">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-container bg-warning">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold text-warning">งานที่กำลังดำเนินการ</h6>
+                            <p class="fs-3 fw-bold text-dark" id="cm-tasks-in-progress">{{ open_cm }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card card-summary bg-success-light shadow-sm rounded-3">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-container bg-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold text-success">งานที่ซ่อมเสร็จแล้ว</h6>
+                            <p class="fs-3 fw-bold text-dark" id="cm-tasks-completed">{{ close_cm }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-dark">
+        
+        
+
+        <!-- Pie Chart: จำนวนงาน CM ทั้งหมด -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
                 <div class="card-body">
-                    <h5 class="card-title">งานที่กำลังดำเนินการ</h5>
-                    <p class="card-text" id="cm-tasks-in-progress">{{ open_cm }}</p>
+                    <h5 class="card-title fw-bold">จำนวนงาน CM ทั้งหมด CM</h5>
+                    <div class="chart-container" style="max-width: 400px; margin: 0 auto;">
+                        <canvas id="cm-status-pie-chart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <h5 class="card-title">งานที่ซ่อมเสร็จแล้ว</h5>
-                    <p class="card-text" id="cm-tasks-completed">{{ close_cm }}</p>
-                </div>
-            </div>
-        </div>
-         
+        
 
         <!-- Pie Chart: อุปกรณ์ที่เสียบ่อยที่สุด -->
-        <div class="col-md-6 mt-4">
-            <div class="card">
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
                 <div class="card-body">
-                    <h5 class="card-title">เปอร์เซ็นต์ประเภทอุปกรณ์ที่เสียบ่อยที่สุด</h5>
-                    <canvas id="equipment-failure-pie-chart"></canvas>
+                    <h5 class="card-title fw-bold">เปอร์เซ็นต์ประเภทอุปกรณ์ที่เสียบ่อยที่สุด</h5>
+                    <canvas id="equipment-failure-pie-chart" style="max-height: 300px;"></canvas>
                 </div>
             </div>
         </div>
 
         <!-- Bar Chart: งานซ่อมที่ค้างอยู่ในแต่ละสถานที่ -->
-        <div class="col-md-6 mt-4">
-            <div class="card">
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
                 <div class="card-body">
-                    <h5 class="card-title">งานซ่อมที่ค้างอยู่ในแต่ละสถานที่</h5>
-                    <canvas id="pending-tasks-by-location-bar-chart"></canvas>
+                    <h5 class="card-title fw-bold">งานซ่อมที่ค้างอยู่ในแต่ละสถานที่</h5>
+                    <canvas id="pending-tasks-by-location-bar-chart"  style="max-height: 300px;"></canvas>
                 </div>
             </div>
         </div>
 
-
-        <!-- Map Visualization: Heatmap/Bubble Chart แสดงจำนวนงาน CM ในแต่ละสถานที่ -->
-        <div class="col-md-12 mt-4">
-            <div class="card">
+        <!-- Bar Chart: งาน CM แยกตาม Line -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
                 <div class="card-body">
-                    <h5 class="card-title">จำนวนงาน CM ในแต่ละสถานที่</h5>
-                    <div id="cm-location-map" style="height: 400px;">
-                        <!-- Map will be rendered here -->
-                    </div>
+                    <h5 class="card-title fw-bold">งาน CM แยกตาม Line</h5>
+                    <canvas id="cm-by-line-bar-chart"  style="max-height: 300px;"></canvas>
                 </div>
             </div>
         </div>
     </div>
-    
 </div>

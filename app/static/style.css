@@ -558,3 +558,118 @@ font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่ส
 .custom-graph-btn:active {
     background-color: #F95454;  /* สีพื้นหลังเมื่อคลิก */
 }
+
+/* ทำให้ Sidebar สูงเต็มจอ */
+#bdSidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    background-color: #363636; /* เปลี่ยนสีพื้นหลังเป็นสีเขียว */
+    color: white;
+    padding: 15px;
+    overflow-y: auto; /* ให้เลื่อนลงได้ถ้าเมนูเยอะ */
+    display: flex; /* เพิ่ม display: flex; */
+    flex-direction: column; /* เพิ่ม flex-direction: column; */
+}
+
+/* ปรับแต่ง Sidebar Menu */
+.mynav li a {
+    color: #fff;
+    text-decoration: none;
+    width: 100%;
+    display: block;
+    border-radius: 5px;
+    padding: 15px 10px; /* เพิ่ม padding top-bottom and left-right*/
+}
+
+/* เพิ่ม CSS ตัวนี้ */
+.mynav {
+    margin-top: 60px; /* ปรับค่าตามต้องการ */
+    
+}
+
+/* Add space between menu items */
+.mynav li {
+    margin-bottom: 10px; /* Adjust this value to change the spacing */
+}
+
+.mynav li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+
+/* ปรับแต่งเนื้อหาหลักให้เหลือพื้นที่จาก Sidebar */
+.content-sidebar {
+    margin-left: 270px; /* ให้ห่างจาก Sidebar 250px + extra padding */
+    padding: 20px;
+    min-height: 100vh;
+    overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอน */
+}
+
+/* เพิ่ม margin-top: auto; ให้กับ li ของเมนูออกจากระบบ */
+.mynav li:last-child {
+    margin-top: auto;
+}
+
+.chart-container {
+    width: 100%;
+    max-width: 500px;  /* ✅ จำกัดขนาดไม่ให้ใหญ่เกิน */
+    height: 300px; /* ✅ กำหนดความสูงให้พอดี */
+    margin: 0 auto;  /* ✅ จัดกึ่งกลาง */
+}
+
+canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* 🎨 ปรับแต่งไอคอนของ Summary Cards */
+.icon-container {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    border-radius: 50%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+/* ปรับแต่งการ์ดให้ดูเรียบหรู */
+.card-summary {
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* เพิ่ม animation เวลา hover */
+.card-summary:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* 🎨 ปรับขนาดไอคอน */
+.icon-container {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    border-radius: 10px;
+    color: white;
+}
+
+/* 📌 ปรับระยะห่างของเนื้อหา */
+.ms-3 {
+    margin-left: 15px;
+}
+
+/* 🎨 ปรับสีพื้นหลังแบบพาสเทล */
+.bg-primary-light { background-color: #0D6EFD  !important; color: white; }
+.bg-warning-light { background-color: #FD7E14  !important; color: white; }
+.bg-success-light { background-color: #198754  !important; color: white; }

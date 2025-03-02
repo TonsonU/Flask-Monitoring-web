@@ -1,61 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<style>
-        /* ทำให้ Sidebar สูงเต็มจอ */
-        #bdSidebar {
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            background-color: #363636; /* เปลี่ยนสีพื้นหลังเป็นสีเขียว */
-            color: white;
-            padding: 15px;
-            overflow-y: auto; /* ให้เลื่อนลงได้ถ้าเมนูเยอะ */
-            display: flex; /* เพิ่ม display: flex; */
-            flex-direction: column; /* เพิ่ม flex-direction: column; */
-        }
 
-        /* ปรับแต่ง Sidebar Menu */
-        .mynav li a {
-            color: #fff;
-            text-decoration: none;
-            width: 100%;
-            display: block;
-            border-radius: 5px;
-            padding: 15px 10px; /* เพิ่ม padding top-bottom and left-right*/
-        }
-
-        /* เพิ่ม CSS ตัวนี้ */
-        .mynav {
-            margin-top: 60px; /* ปรับค่าตามต้องการ */
-            
-        }
-
-        /* Add space between menu items */
-        .mynav li {
-            margin-bottom: 10px; /* Adjust this value to change the spacing */
-        }
-
-        .mynav li a:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        
-        /* ปรับแต่งเนื้อหาหลักให้เหลือพื้นที่จาก Sidebar */
-        .content {
-            margin-left: 270px; /* ให้ห่างจาก Sidebar 250px + extra padding */
-            padding: 20px;
-            min-height: 100vh;
-            overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอน */
-        }
-
-        /* เพิ่ม margin-top: auto; ให้กับ li ของเมนูออกจากระบบ */
-        .mynav li:last-child {
-            margin-top: auto;
-        }
-    </style>
     <!-- Sidebar -->
     <div id="bdSidebar">
         
@@ -78,7 +24,7 @@
     </div>
 
     <!-- เนื้อหาหลัก -->
-    <div class="content">
+    <div class="content-sidebar">
         {% include 'dashboard/overview.html' %}
         {% include 'dashboard/location.html' %}
         {% include 'dashboard/equipment.html' %}
@@ -87,6 +33,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="{{ url_for('static', filename='dashboard.js') }}"></script> 
 
     

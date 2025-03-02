@@ -13,7 +13,7 @@
 
 from flask import Blueprint, render_template,request, url_for, flash, redirect, jsonify, current_app
 from flask_login import login_required,current_user
-from app.models import DeviceName, DeviceType, Location, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db, Work
+from app.models import DeviceName, DeviceType, Location, Line, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db, Work
 from sqlalchemy import or_
 from app.extensions import db
 from . import dashboard_bp
@@ -89,3 +89,17 @@ def pending_tasks_location():
     }
     return jsonify(data)
 
+@dashboard_bp.route("/api/cm_by_line", methods=["GET"])
+def cm_by_line():
+    """API: นับจำนวนงาน CM แยกตาม Line"""
+    line_counts = db.session.query(
+        Line.name, db.func.count(Work.line_id)
+    ).join(Work, Line.id == Work.line_id)  # JOIN ตาราง Work กับ Line
+    line_counts = line_counts.group_by(Line.name).order_by(db.func.count(Work.line_id).desc()).all()
+
+    # JSON Response
+    data = {
+        "labels": [line_name for line_name, count in line_counts],
+        "values": [count for line_name, count in line_counts]
+    }
+    return jsonify(data)
