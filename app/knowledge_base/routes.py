@@ -159,3 +159,38 @@ def upload_image():
         return jsonify({'location': f'/static/uploads/{filename}'})
 
     return jsonify({'error': 'Invalid file type'}), 400
+
+@knowledge_bp.route('/edit_knowledge_base/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_knowledge_base(id):
+    """ แก้ไขข้อมูล Knowledge Base """
+    knowledge = KnowledgeBase.query.get_or_404(id)
+    form = KnowledgeBaseForm(obj=knowledge)
+    thailand_tz = pytz.timezone('Asia/Bangkok')
+
+    if request.method == 'GET':
+        now_th = datetime.now(thailand_tz)
+        form.create_date.data = knowledge.create_date.strftime('%Y-%m-%d %H:%M')
+
+    if form.validate_on_submit():
+        knowledge.device_type = form.device_type.data
+        knowledge.topic = form.topic.data
+        knowledge.description = form.description.data.replace('../static/', '/static/')
+        knowledge.create_by = form.create_by.data
+
+        # แปลงค่า create_date เป็น datetime หากมีการกรอก
+        create_date_str = form.create_date.data
+        try:
+            create_date_naive = datetime.strptime(create_date_str, '%Y-%m-%d %H:%M')
+            knowledge.create_date = thailand_tz.localize(create_date_naive)
+        except ValueError:
+            flash('รูปแบบวันที่และเวลาไม่ถูกต้อง', 'danger')
+            return render_template("edit_knowledge_base.html", form=form, knowledge=knowledge)
+
+        # บันทึกข้อมูลลงในฐานข้อมูล
+        db.session.commit()
+        flash('แก้ไขข้อมูลสำเร็จ!', "success")
+
+        return redirect(url_for('knowledge_base.knowledge_base_detail', id=id))
+
+    return render_template("edit_knowledge_base.html", form=form, knowledge=knowledge)
