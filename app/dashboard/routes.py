@@ -103,3 +103,91 @@ def cm_by_line():
         "values": [count for line_name, count in line_counts]
     }
     return jsonify(data)
+
+
+# Location.html
+@dashboard_bp.route("/api/get_lines_locations", methods=["GET"])
+def get_lines_locations():
+    """ดึงข้อมูล Line ทั้งหมด + Location ตาม Line ID"""
+    line_id = request.args.get("line_id")  # รับค่า line_id จาก dropdown
+
+    # 📌 ดึงข้อมูล Line ทั้งหมด
+    lines = db.session.query(Line.id, Line.name).all()
+    lines_data = [{"id": line.id, "name": line.name} for line in lines]
+
+    # 📌 ถ้ามี line_id ให้ดึง Location ของ Line นั้นเท่านั้น
+    locations_data = []
+    if line_id:
+        locations = (
+            db.session.query(Location.id, Location.name, Location.line_id)
+            .filter(Location.line_id == line_id)
+            .all()
+        )
+        locations_data = [
+            {"id": loc.id, "name": loc.name, "line_id": loc.line_id} for loc in locations
+        ]
+
+    return jsonify({"lines": lines_data, "locations": locations_data})
+
+@dashboard_bp.route("/api/get_cm_data", methods=["GET"])
+def get_cm_data():
+    """ดึงข้อมูล CM ตาม Location ID"""
+    location_id = request.args.get("location_id")
+    if not location_id:
+        return jsonify({"labels": [], "values": []})
+
+    cm_counts = (
+        db.session.query(Work.status, db.func.count(Work.id))
+        .filter(Work.location_id == location_id)
+        .group_by(Work.status)
+        .all()
+    )
+
+    labels = [status for status, count in cm_counts]
+    values = [count for status, count in cm_counts]
+
+    return jsonify({"labels": labels, "values": values})
+
+@dashboard_bp.route("/api/get_work_by_location", methods=["GET"])
+def get_work_by_location():
+    """ดึงข้อมูล Work ตาม Location ID พร้อมแสดงชื่ออุปกรณ์"""
+    location_id = request.args.get("location_id")
+
+    if not location_id:
+        print("❌ No location_id provided")
+        return jsonify([])  # ถ้าไม่มี location_id ให้คืนค่าว่าง
+
+    works = (
+        db.session.query(
+            Work.work_order,
+            Work.status,
+            DeviceType.name.label("device_type_name"),
+            DeviceName.name.label("device_name_name"),
+            Work.description,
+            Work.report_by
+        )
+        .join(DeviceType, DeviceType.id == Work.device_type_id, isouter=True)  # ✅ Join กับ DeviceType
+        .join(DeviceName, DeviceName.id == Work.device_name_id, isouter=True)  # ✅ Join กับ DeviceName
+        .filter(Work.location_id == location_id)
+        .all()
+    )
+
+    print(f"✅ Fetched {len(works)} records for location_id={location_id}")
+    for work in works:
+        print(f"🔹 {work.work_order} | {work.device_type_name} | {work.device_name_name}")
+
+    data = [
+        {
+            "work_order": work.work_order,
+            "status": work.status,
+            "device_type_name": work.device_type_name or "ไม่ระบุ",
+            "device_name_name": work.device_name_name or "ไม่ระบุ",
+            "description": work.description,
+            "report_by": work.report_by,
+        }
+        for work in works
+    ]
+
+    return jsonify(data)
+
+
