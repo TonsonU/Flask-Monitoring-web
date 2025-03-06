@@ -1,9 +1,23 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block dashboard_content %}
+
 <div id="location-dashboard" class="container-fluid">
     <div class="row mb-4">
         <div class="col-md-12">
             <h2 class="mb-3 fw-bold">Location Overview</h2>
         </div>
     </div>
+
+    <!-- Bar Chart: งานซ่อมที่ค้างอยู่ในแต่ละสถานที่ -->
+    <div class="col-lg-6 col-md-12 mt-4">
+        <div class="card shadow-sm rounded-4 text-center">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">เปรียบเทียบงานซ่อมของแต่ละสถานที่</h5>
+                <canvas id="work-location-bar-chart"  style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>    
 
     <!-- Filter Section -->
     <div class="row mb-4">
@@ -21,17 +35,7 @@
         </div>
     </div>
 
-    <!-- Bar Chart -->
-    <div class="row">
-        <div class="col-md-6">
-            <h4 class="fw-bold">เปรียบเทียบงานซ่อมของแต่ละสถานที่</h4>
-            <canvas id="locationBarChart"></canvas>
-        </div>
-        <div class="col-md-6">
-            <h4 class="fw-bold">Stacked Bar Chart: แสดงสถานะงานซ่อม</h4>
-            <canvas id="stackedBarChart"></canvas>
-        </div>
-    </div>
+    
 
     <!-- Data Table -->
     <div class="row mb-4">
@@ -60,3 +64,5 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='location_dashboard.js') }}"></script>
+
+{% endblock %}

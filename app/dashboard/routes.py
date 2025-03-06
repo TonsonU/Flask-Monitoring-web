@@ -22,15 +22,38 @@ from . import dashboard_bp
 @dashboard_bp.route('/dashboard')
 @login_required
 def dashboard():
-    """ แสดงหน้า Dashboard """
-    total_cm = Work.query.count()  # นับจำนวนงานทั้งหมด
-    open_cm = Work.query.filter_by(status="Open").count()  # งานที่กำลังดำเนินการ
-    close_cm = Work.query.filter_by(status="Close").count()  # งานที่เสร็จแล้ว
+    """เมื่อเข้า Dashboard ให้ Redirect ไปหน้า Overview"""
+    return redirect(url_for('dashboard.overview_page'))
 
-    return render_template("dashboard/dashboard.html", 
+@dashboard_bp.route("/overview")
+@login_required
+def overview_page():
+    """แสดงหน้า Overview"""
+    total_cm = Work.query.count()
+    open_cm = Work.query.filter_by(status="Open").count()
+    close_cm = Work.query.filter_by(status="Close").count()
+
+    return render_template("dashboard/overview.html",
                            total_cm=total_cm,
                            open_cm=open_cm,
                            close_cm=close_cm)
+
+
+@dashboard_bp.route("/location")
+@login_required
+def location_page():
+    return render_template("dashboard/location.html")
+
+@dashboard_bp.route("/equipment")
+@login_required
+def equipment_page():
+    return render_template("dashboard/equipment.html")
+
+@dashboard_bp.route("/tracking")
+@login_required
+def tracking_page():
+    return render_template("dashboard/tracking.html")
+    
 
 @dashboard_bp.route("/api/overview_data")
 def overview_data():
@@ -38,7 +61,7 @@ def overview_data():
     data = {
         "total_cm": Work.query.count(),
         "open_cm": Work.query.filter_by(status="Open").count(),
-        "close_cm": Work.query.filter_by(status="Close").count(),
+        "close_cm": Work.query.filter_by(status="Closed").count(),
     }
     return jsonify(data)
 
@@ -148,6 +171,7 @@ def get_cm_data():
 
     return jsonify({"labels": labels, "values": values})
 
+
 @dashboard_bp.route("/api/get_work_by_location", methods=["GET"])
 def get_work_by_location():
     """ดึงข้อมูล Work ตาม Location ID พร้อมแสดงชื่ออุปกรณ์"""
@@ -190,4 +214,23 @@ def get_work_by_location():
 
     return jsonify(data)
 
+@dashboard_bp.route("/api/work_count_by_location", methods=["GET"])
+def work_count_by_location():
+    """API: ดึงจำนวนงานซ่อมทั้งหมด แยกตาม Location"""
+    
+    work_counts = (
+        db.session.query(Location.name, db.func.count(Work.number))
+        .join(Work, Work.location_id == Location.id)  # ✅ Join ตาราง Work กับ Location
+        .filter(Work.status == "Open")  # ✅ กรองเฉพาะงานที่ยังไม่เสร็จ
+        .group_by(Location.name)
+        .order_by(db.func.count(Work.number).desc())  # ✅ เรียงจากมากไปน้อย
+        .limit(10)
+        .all()
+    )
 
+    # ✅ ส่งข้อมูลกลับในรูปแบบ JSON
+    data = {
+        "labels": [location for location, count in work_counts],
+        "values": [count for location, count in work_counts],
+    }
+    return jsonify(data)

@@ -1,43 +1,33 @@
 {% extends "layout.html" %}
 {% block content %}
 
+<!-- Sidebar -->
+<div id="bdSidebar">
+    <ul class="mynav nav flex-column">
+        <li class="nav-item mb-1">
+            <a href="{{ url_for('dashboard.overview_page') }}"><i class="fa-solid fa-house"></i> Overview</a>
+        </li>
+        <li class="nav-item mb-1">
+            <a href="{{ url_for('dashboard.location_page') }}"><i class="fa-solid fa-chart-line"></i> Location</a>
+        </li>
+        <li class="nav-item mb-1">
+            <a href="{{ url_for('dashboard.equipment_page') }}"><i class="fa-solid fa-box"></i> Equipment</a>
+        </li>
+        <li class="nav-item mb-1">
+            <a href="{{ url_for('dashboard.tracking_page') }}"><i class="fa-solid fa-user"></i> Tracking</a>
+        </li>
+    </ul>
+</div>
 
-    <!-- Sidebar -->
-    <div id="bdSidebar">
-        
-        <ul class="mynav nav flex-column">
-            <li class="nav-item mb-1">
-                <a href="#overview"><i class="fa-solid fa-house"></i> Overview</a>
-                <ul class="sub-menu"></ul>
-            </li>
-            <li class="nav-item mb-1">
-                <a href="#location"><i class="fa-solid fa-chart-line"></i> Location</a>
-            </li>
-            <li class="nav-item mb-1">
-                <a href="#equipment"><i class="fa-solid fa-box"></i> Equipment</a>
-            </li>
-            <li class="nav-item mb-1">
-                <a href="#tracking"><i class="fa-solid fa-user"></i> Tracking</a>
-            </li>
-            
-        </ul>
-    </div>
+<!-- เนื้อหาหลัก -->
+<div class="content-sidebar">
+    {% block dashboard_content %}
+        {% include 'dashboard/overview.html' %}    
+    {% endblock %}
+</div>
 
-    <!-- เนื้อหาหลัก -->
-    <div class="content-sidebar">
-        {% include 'dashboard/overview.html' %}
-        {% include 'dashboard/location.html' %}
-        {% include 'dashboard/equipment.html' %}
-        {% include 'dashboard/tracking.html' %}
-        
-    </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    <script src="{{ url_for('static', filename='dashboard.js') }}"></script> 
-
-    
-    <script>
-        // All of your general JavaScript code will go here.
-    </script>
 {% endblock %}
