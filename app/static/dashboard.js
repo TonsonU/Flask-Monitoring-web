@@ -22,7 +22,7 @@ function generateColorPalette(count) {
     return colors;
 }
 
-// 📌 โหลด Pie Chart สำหรับสถานะ CM (Open / Close)
+/// 📌 โหลด Pie Chart สำหรับสถานะ CM (Open / Close)
 async function loadCMStatusPieChart() {
     try {
         let response = await fetch("/dashboard/api/overview_data");
@@ -36,6 +36,7 @@ async function loadCMStatusPieChart() {
         }
 
         let colors = generateColorPalette(2); // สร้างสีสุ่ม 2 สี
+        let total = data.open_cm + data.close_cm; // หาผลรวมทั้งหมด
 
         window.cmStatusChart = new Chart(statusCtx, {
             type: "pie",
@@ -50,9 +51,21 @@ async function loadCMStatusPieChart() {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: "bottom" }
+                    legend: { position: "bottom" },
+                    datalabels: {
+                        formatter: (value) => {
+                            let percentage = ((value / total) * 100).toFixed(1); // คำนวณ % และให้มีทศนิยม 1 ตำแหน่ง
+                            return `${percentage}%`; // แสดงค่าบนกราฟ
+                        },
+                        color: "#fff", // สีของข้อความ
+                        font: {
+                            weight: "bold",
+                            size: 14
+                        }
+                    }
                 }
-            }
+            },
+            plugins: [ChartDataLabels] // เปิดใช้งาน Data Labels
         });
 
     } catch (error) {
@@ -73,7 +86,8 @@ async function loadEquipmentFailurePieChart() {
             window.equipmentFailureChart.destroy();
         }
 
-        let dynamicColors = generateColorPalette(equipData.labels.length);  // ✅ ใช้สีสุ่ม
+        let dynamicColors = generateColorPalette(equipData.labels.length); // ✅ ใช้สีสุ่ม
+        let total = equipData.values.reduce((sum, val) => sum + val, 0); // ✅ คำนวณผลรวมของค่าทั้งหมด
 
         window.equipmentFailureChart = new Chart(equipCtx, {
             type: "pie",
@@ -88,15 +102,28 @@ async function loadEquipmentFailurePieChart() {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: "bottom" }
+                    legend: { position: "bottom" },
+                    datalabels: {
+                        formatter: (value) => {
+                            let percentage = ((value / total) * 100).toFixed(1); // ✅ คำนวณเปอร์เซ็นต์ และปัดเศษทศนิยม 1 ตำแหน่ง
+                            return `${percentage}%`; // ✅ แสดงค่าเป็นเปอร์เซ็นต์
+                        },
+                        color: "#fff", // ✅ กำหนดสีตัวอักษรเป็นสีขาว
+                        font: {
+                            weight: "bold",
+                            size: 14
+                        }
+                    }
                 }
-            }
+            },
+            plugins: [ChartDataLabels] // ✅ ใช้ ChartDataLabels เพื่อแสดงค่าบนกราฟ
         });
 
     } catch (error) {
         console.error("❌ Error fetching Equipment Failure data:", error);
     }
 }
+
 
 // 📌 โหลด Bar Chart สำหรับงานซ่อมที่ค้างอยู่ในแต่ละสถานที่
 async function loadPendingTasksByLocationBarChart() {

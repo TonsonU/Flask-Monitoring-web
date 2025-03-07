@@ -31,7 +31,7 @@ def overview_page():
     """แสดงหน้า Overview"""
     total_cm = Work.query.count()
     open_cm = Work.query.filter_by(status="Open").count()
-    close_cm = Work.query.filter_by(status="Close").count()
+    close_cm = Work.query.filter_by(status="Closed").count()
 
     return render_template("dashboard/overview.html",
                            total_cm=total_cm,
@@ -72,7 +72,7 @@ def equipment_failure():
     
     device_counts = (
         db.session.query(DeviceType.name, db.func.count(Work.device_type_id))
-        .join(DeviceType, DeviceType.id == Work.device_type_id)  # ✅ JOIN DeviceType
+        .join(DeviceType, DeviceType.id == Work.device_type_id)  # ✅ JOIN DeviceType        
         .group_by(DeviceType.name)
         .order_by(db.func.count(Work.device_type_id).desc())
         .limit(10)  # ดึงแค่ 10 อันดับแรก
@@ -187,11 +187,13 @@ def get_work_by_location():
             Work.status,
             DeviceType.name.label("device_type_name"),
             DeviceName.name.label("device_name_name"),
+            Location.name.label("location_name"),  # ✅ ดึงชื่อ Location
             Work.description,
             Work.report_by
         )
         .join(DeviceType, DeviceType.id == Work.device_type_id, isouter=True)  # ✅ Join กับ DeviceType
         .join(DeviceName, DeviceName.id == Work.device_name_id, isouter=True)  # ✅ Join กับ DeviceName
+        .join(Location, Location.id == Work.location_id)  # ✅ JOIN Location
         .filter(Work.location_id == location_id)
         .all()
     )
@@ -206,6 +208,7 @@ def get_work_by_location():
             "status": work.status,
             "device_type_name": work.device_type_name or "ไม่ระบุ",
             "device_name_name": work.device_name_name or "ไม่ระบุ",
+            "location_name": work.location_name,  # ✅ เพิ่มชื่อ Location
             "description": work.description,
             "report_by": work.report_by,
         }
@@ -217,12 +220,12 @@ def get_work_by_location():
 @dashboard_bp.route("/api/work_count_by_location", methods=["GET"])
 def work_count_by_location():
     """API: ดึงจำนวนงานซ่อมทั้งหมด แยกตาม Location"""
-    
+
     work_counts = (
-        db.session.query(Location.name, db.func.count(Work.number))
+        db.session.query(Location.id, Location.name, db.func.count(Work.number))
         .join(Work, Work.location_id == Location.id)  # ✅ Join ตาราง Work กับ Location
         .filter(Work.status == "Open")  # ✅ กรองเฉพาะงานที่ยังไม่เสร็จ
-        .group_by(Location.name)
+        .group_by(Location.id, Location.name)
         .order_by(db.func.count(Work.number).desc())  # ✅ เรียงจากมากไปน้อย
         .limit(10)
         .all()
@@ -230,7 +233,118 @@ def work_count_by_location():
 
     # ✅ ส่งข้อมูลกลับในรูปแบบ JSON
     data = {
-        "labels": [location for location, count in work_counts],
-        "values": [count for location, count in work_counts],
+        "labels": [location_name for location_id, location_name, count in work_counts],
+        "values": [count for location_id, location_name, count in work_counts],
+        "location_ids": [location_id for location_id, location_name, count in work_counts],  # ✅ เพิ่ม location_id
     }
     return jsonify(data)
+
+
+@dashboard_bp.route("/api/work_status_by_location", methods=["GET"])
+def work_status_by_location():
+    """API: ดึงข้อมูลสถานะงานซ่อมในแต่ละสถานที่ (แสดง Top 10)"""
+
+    # ดึงข้อมูลจำนวนงาน "Open" และ "Close" ของแต่ละ Location
+    work_counts = (
+        db.session.query(
+            Location.name,
+            db.func.count(db.case((Work.status == "Open", 1))).label("open_count"),
+            db.func.count(db.case((Work.status == "Closed", 1))).label("close_count"),
+        )
+        .join(Work, Work.location_id == Location.id)
+        .group_by(Location.name)
+        .order_by(db.func.count(Work.number).desc())  # เรียงจากสถานที่ที่มีงานมากที่สุด
+        .limit(10)  # ดึงแค่ 10 อันดับแรก
+        .all()
+    )
+
+    data = {
+        "labels": [row.name for row in work_counts],
+        "open_values": [row.open_count for row in work_counts],
+        "close_values": [row.close_count for row in work_counts],
+    }
+
+    return jsonify(data)
+
+
+# equipment.html
+
+@dashboard_bp.route("/api/work_count_by_equipment", methods=["GET"])
+def work_count_by_equipment():
+    """API: ดึงจำนวนงานซ่อมทั้งหมด แยกตามประเภทอุปกรณ์"""
+
+    # 📌 รับค่าที่เลือกจาก Dropdown (ถ้ามี)
+    equipment_type_id = request.args.get("equipment_type_id")
+
+    # 📌 Query นับจำนวนงานซ่อม แยกตามประเภทอุปกรณ์
+    query = db.session.query(
+        DeviceType.name, db.func.count(Work.id)  # ✅ นับจำนวนงานซ่อม
+    ).join(Work, Work.device_type_id == DeviceType.id)
+
+    # 📌 ถ้ามีการเลือก Filter ตาม Equipment Type
+    if equipment_type_id:
+        query = query.filter(DeviceType.id == equipment_type_id)
+
+    query = (
+        query.group_by(DeviceType.name)
+        .order_by(db.func.count(Work.id).desc())  # ✅ เรียงจากมากไปน้อย
+        .limit(17)  # ✅ แสดงสูงสุด 17 ประเภท
+        .all()
+    )
+
+    # 📌 ส่งข้อมูลกลับในรูปแบบ JSON
+    data = {
+        "labels": [device for device, count in query],
+        "values": [count for device, count in query],
+    }
+    return jsonify(data)
+
+@dashboard_bp.route("/api/get_equipment_types_grouped", methods=["GET"])
+def get_equipment_types_grouped():
+    """API: ดึงรายการประเภทอุปกรณ์ทั้งหมด แต่รวมชื่อที่ซ้ำกัน"""
+
+    # 📌 Query ดึงประเภทอุปกรณ์ทั้งหมด + Line ที่เกี่ยวข้อง
+    equipment_types = (
+        db.session.query(DeviceType.name, Line.name.label("line_name"), db.func.count(Work.number))
+        .join(Work, Work.device_type_id == DeviceType.id)
+        .join(Line, Work.line_id == Line.id)
+        .group_by(DeviceType.name, Line.name)  # ✅ รวมชื่อที่ซ้ำกัน แต่แยกตาม Line
+        .order_by(DeviceType.name, db.func.count(Work.number).desc())  # ✅ เรียงตามชื่อ
+        .all()
+    )
+
+    # 📌 รวมชื่ออุปกรณ์เดียวกัน แต่แยกตาม Line
+    grouped_data = {}
+    for device_name, line_name, count in equipment_types:
+        if device_name not in grouped_data:
+            grouped_data[device_name] = []
+        grouped_data[device_name].append({"line": line_name, "count": count})
+
+    return jsonify(grouped_data)
+
+@dashboard_bp.route("/api/work_trend_by_equipment", methods=["GET"])
+def work_trend_by_equipment():
+    """API: ดึงแนวโน้มจำนวนงานซ่อมของอุปกรณ์แยกตามปี"""
+
+    equipment_name = request.args.get("equipment_name")  # รับค่า Equipment Name จาก Filter
+    if not equipment_name:
+        return jsonify({"labels": [], "values": []})
+
+    work_trend = (
+        db.session.query(
+            db.func.strftime("%Y", Work.create_date).label("year"),  # ดึงปีจาก created_at
+            db.func.count(Work.number).label("work_count")
+        )
+        .join(DeviceType, DeviceType.id == Work.device_type_id)  # ✅ JOIN เพื่อดึงชื่ออุปกรณ์
+        .filter(DeviceType.name == equipment_name)  # ✅ กรองตามชื่ออุปกรณ์
+        .group_by("year")  # ✅ จัดกลุ่มตามปี
+        .order_by("year")  # ✅ เรียงตามปี
+        .all()
+    )
+
+    data = {
+        "labels": [year for year, count in work_trend],  # 📌 ปี
+        "values": [count for year, count in work_trend]  # 📌 จำนวนงานซ่อม
+    }
+    return jsonify(data)
+

@@ -626,7 +626,22 @@ canvas {
     height: 100% !important;
 }
 
+/* 📌 สไตล์ของ Status */
+.status-tag {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    color: white;
+}
 
+/* 📌 กำหนดความกว้างของ Dropdown */
+.custom-dropdown {
+    width: 250px;  /* ✅ ปรับขนาดตามต้องการ */
+    min-width: 200px; /* ✅ กำหนดขนาดขั้นต่ำ */
+    max-width: 300px; /* ✅ ป้องกันกว้างเกินไป */
+}
 
 
 
