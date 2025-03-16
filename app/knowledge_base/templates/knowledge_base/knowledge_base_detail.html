@@ -55,10 +55,10 @@
                     <a href="{{ url_for('knowledge_base.knowledge_base') }}" class="btn-close btn-close-white" aria-label="Close"></a>
                 </div>
                 <div class="card-body">
-                    <a href="{{ url_for('knowledge_base.edit_knowledge_base', number=knowledge.number) }}" class="btn btn-warning">
-                        <i class="fa-solid fa-edit"></i> Edit
-                      </a>
-           
+                    <div class="edit-btn-container">
+                        <a href="{{ url_for('knowledge_base.edit_knowledge_base', number=items.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
+                    </a>
+                    </div>
                 <div class="table-responsive-lg">
                     <table class="table table-striped">
                         <thead>

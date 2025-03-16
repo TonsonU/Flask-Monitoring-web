@@ -13,7 +13,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort
 from flask_login import login_required, current_user
 from app.models import db, KnowledgeBase
-from .forms import KnowledgeBaseForm
+from .forms import KnowledgeBaseForm, EditKnowledgeBaseForm
 import pytz
 from pytz import timezone
 from datetime import datetime
@@ -160,37 +160,43 @@ def upload_image():
 
     return jsonify({'error': 'Invalid file type'}), 400
 
-@knowledge_bp.route('/edit_knowledge_base/<int:id>', methods=['GET', 'POST'])
+@knowledge_bp.route('/edit_knowledge_base/<int:number>', methods=['GET', 'POST'])
 @login_required
-def edit_knowledge_base(id):
-    """ แก้ไขข้อมูล Knowledge Base """
-    knowledge = KnowledgeBase.query.get_or_404(id)
-    form = KnowledgeBaseForm(obj=knowledge)
+def edit_knowledge_base(number):
+    """ แก้ไขข้อมูลใน Knowledge Base """
+    items = KnowledgeBase.query.get_or_404(number)
+
+    # จำกัดสิทธิ์เฉพาะ Admin
+    if current_user.role != 'admin':
+        flash("คุณไม่มีสิทธิ์แก้ไขข้อมูลนี้", "danger")
+        return redirect(url_for('knowledge_base.knowledge_base_detail', number=number))
+
+    # ใช้ EditKnowledgeBaseForm และโหลดค่าจากฐานข้อมูล
+    form = EditKnowledgeBaseForm()
+    form.process(obj=items)  # โหลดค่าที่มีอยู่เข้าไปในฟอร์ม
+
     thailand_tz = pytz.timezone('Asia/Bangkok')
 
-    if request.method == 'GET':
-        now_th = datetime.now(thailand_tz)
-        form.create_date.data = knowledge.create_date.strftime('%Y-%m-%d %H:%M')
-
     if form.validate_on_submit():
-        knowledge.device_type = form.device_type.data
-        knowledge.topic = form.topic.data
-        knowledge.description = form.description.data.replace('../static/', '/static/')
-        knowledge.create_by = form.create_by.data
+        # อัปเดตค่าต่าง ๆ จากฟอร์ม
+        items.device_type = form.device_type.data
+        items.topic = form.topic.data
+        items.description = form.description.data.replace('../static/', '/static/')
+        items.create_by = form.create_by.data
 
-        # แปลงค่า create_date เป็น datetime หากมีการกรอก
+        # แปลง create_date
         create_date_str = form.create_date.data
         try:
             create_date_naive = datetime.strptime(create_date_str, '%Y-%m-%d %H:%M')
-            knowledge.create_date = thailand_tz.localize(create_date_naive)
+            items.create_date = thailand_tz.localize(create_date_naive)
         except ValueError:
-            flash('รูปแบบวันที่และเวลาไม่ถูกต้อง', 'danger')
-            return render_template("edit_knowledge_base.html", form=form, knowledge=knowledge)
+            flash('รูปแบบวันที่ไม่ถูกต้อง', 'danger')
+            return render_template("edit_knowledge_base.html", form=form, items=items)
 
-        # บันทึกข้อมูลลงในฐานข้อมูล
         db.session.commit()
-        flash('แก้ไขข้อมูลสำเร็จ!', "success")
+        flash("แก้ไขข้อมูลสำเร็จ!", "success")
+        return redirect(url_for('knowledge_base.knowledge_base_detail', number=items.number))
 
-        return redirect(url_for('knowledge_base.knowledge_base_detail', id=id))
+    return render_template("edit_knowledge_base.html", form=form, items=items)
 
-    return render_template("edit_knowledge_base.html", form=form, knowledge=knowledge)
+
