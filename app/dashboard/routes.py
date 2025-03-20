@@ -269,36 +269,6 @@ def work_status_by_location():
 
 # equipment.html
 
-@dashboard_bp.route("/api/work_count_by_equipment", methods=["GET"])
-def work_count_by_equipment():
-    """API: ดึงจำนวนงานซ่อมทั้งหมด แยกตามประเภทอุปกรณ์"""
-
-    # 📌 รับค่าที่เลือกจาก Dropdown (ถ้ามี)
-    equipment_type_id = request.args.get("equipment_type_id")
-
-    # 📌 Query นับจำนวนงานซ่อม แยกตามประเภทอุปกรณ์
-    query = db.session.query(
-        DeviceType.name, db.func.count(Work.id)  # ✅ นับจำนวนงานซ่อม
-    ).join(Work, Work.device_type_id == DeviceType.id)
-
-    # 📌 ถ้ามีการเลือก Filter ตาม Equipment Type
-    if equipment_type_id:
-        query = query.filter(DeviceType.id == equipment_type_id)
-
-    query = (
-        query.group_by(DeviceType.name)
-        .order_by(db.func.count(Work.id).desc())  # ✅ เรียงจากมากไปน้อย
-        .limit(17)  # ✅ แสดงสูงสุด 17 ประเภท
-        .all()
-    )
-
-    # 📌 ส่งข้อมูลกลับในรูปแบบ JSON
-    data = {
-        "labels": [device for device, count in query],
-        "values": [count for device, count in query],
-    }
-    return jsonify(data)
-
 @dashboard_bp.route("/api/get_equipment_types_grouped", methods=["GET"])
 def get_equipment_types_grouped():
     """API: ดึงรายการประเภทอุปกรณ์ทั้งหมด แต่รวมชื่อที่ซ้ำกัน"""
@@ -312,6 +282,7 @@ def get_equipment_types_grouped():
         .order_by(DeviceType.name, db.func.count(Work.number).desc())  # ✅ เรียงตามชื่อ
         .all()
     )
+    print("🔍 DEBUG: Equipment Types Grouped Data:", equipment_types)
 
     # 📌 รวมชื่ออุปกรณ์เดียวกัน แต่แยกตาม Line
     grouped_data = {}
@@ -329,6 +300,7 @@ def work_trend_by_equipment():
     equipment_name = request.args.get("equipment_name")  # รับค่า Equipment Name จาก Filter
     if not equipment_name:
         return jsonify({"labels": [], "values": []})
+    print("🔍 DEBUG: Equipment Name:", equipment_name)
 
     work_trend = (
         db.session.query(
@@ -347,4 +319,34 @@ def work_trend_by_equipment():
         "values": [count for year, count in work_trend]  # 📌 จำนวนงานซ่อม
     }
     return jsonify(data)
+
+@dashboard_bp.route("/api/breakdown_by_equipment", methods=["GET"])
+def breakdown_by_equipment():
+    """API: ดึงจำนวนงานซ่อมของ Device Name ตาม Device Type (ไม่แยกตามปี)"""
+
+    equipment_name = request.args.get("device_type_id")
+    print("🔍 DEBUG: Device Type ID:", equipment_name)
+    
+    if not equipment_name:
+        return jsonify({"labels": [], "values": []})
+
+    breakdown_data = (
+        db.session.query(DeviceName.name, db.func.count(Work.device_name_id))
+        .join(Work, Work.device_name_id == DeviceName.id)  # ✅ JOIN Work กับ DeviceName
+        .join(DeviceType, DeviceType.id == DeviceName.device_type_id)  # ✅ JOIN DeviceType
+        .filter(DeviceType.name == equipment_name)  # ✅ กรองตามประเภทอุปกรณ์
+        .group_by(DeviceName.name)  # ✅ รวม Device Name ที่ซ้ำกัน
+        .order_by(db.func.count(Work.device_name_id).desc())  # ✅ เรียงจากมากไปน้อย
+        .all()
+    )
+    print("🔍 DEBUG: Breakdown Data:", breakdown_data)
+
+
+    data = {
+        "labels": [device_name for device_name, count in breakdown_data],  # 📌 ชื่ออุปกรณ์
+        "values": [count for device_name, count in breakdown_data],  # 📌 จำนวนงานซ่อมของอุปกรณ์
+    }
+
+    return jsonify(data)
+
 

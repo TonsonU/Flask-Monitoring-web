@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <!-- line Chart: งานซ่อมที่ค้างอยู่ในแต่ละสถานที่ -->
+        <!-- line Chart: แนวโน้มปัญหาของอุปกรณ์ในช่วงเวลา -->
         <div class="col-lg-6 col-md-12 mt-4">
             <div class="card shadow-sm rounded-4 text-center">
                 <div class="card-body">
@@ -36,6 +36,18 @@
                 </div>
             </div>
         </div>
+
+        <!-- 📌 Bar Chart: งานซ่อมที่ค้างอยู่ในแต่ละสถานที่ -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">ชื่ออุปกรณ์ที่เกิดเคสบ่อยที่สุด</h5>
+                    <canvas id="breakdown-equipment-chart"  style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        
 
     </div>
 </div>
