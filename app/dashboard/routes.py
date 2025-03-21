@@ -13,7 +13,7 @@
 
 from flask import Blueprint, render_template,request, url_for, flash, redirect, jsonify, current_app
 from flask_login import login_required,current_user
-from app.models import DeviceName, DeviceType, Location, Line, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db, Work
+from app.models import DeviceName, DeviceType, Location, Line, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db, Work,PointCaseDetail
 from sqlalchemy import or_
 from app.extensions import db
 from . import dashboard_bp
@@ -349,4 +349,60 @@ def breakdown_by_equipment():
 
     return jsonify(data)
 
+@dashboard_bp.route("/api/device_location_breakdown", methods=["GET"])
+def device_location_breakdown():
+    """API: ดึงจำนวนงานซ่อมของ Device Name (ภายใต้ Device Type ที่เลือก) แยกตาม Location"""
 
+    device_type_name = request.args.get("device_name")  # 🔍 จริงๆ คือ DeviceType.name
+    print("🔍 DEBUG: Device Type Name:", device_type_name)
+
+    if not device_type_name:
+        return jsonify({"labels": [], "values": []})
+
+    # 📌 ดึงจำนวนงานซ่อมโดยรวมของอุปกรณ์ใน DeviceType นั้น แยกตาม Location
+    breakdown = (
+        db.session.query(Location.name, db.func.count(Work.number))
+        .join(Work, Work.location_id == Location.id)
+        .join(DeviceName, Work.device_name_id == DeviceName.id)
+        .join(DeviceType, DeviceType.id == DeviceName.device_type_id)
+        .filter(DeviceType.name == device_type_name)
+        .group_by(Location.name)
+        .order_by(db.func.count(Work.number).desc())
+        .all()
+    )
+
+    print("🔍 DEBUG: Breakdown =", breakdown)
+
+    data = {
+        "labels": [loc for loc, count in breakdown],
+        "values": [count for loc, count in breakdown]
+    }
+    return jsonify(data)
+
+
+@dashboard_bp.route("/api/point_case_breakdown", methods=["GET"])
+def point_case_breakdown():
+    """API: ดึงจำนวนเคสของอุปกรณ์ประเภท 'Point' โดยแยกตาม PointCaseDetail"""
+
+    # 🔍 ค้นหา DeviceType.id ที่ชื่อ "Point"
+    point_device_type = DeviceType.query.filter_by(name="Point").first()
+
+    if not point_device_type:
+        return jsonify({"labels": [], "values": []})
+
+    # 🔧 ดึงจำนวนงานที่เป็น Point Case โดย group ตามชื่อเคส
+    results = (
+        db.session.query(PointCaseDetail.name, db.func.count(Work.number))
+        .join(Work, Work.point_casedetail_id == PointCaseDetail.id)
+        .filter(Work.device_type_id == point_device_type.id)
+        .group_by(PointCaseDetail.name)
+        .order_by(db.func.count(Work.number).desc())
+        .all()
+    )
+
+    data = {
+        "labels": [name for name, count in results],
+        "values": [count for name, count in results]
+    }
+
+    return jsonify(data)

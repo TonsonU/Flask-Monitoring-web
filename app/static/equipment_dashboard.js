@@ -22,6 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 loadWorkCountByEquipmentChart(firstOption);
                 loadWorkTrendByEquipment(firstOption);
                 loadBreakdownByEquipment(firstOption);
+                loadDeviceLocationBreakdown(firstOption);
+                
+
             }
         });
 
@@ -32,9 +35,23 @@ document.addEventListener("DOMContentLoaded", function () {
             loadWorkCountByEquipmentChart(selectedEquipment);
             loadWorkTrendByEquipment(selectedEquipment);
             loadBreakdownByEquipment(selectedEquipment);
+            loadDeviceLocationBreakdown(selectedEquipment);
         }
     });
 });
+
+document.getElementById("equipmentFilter").addEventListener("change", function () {
+    const selected = this.value;
+
+    // 👉 ถ้าเป็น Point ให้โชว์ card + โหลดกราฟ
+    if (selected === "Point") {
+        document.getElementById("point-card").style.display = "block";
+        loadPointCaseChart();  // 📌 เรียกโหลดกราฟ
+    } else {
+        document.getElementById("point-card").style.display = "none";
+    }
+});
+
 
 // 📌 โหลด Bar Chart สำหรับ Breakdown ของ Equipment ตาม Line
 async function loadWorkCountByEquipmentChart(equipmentName) {
@@ -205,7 +222,14 @@ async function loadBreakdownByEquipment(equipment_name) {
                 indexAxis: 'y',
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: true }
+                    tooltip: { enabled: true },                    
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right',
+                        formatter: (value) => value,
+                        color: '#000',
+                        font: { weight: 'bold', size: 14 }
+                    }
                 },
                 scales: {
                     x: {
@@ -227,5 +251,115 @@ async function loadBreakdownByEquipment(equipment_name) {
 
     } catch (error) {
         console.error("❌ Error fetching Breakdown by Equipment data:", error);
+    }
+}
+
+// 📌 โหลด Bar Chart แสดงจำนวนงานซ่อมของ Device Name แยกตาม Location
+async function loadDeviceLocationBreakdown(device_type_name) {
+    try {
+        const response = await fetch(`/dashboard/api/device_location_breakdown?device_name=${encodeURIComponent(device_type_name)}`);
+        const data = await response.json();
+        console.log("📊 Device Breakdown by Location:", data);
+
+        let ctx = document.getElementById("device-location-breakdown-chart").getContext("2d");
+
+        if (window.deviceLocationChart) {
+            window.deviceLocationChart.destroy();
+        }
+
+        const colors = generateColorPalette(data.labels.length);
+
+        window.deviceLocationChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: `จำนวนเคสของ ${device_type_name} ในแต่ละ Location`,
+                    data: data.values,
+                    backgroundColor: colors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                layout: {
+                    padding: { top: 20 }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right',
+                        formatter: (value) => value,
+                        color: '#000',
+                        font: { weight: 'bold', size: 14 }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        suggestedMax: Math.max(...data.values) * 1.2,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+    } catch (error) {
+        console.error("❌ Error loading device breakdown by location:", error);
+    }
+}
+
+async function loadPointCaseChart() {
+    try {
+        const response = await fetch("/dashboard/api/point_case_breakdown");
+        const data = await response.json();
+        console.log("📊 Point Case Breakdown:", data);
+
+        const ctx = document.getElementById("point-case-chart").getContext("2d");
+
+        if (window.pointChart) {
+            window.pointChart.destroy();
+        }
+
+        const colors = generateColorPalette(data.labels.length);
+
+        window.pointChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: "จำนวนเคสของ Point",
+                    data: data.values,
+                    backgroundColor: colors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error("❌ Error loading point case chart:", error);
     }
 }
