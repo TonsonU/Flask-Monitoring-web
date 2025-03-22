@@ -29,7 +29,7 @@ class KnowledgeBaseForm(FlaskForm):
     submit = SubmitField('Create')
 
 class EditKnowledgeBaseForm(FlaskForm):
-    create_date = StringField('Create Date', validators=[DataRequired()])
+    create_date = StringField('Create Date', render_kw={"readonly": True})
     device_type = StringField('Device Type', validators=[DataRequired()])
     topic = StringField('Topic')
     description = StringField('Description')
