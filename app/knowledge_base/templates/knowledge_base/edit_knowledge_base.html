@@ -54,7 +54,7 @@
           <!-- Create Date -->
           <div class="mb-3">
             <label for="create_date" class="form-label">{{ form.create_date.label }}</label>
-            {{ form.create_date(class="form-control", id="create_date", placeholder="YYYY-MM-DD HH:MM", value=form.create_date.data or '') }}
+            
           </div>
 
           <!-- Device Type -->
@@ -99,8 +99,19 @@
       selector: '#description',  // ✅ ระบุ textarea ที่จะใช้
       height: 300,               // ✅ ตั้งค่าความสูง
       menubar: false,
-      plugins: 'lists link image code textcolor colorpicker',
+      plugins: 'lists link image code',
       toolbar: 'undo redo | formatselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link image | code',
+      
+
+      // กำหนดให้ใช้เฉพาะ Image Upload Tab (ไม่ให้ใส่ URL ได้)
+      image_urltab: false,     // ตัดแท็บ “General” ที่ให้ใส่ URL ออก
+      image_uploadtab: true,
+
+      // ใส่ option เหล่านี้เพื่อบังคับให้ TinyMCE ใช้ URL แบบ absolute
+      // และไม่แปลงเส้นทางกลับไปเป็น relative
+      convert_urls: false,
+      relative_urls: false,
+      remove_script_host: false,  // (ถ้าอยากให้เต็มโดเมน เช่น https://... ก็จัดการได้)
 
       // ✅ กำหนดให้รองรับการอัปโหลดรูปภาพ
       images_upload_url: '/knowledge_base/upload_image', // ✅ เปลี่ยน URL ตาม Route ของคุณ
