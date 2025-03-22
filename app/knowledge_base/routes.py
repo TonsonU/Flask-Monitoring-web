@@ -173,9 +173,13 @@ def edit_knowledge_base(number):
 
     # ใช้ EditKnowledgeBaseForm และโหลดค่าจากฐานข้อมูล
     form = EditKnowledgeBaseForm()
-    form.process(obj=items)  # โหลดค่าที่มีอยู่เข้าไปในฟอร์ม
 
-    thailand_tz = pytz.timezone('Asia/Bangkok')
+    if request.method == 'GET':
+        form.create_date.data = items.create_date.strftime('%Y-%m-%d %H:%M') if items.create_date else ''
+        form.device_type.data = items.device_type
+        form.topic.data = items.topic
+        form.description.data = items.description
+        form.create_by.data = items.create_by
 
     if form.validate_on_submit():
         # อัปเดตค่าต่าง ๆ จากฟอร์ม
@@ -184,17 +188,7 @@ def edit_knowledge_base(number):
         items.description = form.description.data.replace('../static/', '/static/')
         items.create_by = form.create_by.data
 
-        # แปลง create_date
-        create_date_str = form.create_date.data
-        try:
-            create_date_naive = datetime.strptime(create_date_str, '%Y-%m-%d %H:%M')
-            items.create_date = thailand_tz.localize(create_date_naive)
-        except ValueError:
-            flash('รูปแบบวันที่ไม่ถูกต้อง', 'danger')
-            return render_template("edit_knowledge_base.html", form=form, items=items)
-
         db.session.commit()
-        flash("แก้ไขข้อมูลสำเร็จ!", "success")
         return redirect(url_for('knowledge_base.knowledge_base_detail', number=items.number))
 
     return render_template("edit_knowledge_base.html", form=form, items=items)
