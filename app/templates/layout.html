@@ -1,3 +1,4 @@
+<!-- app/templates/layout.html -->
 <!--
 ####################################################
 # Flask Monitoring Web
@@ -34,6 +35,22 @@
 	<!-- ลิงก์ไปยัง Boxicons -->
 	<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
 
+    <style>
+        body{
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex-grow: 1; /* เพิ่ม flex-grow: 1; ให้ main */
+            padding: 20px;
+        }
+        footer{
+            flex-shrink: 0;
+        }
+
+    </style>
+
 </head>
 <body>
 	<!-- Navbar -->
@@ -46,7 +63,7 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav me-auto"> <!-- me-auto ใช้ให้เมนูอยู่ทางซ้ายสุด -->
-					
+										
 					
 					<!-- Dropdown Task List-->
 					<li class="nav-item dropdown">
@@ -82,6 +99,14 @@
 							<li><a class="dropdown-item" href="{{ url_for('inventory.inventory_trackname') }}"><i class="fa-solid fa-circle fa-2xs"></i>&nbsp; Track Name Plate</a></li>
 						</ul>
 					</li>
+
+					<!-- เพิ่มเมนู Dashboard -->
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">
+							Dashboard
+						</a>
+					</li>
+
 					<!-- เพิ่มเมนู Knowledge Base -->
 					<li class="nav-item">
 						<a class="nav-link" href="{{ url_for('knowledge_base.knowledge_base') }}">
@@ -104,10 +129,10 @@
 		</div>
 	</nav>
 
-	<main class="container">
-		{% block content %}
-		{% endblock %}
-	</main>
+     <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
 	<!-- Footer as a Gray Line -->
 	<footer>

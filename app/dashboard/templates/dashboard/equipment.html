@@ -1,0 +1,80 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block dashboard_content %}
+
+<div id="location-dashboard" class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="mb-3 fw-bold">Equipment Overview</h2>
+        </div>
+
+        <!-- 📌 Dropdown Filter เลือกประเภทอุปกรณ์ -->
+        <div class="mb-4">
+            <label for="equipmentFilter" class="form-label">เลือกประเภทอุปกรณ์:</label>
+            <select id="equipmentFilter" class="form-select custom-dropdown">
+                <option value="">-- ทุกประเภท --</option>
+            </select>
+        </div>
+    
+
+        <!-- Bar Chart: งานซ่อมที่ค้างอยู่ในแต่ละสถานที่ -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">งาน CM ของแต่ละ Line</h5>
+                    <canvas id="work-count-by-equipment-chart"  style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- line Chart: แนวโน้มปัญหาของอุปกรณ์ในช่วงเวลา -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">แนวโน้มปัญหาของอุปกรณ์ในช่วงเวลา</h5>
+                    <canvas id="work-trend-line-chart"  style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📌 Bar Chart: อุปกรณ์ที่เกิดเคสบ่อยที่สุด -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">อุปกรณ์ที่เกิดเคสบ่อยที่สุด</h5>
+                    <canvas id="breakdown-equipment-chart"  style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📌 Bar Chart: งานซ่อมของอุปกรณ์แต่ละตัว แยกตาม Location -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">จำนวนงาน CM ของอุปกรณ์แต่ละ Location</h5>
+                    <canvas id="device-location-breakdown-chart"  style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📌 Bar Chart: เคสของอุปกรณ์ประเภท 'Point' -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">จำนวนงาน CM ของอุปกรณ์แต่ละ Location</h5>
+                    <canvas id="point-case-chart"  style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+    
+
+
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='equipment_dashboard.js') }}"></script>
+
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block dashboard_content %}
+
+<div id="location-dashboard" class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="mb-3 fw-bold">Location Overview</h2>
+        </div>
+    
+
+        <!-- Bar Chart: งานซ่อมที่ค้างอยู่ในแต่ละสถานที่ -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">งาน CM ของแต่ละสถานที่</h5>
+                    <canvas id="work-location-bar-chart"  style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bar Chart: สถานะงานซ่อมในแต่ละสถานที่ (Top 10) -->
+        <div class="col-lg-6 col-md-12 mt-4">
+            <div class="card shadow-sm rounded-4 text-center">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">สถานะงาน CM ในแต่ละสถานที่</h5>
+                    <canvas id="work-status-stacked-chart"  style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div> 
+
+        <!-- Filter Section 
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="lineFilter">เลือกสายงาน (Line):</label>
+                <select id="lineFilter" class="form-control">
+                    <option value="">-- เลือก Line --</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="locationFilter">เลือกสถานที่ (Location):</label>
+                <select id="locationFilter" class="form-control">
+                    <option value="">-- เลือก Location --</option>
+                </select>
+            </div>
+        </div>  -->
+
+        
+
+        <!-- Data Table -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h4 class="fw-bold">งานซ่อมที่เกี่ยวข้อง</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Work Order</th>
+                            <th>สถานะ</th>
+                            <th>ประเภทอุปกรณ์</th>
+                            <th>ชื่ออุปกรณ์</th>
+                            <th>สถานที่</th>  <!-- ✅ เพิ่ม Location -->
+                            <th>รายละเอียด</th>
+                            <th>ผู้รายงาน</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workTableBody">
+                        <tr><td colspan="7" class="text-center">เลือก Location เพื่อดูข้อมูล</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='location_dashboard.js') }}"></script>
+
+{% endblock %}
