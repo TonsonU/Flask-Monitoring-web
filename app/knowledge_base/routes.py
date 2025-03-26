@@ -28,9 +28,9 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
 
-@knowledge_bp.route('/knowledge_base')
+@knowledge_bp.route('/main')
 @login_required
-def knowledge_base():
+def main():
         items = KnowledgeBase.query.all()
         return render_template('knowledge_base.html', items=items) 
     
@@ -81,7 +81,7 @@ def create_knowledge_base():
             flash('บันทึกข้อมูลสำเร็จ', "success")
 
             # หลังจากบันทึกข้อมูลเสร็จแล้ว ให้รีไดเรกต์ไปที่หน้า index
-            return redirect(url_for('knowledge_base.knowledge_base'))
+            return redirect(url_for('knowledge_base.main'))
         return render_template("create_knowledge_base.html", form=form)
     
     # Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
@@ -119,7 +119,7 @@ def knowledge_base_detail(number):
 def deleteknowledge(number):
         if current_user.role != 'admin':
             flash("You don't have permission to delete knowledgebase.", "danger")
-            return redirect(url_for('knowledge_base.knowledge_base'))
+            return redirect(url_for('knowledge_base.main'))
         items = KnowledgeBase.query.filter_by(number=number).first()
         if items:
             db.session.delete(items)
@@ -128,7 +128,7 @@ def deleteknowledge(number):
         else:
             flash("Knowledgebase not found.", "danger")
         #return redirect(url_for('knowledge_base'))
-        return redirect(url_for('knowledge_base.knowledge_base'))
+        return redirect(url_for('knowledge_base.main'))
 
 def allowed_file(filename):
     """ ตรวจสอบประเภทไฟล์ที่อนุญาต """
