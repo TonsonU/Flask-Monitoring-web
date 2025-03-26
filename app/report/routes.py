@@ -42,8 +42,12 @@ def generate_interlocking_pdf():
     # สร้าง pdf
     pdf_path = create_pdf(field1, field2)
 
+    # วันที่ปัจจุบันในรูปแบบ KK-YYYY-MM-DD
+    today = datetime.now().strftime("%Y-%m-%d")
+    filename = f"KK-{today} PM Interlocking.pdf"
+
     # ส่งไฟล์กลับให้ผู้ใช้
-    return send_file(pdf_path, as_attachment=True, download_name='interlocking_report.pdf')
+    return send_file(pdf_path, as_attachment=True, download_name=filename)
 
 def create_pdf(field1, field2):
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
