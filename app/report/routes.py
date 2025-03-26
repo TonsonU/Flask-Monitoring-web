@@ -15,3 +15,5 @@ from app.static import uploads
 def main():
     return render_template('report.html') 
 
+
+
