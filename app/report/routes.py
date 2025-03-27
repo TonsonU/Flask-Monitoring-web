@@ -22,6 +22,8 @@ from app.static import uploads
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 import tempfile
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 
 @report_bp.route('/main')
@@ -50,15 +52,18 @@ def generate_interlocking_pdf():
     return send_file(pdf_path, as_attachment=True, download_name=filename)
 
 def create_pdf(field1, field2):
+    pdfmetrics.registerFont(TTFont('AngsanaNew', 'static/fonts/Angsana_0.ttf'))
+    pdfmetrics.registerFont(TTFont('AngsanaNew-Bold', 'static/fonts/Angsana_1.ttf'))
+
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
 
     c = canvas.Canvas(temp_file.name, pagesize=A4)
     width, height = A4
 
-    c.setFont("Helvetica-Bold", 18)
+    c.setFont("AngsanaNew-Bold", 18)
     c.drawString(50, height - 50, "Interlocking Report")
 
-    c.setFont("Helvetica", 12)
+    c.setFont("AngsanaNew", 12)
     c.drawString(50, height - 100, f"Field 1: {field1}")
     c.drawString(50, height - 120, f"Field 2: {field2}")
 
