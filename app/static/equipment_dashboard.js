@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 loadWorkTrendByEquipment(firstOption);
                 loadBreakdownByEquipment(firstOption);
                 loadDeviceLocationBreakdown(firstOption);
+                loadPointCaseChart(firstOption);
                 
 
             }
@@ -36,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
             loadWorkTrendByEquipment(selectedEquipment);
             loadBreakdownByEquipment(selectedEquipment);
             loadDeviceLocationBreakdown(selectedEquipment);
+            loadPointCaseChart(selectedEquipment);
         }
     });
 });

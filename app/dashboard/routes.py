@@ -399,6 +399,7 @@ def point_case_breakdown():
         .order_by(db.func.count(Work.number).desc())
         .all()
     )
+    print("🔍 DEBUG: Point case:", results)
 
     data = {
         "labels": [name for name, count in results],
