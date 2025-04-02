@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 loadWorkTrendByEquipment(firstOption);
                 loadBreakdownByEquipment(firstOption);
                 loadDeviceLocationBreakdown(firstOption);
-                loadPointCaseChart(firstOption);
+                loadMonthlyTrendChart(firstOption);
+                loadMonthlyTrendYears(firstOption);
                 
 
             }
@@ -38,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
             loadBreakdownByEquipment(selectedEquipment);
             loadDeviceLocationBreakdown(selectedEquipment);
             loadPointCaseChart(selectedEquipment);
+            loadCauseCaseChart(selectedEquipment);
         }
     });
 });
@@ -47,12 +49,25 @@ document.getElementById("equipmentFilter").addEventListener("change", function (
 
     // 👉 ถ้าเป็น Point ให้โชว์ card + โหลดกราฟ
     if (selected === "Point") {
+        // ✅ แสดงกราฟเฉพาะ Point
         document.getElementById("point-card").style.display = "block";
-        loadPointCaseChart();  // 📌 เรียกโหลดกราฟ
+        document.getElementById("cause-card").style.display = "block";
+        loadMonthlyTrendYears(equipment_name); // ✅ โหลดปีใหม่และกราฟ Line Chart
+        loadPointCaseChart();
+        loadCauseCaseChart();
     } else {
         document.getElementById("point-card").style.display = "none";
+        document.getElementById("cause-card").style.display = "none";
     }
 });
+
+document.getElementById("equipmentFilter").addEventListener("change", function () {
+    const equipment_name = this.value;
+    if (equipment_name) {
+        loadMonthlyTrendYears(equipment_name); // ✅ โหลดปีใหม่และกราฟ Line
+    }
+});
+
 
 
 // 📌 โหลด Bar Chart สำหรับ Breakdown ของ Equipment ตาม Line
@@ -256,7 +271,7 @@ async function loadBreakdownByEquipment(equipment_name) {
     }
 }
 
-// 📌 โหลด Bar Chart แสดงจำนวนงานซ่อมของ Device Name แยกตาม Location
+// 📌 โหลด Bar Chart แสดงจำนวนงานCM ของ Device Name แยกตาม Location
 async function loadDeviceLocationBreakdown(device_type_name) {
     try {
         const response = await fetch(`/dashboard/api/device_location_breakdown?device_name=${encodeURIComponent(device_type_name)}`);
@@ -318,6 +333,7 @@ async function loadDeviceLocationBreakdown(device_type_name) {
     }
 }
 
+// 📌 โหลด Bar Chart แสดงจำนวนประเภทของเคส CM ของ Point
 async function loadPointCaseChart() {
     try {
         const response = await fetch("/dashboard/api/point_case_breakdown");
@@ -346,22 +362,156 @@ async function loadPointCaseChart() {
                 responsive: true,
                 maintainAspectRatio: false,
                 indexAxis: 'y',
+                layout: {
+                    padding: { top: 20 }
+                },
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: { enabled: true },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right',
+                        formatter: (value) => value,
+                        color: '#000',
+                        font: { weight: 'bold', size: 14 }
+                    },
                 },
                 scales: {
                     x: {
                         beginAtZero: true,
+                        suggestedMax: Math.max(...data.values) * 1.2,
                         ticks: {
                             stepSize: 1,
                             precision: 0
                         }
                     }
                 }
-            }
-        });
-
+            },
+            plugins: [ChartDataLabels]
+        });            
     } catch (error) {
         console.error("❌ Error loading point case chart:", error);
     }
 }
+
+// 📌 โหลด Bar Chart แสดงจำนวนสาเหตุของเคส CM ของ Pointว่าเป็นที่ฝั่งไหน
+async function loadCauseCaseChart() {
+    try {
+        const response = await fetch("/dashboard/api/cause_case_breakdown");
+        const data = await response.json();
+        console.log("📊 Cause Case Breakdown:", data);
+
+        const ctx = document.getElementById("cause-case-chart").getContext("2d");
+
+        if (window.causeChart) {
+            window.causeChart.destroy();
+        }
+
+        const colors = generateColorPalette(data.labels.length);
+
+        window.causeChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: "จำนวนเคสตามสาเหตุ",
+                    data: data.values,
+                    backgroundColor: colors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                layout: {
+                    padding: { top: 20 }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right',
+                        formatter: (value) => value,
+                        color: '#000',
+                        font: { weight: 'bold', size: 14 }
+                    },
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        suggestedMax: Math.max(...data.values) * 1.2,
+                        ticks: { stepSize: 1, precision: 0 }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    } catch (error) {
+        console.error("❌ Error loading cause case chart:", error);
+    }
+}
+
+// ✅ ดึงปีที่มีข้อมูล แล้วโหลดกราฟล่าสุด
+async function loadMonthlyTrendYears(equipment_name) {
+    const yearSelect = document.getElementById("monthYearSelect");
+    yearSelect.innerHTML = "";
+
+    const res = await fetch(`/dashboard/api/work_years_by_equipment?equipment_name=${encodeURIComponent(equipment_name)}`);
+    const years = await res.json();
+
+    years.forEach((year, i) => {
+        const option = new Option(year, year);
+        if (i === years.length - 1) option.selected = true;
+        yearSelect.appendChild(option);
+    });
+
+    if (years.length > 0) {
+        loadMonthlyTrendChart(equipment_name, years[years.length - 1]);
+    }
+}
+
+// ✅ โหลดกราฟตามเดือน
+async function loadMonthlyTrendChart(equipment_name, year) {
+    const res = await fetch(`/dashboard/api/work_trend_by_month?equipment_name=${encodeURIComponent(equipment_name)}&year=${year}`);
+    const data = await res.json();
+
+    const ctx = document.getElementById("monthly-trend-line-chart").getContext("2d");
+    if (window.monthlyChart) window.monthlyChart.destroy();
+
+    window.monthlyChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: `แนวโน้ม (${year})`,
+                data: data.values,
+                borderColor: "#0d6efd",
+                backgroundColor: "rgba(13, 110, 253, 0.2)",
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: "#0d6efd"
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: Math.max(...data.values) * 1.2,
+                    ticks: { stepSize: 1, precision: 0 }
+                }
+            }
+        }
+    });
+}
+
+// 📌 Event เมื่อเปลี่ยนปี
+document.getElementById("monthYearSelect").addEventListener("change", function () {
+    const year = this.value;
+    const equipment = document.getElementById("equipmentFilter").value;
+    if (equipment && year) {
+        loadMonthlyTrendChart(equipment, year);
+    }
+});

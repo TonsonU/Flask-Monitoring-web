@@ -13,7 +13,7 @@
 
 from flask import Blueprint, render_template,request, url_for, flash, redirect, jsonify, current_app
 from flask_login import login_required,current_user
-from app.models import DeviceName, DeviceType, Location, Line, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db, Work,PointCaseDetail
+from app.models import DeviceName, DeviceType, Location, Line, SerialNumberHistory, ForceDataHistory, MacAddressHistory, ModuleHistory, db, Work,PointCaseDetail,Cause
 from sqlalchemy import or_
 from app.extensions import db
 from . import dashboard_bp
@@ -320,6 +320,57 @@ def work_trend_by_equipment():
     }
     return jsonify(data)
 
+@dashboard_bp.route("/api/work_years_by_equipment", methods=["GET"])
+def get_years_by_equipment():
+    equipment_name = request.args.get("equipment_name")
+    if not equipment_name:
+        return jsonify([])
+
+    years = (
+        db.session.query(db.func.strftime("%Y", Work.create_date))
+        .join(DeviceType, DeviceType.id == Work.device_type_id)
+        .filter(DeviceType.name == equipment_name)
+        .distinct()
+        .order_by(db.func.strftime("%Y", Work.create_date))
+        .all()
+    )
+
+    return jsonify([year for (year,) in years])
+
+
+@dashboard_bp.route("/api/work_trend_by_month", methods=["GET"])
+def work_trend_by_month():
+    equipment_name = request.args.get("equipment_name")
+    selected_year = request.args.get("year")
+
+    if not equipment_name or not selected_year:
+        return jsonify({"labels": [], "values": []})
+
+    results = (
+        db.session.query(
+            db.func.strftime("%m", Work.create_date).label("month"),
+            db.func.count(Work.number)
+        )
+        .join(DeviceType, DeviceType.id == Work.device_type_id)
+        .filter(DeviceType.name == equipment_name)
+        .filter(db.func.strftime("%Y", Work.create_date) == selected_year)
+        .group_by("month")
+        .order_by("month")
+        .all()
+    )
+
+    # ให้แน่ใจว่ามีครบทุกเดือน
+    month_map = {f"{i:02}": 0 for i in range(1, 13)}
+    for month, count in results:
+        month_map[month] = count
+
+    return jsonify({
+        "labels": [f"{i:02}" for i in range(1, 13)],
+        "values": list(month_map.values())
+    })
+
+
+
 @dashboard_bp.route("/api/breakdown_by_equipment", methods=["GET"])
 def breakdown_by_equipment():
     """API: ดึงจำนวนงานซ่อมของ Device Name ตาม Device Type (ไม่แยกตามปี)"""
@@ -384,22 +435,47 @@ def device_location_breakdown():
 def point_case_breakdown():
     """API: ดึงจำนวนเคสของอุปกรณ์ประเภท 'Point' โดยแยกตาม PointCaseDetail"""
 
-    # 🔍 ค้นหา DeviceType.id ที่ชื่อ "Point"
-    point_device_type = DeviceType.query.filter_by(name="Point").first()
+    # 🔍 ดึง DeviceType.id ทั้งหมดที่ชื่อ "Point"
+    point_type_ids = [
+        dt.id for dt in DeviceType.query.filter(DeviceType.name == "Point").all()
+    ]
+    print("✅ Point DeviceType IDs:", point_type_ids)
 
-    if not point_device_type:
+    if not point_type_ids:
         return jsonify({"labels": [], "values": []})
 
     # 🔧 ดึงจำนวนงานที่เป็น Point Case โดย group ตามชื่อเคส
     results = (
         db.session.query(PointCaseDetail.name, db.func.count(Work.number))
         .join(Work, Work.point_casedetail_id == PointCaseDetail.id)
-        .filter(Work.device_type_id == point_device_type.id)
+        .filter(Work.device_type_id.in_(point_type_ids))  # ✅ แทนที่จะใช้แค่ตัวเดียว
         .group_by(PointCaseDetail.name)
         .order_by(db.func.count(Work.number).desc())
         .all()
     )
+
     print("🔍 DEBUG: Point case:", results)
+
+    data = {
+        "labels": [name for name, count in results],
+        "values": [count for name, count in results]
+    }
+
+    return jsonify(data)
+
+@dashboard_bp.route("/api/cause_case_breakdown", methods=["GET"])
+def cause_case_breakdown():
+    """API: ดึงจำนวนเคสโดยแยกตาม Cause"""
+
+    results = (
+        db.session.query(Cause.name, db.func.count(Work.number))
+        .join(Work, Work.cause_id == Cause.id)
+        .group_by(Cause.name)
+        .order_by(db.func.count(Work.number).desc())
+        .all()
+    )
+
+    print("🔍 DEBUG: Case:", results)
 
     data = {
         "labels": [name for name, count in results],
