@@ -70,7 +70,7 @@ document.getElementById("equipmentFilter").addEventListener("change", function (
 
 
 
-// 📌 โหลด Bar Chart สำหรับ Breakdown ของ Equipment ตาม Line
+// 📌 โหลด Pie Chart สำหรับ Breakdown ของ Equipment ตาม Line
 async function loadWorkCountByEquipmentChart(equipmentName) {
     try {
         let response = await fetch("/dashboard/api/get_equipment_types_grouped");
@@ -91,43 +91,30 @@ async function loadWorkCountByEquipmentChart(equipmentName) {
         let colors = generateColorPalette(labels.length);
 
         window.workEquipmentChart = new Chart(ctx, {
-            type: "bar",
+            type: "pie", // ✅ เปลี่ยนเป็น pie
             data: {
                 labels: labels,
                 datasets: [{
                     label: `จำนวนงานซ่อมของ ${equipmentName}`,
                     data: values,
-                    backgroundColor: colors,
-                    barThickness: 30  // ✅ ปรับขนาดแท่งกราฟให้เหมาะสม
+                    backgroundColor: colors
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                layout: {
-                    padding: { top: 20 }
-                },
-                indexAxis: 'y',
                 plugins: {
-                    legend: { display: false },
+                    legend: { position: "bottom" },
                     tooltip: { enabled: true },
                     datalabels: {
-                        anchor: 'end',
-                        align: 'right',
-                        formatter: (value) => value,
-                        color: '#000',
-                        font: { weight: 'bold', size: 14 }
-                    }
-                },
-                scales: {
-                    x: { 
-                        beginAtZero: true, 
-                        suggestedMax: Math.max(...values) * 1.2, // ✅ เพิ่มขนาดสูงสุดอีก 20%
-                        ticks: { stepSize: 1, precision: 0 } 
-                    },
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 1, precision: 0 }
+                        formatter: (value, context) => {
+                            // ✅ แสดงทั้งจำนวนและเปอร์เซ็นต์
+                            const total = context.chart._metasets[0].total;
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${percentage}%`;
+                        },
+                        color: "#000",
+                        font: { weight: "bold", size: 14 }
                     }
                 }
             },
@@ -471,7 +458,7 @@ async function loadMonthlyTrendYears(equipment_name) {
     }
 }
 
-// ✅ โหลดกราฟตามเดือน
+// ✅ โหลดกราฟ line ตามเดือน
 async function loadMonthlyTrendChart(equipment_name, year) {
     const res = await fetch(`/dashboard/api/work_trend_by_month?equipment_name=${encodeURIComponent(equipment_name)}&year=${year}`);
     const data = await res.json();
@@ -488,24 +475,44 @@ async function loadMonthlyTrendChart(equipment_name, year) {
                 data: data.values,
                 borderColor: "#0d6efd",
                 backgroundColor: "rgba(13, 110, 253, 0.2)",
+                fill: true,
                 tension: 0.3,
-                pointRadius: 4,
+                pointRadius: 5,
                 pointBackgroundColor: "#0d6efd"
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: { top: 20, bottom: 20}
+            },
+            plugins: {
+                legend: { position: "top" },
+                tooltip: { enabled: true },
+                datalabels: {
+                    anchor: "end",
+                    align: "top",
+                    formatter: (value) => value,
+                    color: "#000",
+                    font: { weight: "bold", size: 14 }
+                }
+            },
             scales: {
+                x: {
+                    beginAtZero: true
+                },
                 y: {
                     beginAtZero: true,
-                    suggestedMax: Math.max(...data.values) * 1.2,
+                    suggestedMax: Math.max(...data.values) * 1.2, // ✅ เพิ่มขนาดสูงสุดอีก 20%
                     ticks: { stepSize: 1, precision: 0 }
                 }
             }
-        }
+        },
+        plugins: [ChartDataLabels]
     });
 }
+
 
 // 📌 Event เมื่อเปลี่ยนปี
 document.getElementById("monthYearSelect").addEventListener("change", function () {
