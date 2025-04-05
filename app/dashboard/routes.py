@@ -483,3 +483,42 @@ def cause_case_breakdown():
     }
 
     return jsonify(data)
+
+@dashboard_bp.route("/api/work_status_by_equipment", methods=["GET"])
+def work_status_by_equipment():
+    """
+    API: ดึงข้อมูลจำนวนงานซ่อมของแต่ละอุปกรณ์ (Device Name)
+    แยกตามสถานะ Open / Closed
+    โดยกรองตามประเภทอุปกรณ์ (Device Type) ที่เลือกจาก Dropdown
+    """
+
+    device_type_name = request.args.get("device_type_name")  # เช่น "Point", "Axle Counter"
+    if not device_type_name:
+        return jsonify({"labels": [], "open_values": [], "close_values": []})
+    
+    print("✅ Point DeviceType IDs:", device_type_name)
+
+    work_counts = (
+        db.session.query(
+            DeviceName.name.label("device_name"),
+            db.func.count(db.case((Work.status == "Open", 1))).label("open_count"),
+            db.func.count(db.case((Work.status == "Closed", 1))).label("close_count")
+        )
+        .join(Work, Work.device_name_id == DeviceName.id)
+        .join(DeviceType, DeviceName.device_type_id == DeviceType.id)
+        .filter(DeviceType.name == device_type_name)  # 📌 กรองจาก dropdown
+        .group_by(DeviceName.name)
+        .order_by(db.func.count(Work.number).desc())
+        .limit(10)
+        .all()
+    )
+
+    print("📌 DEBUG: Query Results =", work_counts)
+
+    data = {
+        "labels": [row.device_name for row in work_counts],
+        "open_values": [row.open_count for row in work_counts],
+        "close_values": [row.close_count for row in work_counts]
+    }
+
+    return jsonify(data)

@@ -3,76 +3,184 @@
 {% block dashboard_content %}
 
 <div id="location-dashboard" class="container-fluid">
+    <!-- Header + Toggle -->
     <div class="row mb-4">
-        <div class="col-md-12">
-            <h2 class="mb-3 fw-bold">Location Overview</h2>
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h2 class="fw-bold mb-3 me-3">Location Overview</h2>
+            <label class="switch mb-3">
+                <input type="checkbox" id="toggleDarkMode">
+                <span class="slider">
+                    <i id="themeIcon" class="fas fa-moon"></i>
+                </span>
+            </label>
         </div>
-    
+    </div>
 
-        <!-- Bar Chart: งานซ่อมที่ค้างอยู่ในแต่ละสถานที่ -->
-        <div class="col-lg-6 col-md-12 mt-4">
-            <div class="card shadow-sm rounded-4 text-center">
+    <!-- Charts -->
+    <div class="row g-4">
+
+        <!-- Bar Chart: งานซ่อมที่ค้างอยู่ -->
+        <div class="col-lg-6 col-md-12">
+            <div class="card shadow-sm rounded-4 text-center h-100">
                 <div class="card-body">
                     <h5 class="card-title fw-bold">งาน CM ที่ค้างอยู่ในแต่ละสถานที่</h5>
-                    <canvas id="work-location-bar-chart"  style="max-height: 300px;"></canvas>
+                    <canvas id="work-location-bar-chart" style="max-height: 300px;"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Bar Chart: สถานะงานซ่อมในแต่ละสถานที่ (Top 10) -->
-        <div class="col-lg-6 col-md-12 mt-4">
-            <div class="card shadow-sm rounded-4 text-center">
+        <!-- Stacked Bar Chart: สถานะงาน CM -->
+        <div class="col-lg-6 col-md-12">
+            <div class="card shadow-sm rounded-4 text-center h-100">
                 <div class="card-body">
                     <h5 class="card-title fw-bold">สถานะงาน CM ในแต่ละสถานที่</h5>
-                    <canvas id="work-status-stacked-chart"  style="max-height: 300px;"></canvas>
+                    <canvas id="work-status-stacked-chart" style="max-height: 300px;"></canvas>
                 </div>
             </div>
-        </div> 
-
-        <!-- Filter Section 
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label for="lineFilter">เลือกสายงาน (Line):</label>
-                <select id="lineFilter" class="form-control">
-                    <option value="">-- เลือก Line --</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="locationFilter">เลือกสถานที่ (Location):</label>
-                <select id="locationFilter" class="form-control">
-                    <option value="">-- เลือก Location --</option>
-                </select>
-            </div>
-        </div>  -->
-
-        
+        </div>
 
         <!-- Data Table -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <h4 class="fw-bold">งานซ่อมที่เกี่ยวข้อง</h4>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Work Order</th>
-                            <th>สถานะ</th>
-                            <th>ประเภทอุปกรณ์</th>
-                            <th>ชื่ออุปกรณ์</th>
-                            <th>สถานที่</th>  <!-- ✅ เพิ่ม Location -->
-                            <th>รายละเอียด</th>
-                            <th>ผู้รายงาน</th>
-                        </tr>
-                    </thead>
-                    <tbody id="workTableBody">
-                        <tr><td colspan="7" class="text-center">เลือก Location เพื่อดูข้อมูล</td></tr>
-                    </tbody>
-                </table>
+        <div class="col-12">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">งานซ่อมที่เกี่ยวข้อง</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Work Order</th>
+                                    <th>สถานะ</th>
+                                    <th>ประเภทอุปกรณ์</th>
+                                    <th>ชื่ออุปกรณ์</th>
+                                    <th>สถานที่</th>
+                                    <th>รายละเอียด</th>
+                                    <th>ผู้รายงาน</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workTableBody">
+                                <tr><td colspan="7" class="text-center">เลือก Location เพื่อดูข้อมูล</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='location_dashboard.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const toggle = document.getElementById("toggleDarkMode");
+    
+      // โหลดสถานะ dark mode ถ้ามี
+      if (localStorage.getItem("dark-mode") === "enabled") {
+        document.body.classList.add("dark-mode");
+        toggle.checked = true;
+      }
+    
+      toggle.addEventListener("change", function () {
+        document.body.classList.toggle("dark-mode");
+        if (this.checked) {
+          localStorage.setItem("dark-mode", "enabled");
+        } else {
+          localStorage.setItem("dark-mode", "disabled");
+        }
+      });
+    });
+</script>
+
+<!-- ✅ Styling -->
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-4px);
+    }
+
+    .chart-container {
+        width: 100%;
+        height: auto;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background-color: #ccc;
+        border-radius: 30px;
+        transition: background-color 0.3s;
+    }
+
+    .slider:before {
+        content: "";
+        position: absolute;
+        height: 22px;
+        width: 22px;
+        left: 2px;
+        top: 2px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .switch input:checked + .slider {
+        background-color: #333;
+    }
+
+    .switch input:checked + .slider:before {
+        transform: translateX(24px);
+    }
+
+    .slider i {
+        position: absolute;
+        left: 12px;
+        top: 6px;
+        font-size: 14px;
+        color: #fff;
+        pointer-events: none;
+    }
+
+    /* 🌙 Dark Mode */
+    body.dark-mode {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .card {
+        background-color: #1e1e1e;
+        color: #fff;
+        border: 1px solid #333;
+    }
+
+    body.dark-mode .table {
+        background-color: transparent;
+    }
+
+    body.dark-mode .table th,
+    body.dark-mode .table td {
+        color: #e0e0e0;
+    }
+
+    body.dark-mode canvas {
+        background-color: transparent !important;
+    }
+</style>
 
 {% endblock %}

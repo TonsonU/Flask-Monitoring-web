@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 loadDeviceLocationBreakdown(firstOption);
                 loadMonthlyTrendChart(firstOption);
                 loadMonthlyTrendYears(firstOption);
-                
+                loadDeviceStatusPieChart(firstOption); // ✅ โหลดกราฟ Pie Chart สถานะอุปกรณ์
 
             }
         });
@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
             loadDeviceLocationBreakdown(selectedEquipment);
             loadPointCaseChart(selectedEquipment);
             loadCauseCaseChart(selectedEquipment);
+            loadDeviceStatusPieChart(selectedEquipment);
         }
     });
 });
@@ -101,6 +102,10 @@ async function loadWorkCountByEquipmentChart(equipmentName) {
                 }]
             },
             options: {
+                animation: {
+                    duration: 1000,
+                    easing: "easeOutQuart"
+                },                
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
@@ -113,7 +118,7 @@ async function loadWorkCountByEquipmentChart(equipmentName) {
                             const percentage = ((value / total) * 100).toFixed(1);
                             return `${percentage}%`;
                         },
-                        color: "#000",
+                        color: "#fff",
                         font: { weight: "bold", size: 14 }
                     }
                 }
@@ -156,6 +161,10 @@ async function loadWorkTrendByEquipment(equipment_name) {
                 }]
             },
             options: {
+                animation: {
+                    duration: 1000,
+                    easing: "easeOutQuart"
+                },                
                 responsive: true,
                 maintainAspectRatio: false,
                 layout: {
@@ -218,6 +227,10 @@ async function loadBreakdownByEquipment(equipment_name) {
                 }]
             },
             options: {
+                animation: {
+                    duration: 1000,
+                    easing: "easeOutQuart"
+                },               
                 responsive: true,
                 maintainAspectRatio: false,
                 layout: {
@@ -284,6 +297,10 @@ async function loadDeviceLocationBreakdown(device_type_name) {
                 }]
             },
             options: {
+                animation: {
+                    duration: 1000,
+                    easing: "easeOutQuart"
+                },                
                 responsive: true,
                 maintainAspectRatio: false,
                 indexAxis: 'y',
@@ -346,6 +363,10 @@ async function loadPointCaseChart() {
                 }]
             },
             options: {
+                animation: {
+                    duration: 1000,
+                    easing: "easeOutQuart"
+                },                
                 responsive: true,
                 maintainAspectRatio: false,
                 indexAxis: 'y',
@@ -407,6 +428,10 @@ async function loadCauseCaseChart() {
                 }]
             },
             options: {
+                animation: {
+                    duration: 1000,
+                    easing: "easeOutQuart"
+                },                
                 responsive: true,
                 maintainAspectRatio: false,
                 indexAxis: 'y',
@@ -482,6 +507,10 @@ async function loadMonthlyTrendChart(equipment_name, year) {
             }]
         },
         options: {
+            animation: {
+                duration: 1000,
+                easing: "easeOutQuart"
+            },            
             responsive: true,
             maintainAspectRatio: false,
             layout: {
@@ -522,3 +551,60 @@ document.getElementById("monthYearSelect").addEventListener("change", function (
         loadMonthlyTrendChart(equipment, year);
     }
 });
+
+// 📌 โหลด Pie Chart แสดงสัดส่วน Open / Closed ของอุปกรณ์ใน Device Type ที่เลือก
+async function loadDeviceStatusPieChart(deviceTypeName) {
+    const response = await fetch(`/dashboard/api/work_status_by_equipment?device_type_name=${encodeURIComponent(deviceTypeName)}`);
+    const data = await response.json();
+    console.log("📊 Status Data for", deviceTypeName, ":", data);
+
+    const ctx = document.getElementById("status-pie-chart").getContext("2d");
+
+    if (window.deviceStatusChart) {
+        window.deviceStatusChart.destroy();
+    }
+
+    // 👉 รวมค่า Open / Closed
+    const totalOpen = data.open_values.reduce((a, b) => a + b, 0);
+    const totalClose = data.close_values.reduce((a, b) => a + b, 0);
+    const total = totalOpen + totalClose;
+
+    // ✅ ใช้ label คงที่
+    const labels = ["Open", "Closed"];
+    const values = [totalOpen, totalClose];
+    let colors = generateColorPalette(labels.length);
+
+    window.deviceStatusChart = new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `สถานะงานซ่อมของ ${deviceTypeName}`,
+                data: values,
+                backgroundColor: colors
+            }]
+        },
+        options: {
+            animation: {
+                duration: 1000,
+                easing: "easeOutQuart"
+            },            
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: "bottom" },
+                tooltip: { enabled: true },
+                datalabels: {
+                    display: (context) => context.dataset.data[context.dataIndex] > 0,
+                    formatter: (value, context) => {
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        return `${((value / total) * 100).toFixed(1)}%`;
+                    },
+                    color: "#fff",
+                    font: { weight: "bold", size: 14 }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}

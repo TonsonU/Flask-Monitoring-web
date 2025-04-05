@@ -4,29 +4,19 @@ function generateColorPalette(count) {
         "#FF9F40", "#36A2EB", "#F9C74F", "#90BE6D", "#F8961E",
         "#9D4EDD", "#D72638", "#3F88C5", "#F49D37", "#FA7921",
         "#02C39A", "#2A9D8F", "#E63946", "#457B9D", "#8ECAE6",
-        "#8338EC", "#FFBE0B", "#FB5607", "#A8DADC", "#264653",
-        "#E76F51", "#6A994E", "#B5838D", "#C9A227", "#EE6C4D"
+        "#8338EC", "#FFBE0B", "#FB5607", "#A8DADC", "#264653"
     ];
 
-    let colors = [];
+    const shuffled = [...baseColors].sort(() => 0.5 - Math.random());
+    const colors = [];
 
-    // 🔁 เติมจาก baseColors แบบไม่ซ้ำก่อน
     for (let i = 0; i < count; i++) {
-        if (i < baseColors.length) {
-            colors.push(baseColors[i]);
-        } else {
-            // 🔄 ถ้าเกินแล้ว ค่อยสุ่มแบบไม่เอาสีซ้ำติดกัน
-            let lastColor = colors[colors.length - 1];
-            let newColor = lastColor;
-            while (newColor === lastColor) {
-                newColor = baseColors[Math.floor(Math.random() * baseColors.length)];
-            }
-            colors.push(newColor);
-        }
+        colors.push(shuffled[i % shuffled.length]);
     }
 
     return colors;
 }
+
 
 
 /// 📌 โหลด Pie Chart สำหรับสถานะ CM (Open / Close)
@@ -55,8 +45,16 @@ async function loadCMStatusPieChart() {
                 }]
             },
             options: {
+                animation: {
+                    duration: 1000,           // ความเร็วในการแสดงผล (ms)
+                    easing: 'easeOutQuart'    // รูปแบบ animation (smooth)
+                },
                 responsive: true,
+                responsiveAnimationDuration: 500,  // ให้ลื่นเมื่อ resize
                 maintainAspectRatio: false,
+                layout: {
+                    padding: { top: 20, bottom: 20 } // ป้องกัน label ชนขอบ
+                },
                 plugins: {
                     legend: { position: "bottom" },
                     datalabels: {

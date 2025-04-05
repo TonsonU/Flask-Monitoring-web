@@ -2,106 +2,227 @@
 
 {% block dashboard_content %}
 
-<!-- ส่วนที่ 1: ภาพรวม (Overview) -->
 <div id="overview" class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h2 class="mb-3 fw-bold">Overview CM</h2>
-        </div>
+  <div class="row mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+      <h2 class="fw-bold mb-3 me-3">Overview CM</h2>
 
-        <!-- Summary Cards -->
-        <div class="row">
-            <!-- Card 1 -->
-            <div class="col-xl-3 col-sm-6 col-12">
-                <div class="card card-stats">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div class="icon-box">
-                            <i class="fa-solid fa-list-check text-primary fa-2xl"></i>
-                        </div>
-                        <div class="text-end">
-                            <h3 class="fw-bold">{{ total_cm }}</h3>
-                            <span class="text-muted">จำนวนงาน CM</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 2 -->
-            <div class="col-xl-3 col-sm-6 col-12">
-                <div class="card card-stats">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div class="icon-box">
-                            <i class="fa-solid fa-spinner text-warning fa-2xl"></i>
-                        </div>
-                        <div class="text-end">
-                            <h3 class="fw-bold">{{ open_cm }}</h3>
-                            <span class="text-muted">งานที่กำลังดำเนินการ</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 3 -->
-            <div class="col-xl-3 col-sm-6 col-12">
-                <div class="card card-stats">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div class="icon-box">
-                            <i class="fa-solid fa-check-circle text-success fa-2xl"></i>
-                        </div>
-                        <div class="text-end">
-                            <h3 class="fw-bold">{{ close_cm }}</h3>
-                            <span class="text-muted">งานที่ซ่อมเสร็จแล้ว</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-           
-        
-
-        <!-- Pie Chart: จำนวนงาน CM ทั้งหมด -->
-        <div class="col-lg-6 col-md-12 mt-4">
-            <div class="card shadow-sm rounded-4 text-center">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">จำนวนงาน CM ทั้งหมด </h5>
-                    <div class="chart-container" style="max-width: 400px; margin: 0 auto;">
-                        <canvas id="cm-status-pie-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-
-        <!-- Pie Chart: อุปกรณ์ที่เสียบ่อยที่สุด -->
-        <div class="col-lg-6 col-md-12 mt-4">
-            <div class="card shadow-sm rounded-4 text-center">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">อุปกรณ์ที่เสียบ่อยที่สุด</h5>
-                    <canvas id="equipment-failure-pie-chart" style="max-height: 300px;"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bar Chart: งานซ่อมที่ค้างอยู่ในแต่ละสถานที่ -->
-        <div class="col-lg-6 col-md-12 mt-4">
-            <div class="card shadow-sm rounded-4 text-center">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">CM ที่ค้างอยู่ในแต่ละสถานที่</h5>
-                    <canvas id="pending-tasks-by-location-bar-chart"  style="max-height: 300px;"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bar Chart: งาน CM แยกตาม Line -->
-        <div class="col-lg-6 col-md-12 mt-4">
-            <div class="card shadow-sm rounded-4 text-center">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">งาน CM ทั้งหมดแยกตาม Line</h5>
-                    <canvas id="cm-by-line-bar-chart"  style="max-height: 300px;"></canvas>
-                </div>
-            </div>
-        </div>
+      <!-- Toggle Theme Button -->
+      <label class="switch mb-3">
+        <input type="checkbox" id="toggleDarkMode">
+        <span class="slider">
+          <i id="themeIcon" class="fas fa-moon"></i>
+        </span>
+      </label>
     </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4">
+      <!-- Card 1 -->
+      <div class="col-xl-3 col-md-4 col-sm-6 col-12">
+        <div class="card card-stats shadow-sm h-100">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="icon-box">
+              <i class="fa-solid fa-list-check text-primary fa-2xl"></i>
+            </div>
+            <div class="text-end">
+              <h3 class="fw-bold">{{ total_cm }}</h3>
+              <span class="text-muted">จำนวนงาน CM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="col-xl-3 col-md-4 col-sm-6 col-12">
+        <div class="card card-stats shadow-sm h-100">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="icon-box">
+              <i class="fa-solid fa-spinner text-warning fa-2xl"></i>
+            </div>
+            <div class="text-end">
+              <h3 class="fw-bold">{{ open_cm }}</h3>
+              <span class="text-muted">งานที่กำลังดำเนินการ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="col-xl-3 col-md-4 col-sm-6 col-12">
+        <div class="card card-stats shadow-sm h-100">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="icon-box">
+              <i class="fa-solid fa-check-circle text-success fa-2xl"></i>
+            </div>
+            <div class="text-end">
+              <h3 class="fw-bold">{{ close_cm }}</h3>
+              <span class="text-muted">งานที่ซ่อมเสร็จแล้ว</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4 mt-1">
+      <!-- Pie Chart: CM Status -->
+      <div class="col-lg-6 col-md-12">
+        <div class="card shadow-sm rounded-4 h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">จำนวนงาน CM ทั้งหมด</h5>
+            <div class="chart-container" style="max-width: 400px; margin: 0 auto;">
+              <canvas id="cm-status-pie-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pie Chart: Frequent Failure -->
+      <div class="col-lg-6 col-md-12">
+        <div class="card shadow-sm rounded-4 h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">อุปกรณ์ที่เสียบ่อยที่สุด</h5>
+            <canvas id="equipment-failure-pie-chart" style="max-height: 300px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart: Location -->
+      <div class="col-lg-6 col-md-12">
+        <div class="card shadow-sm rounded-4 h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">CM ที่ค้างอยู่ในแต่ละสถานที่</h5>
+            <canvas id="pending-tasks-by-location-bar-chart" style="max-height: 300px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart: By Line -->
+      <div class="col-lg-6 col-md-12">
+        <div class="card shadow-sm rounded-4 h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">งาน CM ทั้งหมดแยกตาม Line</h5>
+            <canvas id="cm-by-line-bar-chart" style="max-height: 300px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
+<!-- Toggle Theme Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const toggle = document.getElementById("toggleDarkMode");
+    
+      // โหลดสถานะ dark mode ถ้ามี
+      if (localStorage.getItem("dark-mode") === "enabled") {
+        document.body.classList.add("dark-mode");
+        toggle.checked = true;
+      }
+    
+      toggle.addEventListener("change", function () {
+        document.body.classList.toggle("dark-mode");
+        if (this.checked) {
+          localStorage.setItem("dark-mode", "enabled");
+        } else {
+          localStorage.setItem("dark-mode", "disabled");
+        }
+      });
+    });
+</script>
+
+<style>
+  .card {
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+  }
+
+  .chart-container {
+    width: 100%;
+    height: auto;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    inset: 0;
+    background-color: #ccc;
+    border-radius: 30px;
+    transition: background-color 0.3s;
+  }
+
+  .slider:before {
+    content: "";
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 2px;
+    top: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .switch input:checked + .slider {
+    background-color: #333;
+  }
+
+  .switch input:checked + .slider:before {
+    transform: translateX(24px);
+  }
+
+  .slider i {
+    position: absolute;
+    left: 12px;
+    top: 6px;
+    font-size: 14px;
+    color: #fff;
+    pointer-events: none;
+  }
+
+  /* 🌙 Dark Mode Styling */
+  body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+
+  body.dark-mode .card {
+    background-color: #1e1e1e;
+    color: #fff;
+    border: 1px solid #333;
+  }
+
+  body.dark-mode .card .card-title {
+    color: #ffffff;
+  }
+
+  body.dark-mode .form-select {
+    background-color: #2b2b2b;
+    color: #fff;
+    border: 1px solid #444;
+  }
+
+  body.dark-mode canvas {
+    background-color: transparent !important;
+  }
+</style>
 
 {% endblock %}
