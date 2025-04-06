@@ -217,77 +217,69 @@ def editWork(number):
         return render_template("edit.html", form=form, works=works)
     
     
-# Route สำหรับดูรายละเอียดเพิ่มเติมของ Work   
 @work_bp.route('/worknumber/<int:number>', methods=['GET', 'POST'])
 @login_required
 def work_detail(number):
-        # ดึงข้อมูลจากตาราง Work โดยใช้ number
-        works = Work.query.get(number)
-    
-        # ตรวจสอบว่ามีข้อมูลหรือไม่
-        if not works:
-            abort(404)
-    
-        # ดึงข้อมูลที่เชื่อมโยงกับ Work
-        line = works.line
-        location = works.location
-        device_type = works.device_type
-        device_name = works.device_name
+    # ดึงข้อมูลจากตาราง Work โดยใช้ number
+    works = Work.query.get(number)
+    if not works:
+        abort(404)
 
-        # สร้างแบบฟอร์มคอมเมนต์
-        form = CommentForm()
-        if form.validate_on_submit():
-            image_url = None
-            # จัดการอัปโหลดรูปภาพ
-            if form.image.data:
-                image_file = form.image.data
-                filename = secure_filename(image_file.filename)  # ป้องกันชื่อไฟล์อันตราย
-                
-                # ใช้ path ที่ถูกต้อง และรองรับทุกระบบปฏิบัติการ
-                upload_folder = os.path.join(current_app.root_path, 'static/uploads')
-                
-                # ตรวจสอบว่ามีโฟลเดอร์หรือไม่ ถ้าไม่มีให้สร้าง
-                if not os.path.exists(upload_folder):
-                    os.makedirs(upload_folder)
+    # ดึงข้อมูลที่เชื่อมโยงกับ Work
+    line = works.line
+    location = works.location
+    device_type = works.device_type
+    device_name = works.device_name
 
-                # กำหนด path ไฟล์ที่จะบันทึก
-                image_path = os.path.join(upload_folder, filename)
-                
-                # บันทึกไฟล์ลงเซิร์ฟเวอร์
+    form = CommentForm()
+    if form.validate_on_submit():
+        image_url = None
+        if form.image.data:
+            image_file = form.image.data
+            filename = secure_filename(image_file.filename)
+            # ตรวจสอบไฟล์ extension (ตัวอย่างใช้ .png, .jpg, .jpeg, .gif)
+            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+            if '.' in filename and filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+                flash('File type not allowed', 'danger')
+                return redirect(url_for('work.work_detail', number=number))
+            # เพิ่มความเป็นเอกลักษณ์ให้กับชื่อไฟล์
+            import uuid
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            upload_folder = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'static/uploads'))
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+            image_path = os.path.join(upload_folder, unique_filename)
+            try:
                 image_file.save(image_path)
+                image_url = url_for('static', filename=f'uploads/{unique_filename}', _external=True)
+            except Exception as e:
+                current_app.logger.error(f"Error saving image: {e}")
+                flash('Error uploading image', 'danger')
+                return redirect(url_for('work.work_detail', number=number))
                 
-                # สร้าง URL ที่ถูกต้องสำหรับการแสดงผล
-                image_url = url_for('static', filename=f'uploads/{filename}', _external=True)
-                
-            # แปลง PDF Path เป็น URL หากจำเป็น
-            pdf_url = form.pdf_url.data.strip() if form.pdf_url.data else None
+        pdf_url = form.pdf_url.data.strip() if form.pdf_url.data else None
 
-            # กำหนดเขตเวลาของประเทศไทย
-            thailand_tz = pytz.timezone('Asia/Bangkok')
-            timestamp = datetime.now(thailand_tz)
+        # กำหนดเขตเวลาของประเทศไทย
+        thailand_tz = pytz.timezone('Asia/Bangkok')
+        timestamp = datetime.now(thailand_tz)
 
-            
-            # สร้าง Comment ใหม่
-            comment = Comment(
-                content=form.comment.data,
-                pdf_url=pdf_url,
-                image_url=image_url,
-                work_id=number,
-                user_id=current_user.id,
-                timestamp=timestamp  # บันทึกเวลาที่คอมเมนต์ถูกโพสต์ตามเขตเวลาของประเทศไทย
+        comment = Comment(
+            content=form.comment.data,
+            pdf_url=pdf_url,
+            image_url=image_url,
+            work_id=number,
+            user_id=current_user.id,
+            timestamp=timestamp
+        )
+        db.session.add(comment)
+        db.session.commit()
+        current_app.logger.info(f"Comment added to DB: {comment}")
+        flash('Your comment has been posted.', 'success')
+        return redirect(url_for('work.work_detail', number=number))
 
-            )
-            db.session.add(comment)
-            db.session.commit()
-            print("Comment added to DB:", comment)
-            flash('Your comment has been posted.', 'success')
-            return redirect(url_for('work.work_detail', number=number))
+    comments = Comment.query.filter_by(work_id=number).order_by(Comment.timestamp.desc()).all()
 
-        # ดึงคอมเมนต์ที่เกี่ยวข้องกับ Work
-        comments = Comment.query.filter_by(work_id=number).order_by(Comment.timestamp.desc()).all()
-
-        # ส่งข้อมูลไปยัง template
-        return render_template(
+    return render_template(
         "work_detail.html", 
         works=works, 
         line=line, 
@@ -296,7 +288,8 @@ def work_detail(number):
         device_name=device_name, 
         form=form, 
         comments=comments
-        )
+    )
+
     
     # Route สำหรับลบคอมเมนต์
 @work_bp.route('/delete_comment/<int:comment_id>', methods=['POST'])

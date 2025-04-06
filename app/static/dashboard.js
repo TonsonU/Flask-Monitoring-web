@@ -6,18 +6,16 @@ function generateColorPalette(count) {
         "#02C39A", "#2A9D8F", "#E63946", "#457B9D", "#8ECAE6",
         "#8338EC", "#FFBE0B", "#FB5607", "#A8DADC", "#264653"
     ];
-
     const shuffled = [...baseColors].sort(() => 0.5 - Math.random());
     const colors = [];
-
     for (let i = 0; i < count; i++) {
         colors.push(shuffled[i % shuffled.length]);
     }
-
     return colors;
 }
 
-
+// กำหนดสี Data Labels แบบคงที่ (static) เป็นสีดำ
+const defaultDataLabelColor = "#000";
 
 /// 📌 โหลด Pie Chart สำหรับสถานะ CM (Open / Close)
 async function loadCMStatusPieChart() {
@@ -32,8 +30,8 @@ async function loadCMStatusPieChart() {
             window.cmStatusChart.destroy();
         }
 
-        let colors = generateColorPalette(2); // สร้างสีสุ่ม 2 สี
-        let total = data.open_cm + data.close_cm; // หาผลรวมทั้งหมด
+        let colors = generateColorPalette(2);
+        let total = data.open_cm + data.close_cm;
 
         window.cmStatusChart = new Chart(statusCtx, {
             type: "pie",
@@ -46,33 +44,29 @@ async function loadCMStatusPieChart() {
             },
             options: {
                 animation: {
-                    duration: 1000,           // ความเร็วในการแสดงผล (ms)
-                    easing: 'easeOutQuart'    // รูปแบบ animation (smooth)
+                    duration: 1000,
+                    easing: 'easeOutQuart'
                 },
                 responsive: true,
-                responsiveAnimationDuration: 500,  // ให้ลื่นเมื่อ resize
+                responsiveAnimationDuration: 500,
                 maintainAspectRatio: false,
                 layout: {
-                    padding: { top: 20, bottom: 20 } // ป้องกัน label ชนขอบ
+                    padding: { top: 20, bottom: 20 }
                 },
                 plugins: {
                     legend: { position: "bottom" },
                     datalabels: {
                         formatter: (value) => {
-                            let percentage = ((value / total) * 100).toFixed(1); // คำนวณ % และให้มีทศนิยม 1 ตำแหน่ง
-                            return `${percentage}%`; // แสดงค่าบนกราฟ
+                            let percentage = ((value / total) * 100).toFixed(1);
+                            return `${percentage}%`;
                         },
-                        color: "#fff", // สีของข้อความ
-                        font: {
-                            weight: "bold",
-                            size: 14
-                        }
+                        color: defaultDataLabelColor,
+                        font: { weight: "bold", size: 14 }
                     }
                 }
             },
-            plugins: [ChartDataLabels] // เปิดใช้งาน Data Labels
+            plugins: [ChartDataLabels]
         });
-
     } catch (error) {
         console.error("❌ Error fetching CM status data:", error);
     }
@@ -91,8 +85,8 @@ async function loadEquipmentFailurePieChart() {
             window.equipmentFailureChart.destroy();
         }
 
-        let dynamicColors = generateColorPalette(equipData.labels.length); // ✅ ใช้สีสุ่ม
-        let total = equipData.values.reduce((sum, val) => sum + val, 0); // ✅ คำนวณผลรวมของค่าทั้งหมด
+        let dynamicColors = generateColorPalette(equipData.labels.length);
+        let total = equipData.values.reduce((sum, val) => sum + val, 0);
 
         window.equipmentFailureChart = new Chart(equipCtx, {
             type: "pie",
@@ -110,25 +104,20 @@ async function loadEquipmentFailurePieChart() {
                     legend: { position: "bottom" },
                     datalabels: {
                         formatter: (value) => {
-                            let percentage = ((value / total) * 100).toFixed(1); // ✅ คำนวณเปอร์เซ็นต์ และปัดเศษทศนิยม 1 ตำแหน่ง
-                            return `${percentage}%`; // ✅ แสดงค่าเป็นเปอร์เซ็นต์
+                            let percentage = ((value / total) * 100).toFixed(1);
+                            return `${percentage}%`;
                         },
-                        color: "#fff", // ✅ กำหนดสีตัวอักษรเป็นสีขาว
-                        font: {
-                            weight: "bold",
-                            size: 14
-                        }
+                        color: defaultDataLabelColor,
+                        font: { weight: "bold", size: 14 }
                     }
                 }
             },
-            plugins: [ChartDataLabels] // ✅ ใช้ ChartDataLabels เพื่อแสดงค่าบนกราฟ
+            plugins: [ChartDataLabels]
         });
-
     } catch (error) {
         console.error("❌ Error fetching Equipment Failure data:", error);
     }
 }
-
 
 // 📌 โหลด Bar Chart สำหรับงานซ่อมที่ค้างอยู่ในแต่ละสถานที่
 async function loadPendingTasksByLocationBarChart() {
@@ -143,7 +132,7 @@ async function loadPendingTasksByLocationBarChart() {
             window.locationChart.destroy();
         }
 
-        let colors = generateColorPalette(locationData.labels.length); // ✅ ใช้สีสุ่มจากฟังก์ชัน
+        let colors = generateColorPalette(locationData.labels.length);
 
         window.locationChart = new Chart(locationCtx, {
             type: "bar",
@@ -157,11 +146,9 @@ async function loadPendingTasksByLocationBarChart() {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, // ✅ ปรับให้ Chart เต็มพื้นที่ card
+                maintainAspectRatio: false,
                 layout: {
-                    padding: {
-                        top: 20  // ✅ เพิ่มระยะห่างด้านบน
-                    }
+                    padding: { top: 20 }
                 },
                 indexAxis: 'y',
                 plugins: {
@@ -171,31 +158,28 @@ async function loadPendingTasksByLocationBarChart() {
                         anchor: 'end',
                         align: 'right',
                         formatter: (value) => value,
-                        color: '#000',
+                        color: defaultDataLabelColor,
                         font: { weight: 'bold', size: 14 }
                     }
                 },
                 scales: {
                     x: { 
                         beginAtZero: true, 
-                        suggestedMax: Math.max(...locationData.values) * 1.2, // ✅ เพิ่มขนาดสูงสุดอีก 20%
-                        ticks: { stepSize: 1, precision: 0 } 
+                        suggestedMax: Math.max(...locationData.values) * 1.2,
+                        ticks: { stepSize: 1, precision: 0 }
                     },
                     y: { 
                         beginAtZero: true, 
-                        ticks: { stepSize: 1, precision: 0 } 
+                        ticks: { stepSize: 1, precision: 0 }
                     }
                 }
             },
             plugins: [ChartDataLabels]
         });
-
     } catch (error) {
         console.error("❌ Error fetching Pending Tasks data:", error);
     }
 }
-
-
 
 // 📌 โหลด Bar Chart สำหรับงาน CM ตาม Line
 async function loadCMByLineBarChart() {
@@ -210,7 +194,7 @@ async function loadCMByLineBarChart() {
             window.lineChart.destroy();
         }
 
-        let colors = generateColorPalette(lineData.labels.length); // ✅ ใช้สีสุ่ม
+        let colors = generateColorPalette(lineData.labels.length);
 
         window.lineChart = new Chart(lineCtx, {
             type: "bar",
@@ -224,11 +208,9 @@ async function loadCMByLineBarChart() {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, // ✅ ปรับให้ Chart เต็มพื้นที่ card
+                maintainAspectRatio: false,
                 layout: {
-                    padding: {
-                        top: 20  // ✅ เพิ่มระยะห่างด้านบน
-                    }
+                    padding: { top: 20 }
                 },
                 indexAxis: 'y',
                 plugins: {
@@ -238,28 +220,28 @@ async function loadCMByLineBarChart() {
                         anchor: 'end',
                         align: 'right',
                         formatter: (value) => value,
-                        color: '#000',
+                        color: defaultDataLabelColor,
                         font: { weight: 'bold', size: 14 }
                     }
                 },
                 scales: {
-                    x: { beginAtZero: true, 
-                        suggestedMax: Math.max(...lineData.values) * 1.2, // ✅ เพิ่มขนาดสูงสุดอีก 20%
+                    x: { 
+                        beginAtZero: true, 
+                        suggestedMax: Math.max(...lineData.values) * 1.2,
                         ticks: { stepSize: 1, precision: 0 }
                     },
-                    y: { beginAtZero: true, 
-                        ticks: { stepSize: 1, precision: 0 } 
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { stepSize: 1, precision: 0 }
                     }
                 }
             },
             plugins: [ChartDataLabels]
         });
-
     } catch (error) {
         console.error("❌ Error fetching CM by Line data:", error);
     }
 }
-
 
 // 📌 โหลดข้อมูลสรุปงาน CM
 async function loadCMOverviewData() {
@@ -271,13 +253,12 @@ async function loadCMOverviewData() {
         document.getElementById("total_cm").innerText = data.total_cm;
         document.getElementById("open_cm").innerText = data.open_cm;
         document.getElementById("close_cm").innerText = data.close_cm;
-
     } catch (error) {
         console.error("❌ Error fetching overview data:", error);
     }
 }
 
-// 📌 เรียกใช้งานเมื่อโหลดหน้า
+// เรียกใช้งานเมื่อโหลดหน้า
 document.addEventListener("DOMContentLoaded", () => {
     loadCMOverviewData();
     loadCMStatusPieChart();

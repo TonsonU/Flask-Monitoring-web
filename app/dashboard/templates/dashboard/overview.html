@@ -6,63 +6,57 @@
   <div class="row mb-4">
     <div class="d-flex justify-content-between align-items-center flex-wrap">
       <h2 class="fw-bold mb-3 me-3">Overview CM</h2>
-
-      <!-- Toggle Theme Button -->
-      <label class="switch mb-3">
-        <input type="checkbox" id="toggleDarkMode">
-        <span class="slider">
-          <i id="themeIcon" class="fas fa-moon"></i>
-        </span>
-      </label>
+      <!-- Removed dark mode toggle button -->
     </div>
 
     <!-- Summary Cards -->
-    <div class="row g-4">
-      <!-- Card 1 -->
-      <div class="col-xl-3 col-md-4 col-sm-6 col-12">
-        <div class="card card-stats shadow-sm h-100">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <div class="icon-box">
-              <i class="fa-solid fa-list-check text-primary fa-2xl"></i>
-            </div>
-            <div class="text-end">
-              <h3 class="fw-bold">{{ total_cm }}</h3>
-              <span class="text-muted">จำนวนงาน CM</span>
-            </div>
+  <div class="row g-4 summary-container">
+    <!-- Card 1 -->
+    <div class="col-xl-3 col-md-4 col-sm-6 col-12">
+      <div class="card card-stats shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="icon-box">
+            <i class="fa-solid fa-list-check text-primary fa-2xl" aria-hidden="true"></i>
           </div>
-        </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="col-xl-3 col-md-4 col-sm-6 col-12">
-        <div class="card card-stats shadow-sm h-100">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <div class="icon-box">
-              <i class="fa-solid fa-spinner text-warning fa-2xl"></i>
-            </div>
-            <div class="text-end">
-              <h3 class="fw-bold">{{ open_cm }}</h3>
-              <span class="text-muted">งานที่กำลังดำเนินการ</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="col-xl-3 col-md-4 col-sm-6 col-12">
-        <div class="card card-stats shadow-sm h-100">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <div class="icon-box">
-              <i class="fa-solid fa-check-circle text-success fa-2xl"></i>
-            </div>
-            <div class="text-end">
-              <h3 class="fw-bold">{{ close_cm }}</h3>
-              <span class="text-muted">งานที่ซ่อมเสร็จแล้ว</span>
-            </div>
+          <div class="text-end">
+            <h3 class="fw-bold" id="total_cm">{{ total_cm }}</h3>
+            <span class="text-muted">จำนวนงาน CM</span>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Card 2 -->
+    <div class="col-xl-3 col-md-4 col-sm-6 col-12">
+      <div class="card card-stats shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="icon-box">
+            <i class="fa-solid fa-spinner text-warning fa-2xl" aria-hidden="true"></i>
+          </div>
+          <div class="text-end">
+            <h3 class="fw-bold" id="open_cm">{{ open_cm }}</h3>
+            <span class="text-muted">งานที่กำลังดำเนินการ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="col-xl-3 col-md-4 col-sm-6 col-12">
+      <div class="card card-stats shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="icon-box">
+            <i class="fa-solid fa-check-circle text-success fa-2xl" aria-hidden="true"></i>
+          </div>
+          <div class="text-end">
+            <h3 class="fw-bold" id="close_cm">{{ close_cm }}</h3>
+            <span class="text-muted">งานที่ซ่อมเสร็จแล้ว</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
     <!-- Charts -->
     <div class="row g-4 mt-1">
@@ -111,118 +105,51 @@
   </div>
 </div>
 
-<!-- Toggle Theme Script -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const toggle = document.getElementById("toggleDarkMode");
-    
-      // โหลดสถานะ dark mode ถ้ามี
-      if (localStorage.getItem("dark-mode") === "enabled") {
-        document.body.classList.add("dark-mode");
-        toggle.checked = true;
-      }
-    
-      toggle.addEventListener("change", function () {
-        document.body.classList.toggle("dark-mode");
-        if (this.checked) {
-          localStorage.setItem("dark-mode", "enabled");
-        } else {
-          localStorage.setItem("dark-mode", "disabled");
-        }
-      });
-    });
-</script>
-
 <style>
   .card {
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
   }
-
   .card:hover {
     transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   }
-
+  .icon-box i {
+    transition: transform 0.3s ease;
+  }
+  .card:hover .icon-box i {
+    transform: scale(1.1);
+  }
   .chart-container {
     width: 100%;
     height: auto;
+  }  
+  /* กำหนดสีพื้นหลังให้กับ container ของ Summary Cards */
+  .summary-container {
+    background-color: #f7f7f7; /* สีพื้นหลังของ container */
+    padding: 20px;
+    border-radius: 8px;
   }
 
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 26px;
+  /* กำหนดสีพื้นหลังให้กับแต่ละ Card */
+  .card {
+    background-color: #ffffff; /* สีพื้นหลังของ Card */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+  
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   }
-
-  .slider {
-    position: absolute;
-    inset: 0;
-    background-color: #ccc;
-    border-radius: 30px;
-    transition: background-color 0.3s;
-  }
-
-  .slider:before {
-    content: "";
-    position: absolute;
-    height: 22px;
-    width: 22px;
-    left: 2px;
-    top: 2px;
-    background-color: white;
-    border-radius: 50%;
+  
+  .icon-box i {
     transition: transform 0.3s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+  
+  .card:hover .icon-box i {
+    transform: scale(1.1);
   }
 
-  .switch input:checked + .slider {
-    background-color: #333;
-  }
 
-  .switch input:checked + .slider:before {
-    transform: translateX(24px);
-  }
-
-  .slider i {
-    position: absolute;
-    left: 12px;
-    top: 6px;
-    font-size: 14px;
-    color: #fff;
-    pointer-events: none;
-  }
-
-  /* 🌙 Dark Mode Styling */
-  body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-  }
-
-  body.dark-mode .card {
-    background-color: #1e1e1e;
-    color: #fff;
-    border: 1px solid #333;
-  }
-
-  body.dark-mode .card .card-title {
-    color: #ffffff;
-  }
-
-  body.dark-mode .form-select {
-    background-color: #2b2b2b;
-    color: #fff;
-    border: 1px solid #444;
-  }
-
-  body.dark-mode canvas {
-    background-color: transparent !important;
-  }
 </style>
 
 {% endblock %}
