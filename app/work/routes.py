@@ -21,6 +21,7 @@ from datetime import datetime
 from . import work_bp
 from werkzeug.utils import secure_filename
 import os
+import re
 
 
 
@@ -291,25 +292,73 @@ def work_detail(number):
     )
 
     
-    # Route สำหรับลบคอมเมนต์
 @work_bp.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_comment(comment_id):
+    import re  # Import โมดูล re สำหรับ regex
     comment = Comment.query.get_or_404(comment_id)
     work_id = comment.work_id
     if comment.user_id != current_user.id:
         abort(403)  # Forbidden
-        
-    # ลบไฟล์รูปภาพถ้ามี
-    if comment.image_url:
-        image_path = os.path.join('static', comment.image_url.split('static/')[-1])
+
+    # Extract image URLs จาก comment.content โดยใช้ regex
+    image_srcs = re.findall(r'<img\s+[^>]*src="([^"]+)"', comment.content)
+
+    # ถ้ามี comment.image_url (เก็บแยกไว้) และยังไม่อยู่ใน image_srcs ให้เพิ่มเข้าไป
+    if comment.image_url and comment.image_url not in image_srcs:
+        image_srcs.append(comment.image_url)
+
+    for src in image_srcs:
+        # หาก src มีรูปแบบ "../../static/..." ให้ตัดเอา relative path ออกมา
+        if src.startswith('../../static/'):
+            relative_path = src.split('../../static/')[-1]
+        # หาก src มีรูปแบบ "/static/..." ให้ตัดเอา relative path ออกมา
+        elif src.startswith('/static/'):
+            relative_path = src.split('/static/')[-1]
+        else:
+            current_app.logger.warning(f"Unexpected image src format: {src}")
+            continue
+
+        # สร้าง absolute path โดยใช้ current_app.root_path
+        image_path = os.path.join(current_app.root_path, 'static', relative_path)
         if os.path.exists(image_path):
-            os.remove(image_path)
+            try:
+                os.remove(image_path)
+                current_app.logger.info(f"Deleted image file: {image_path}")
+            except Exception as e:
+                current_app.logger.error(f"Error deleting image file {image_path}: {e}")
+        else:
+            current_app.logger.warning(f"Image file not found: {image_path}")
 
     db.session.delete(comment)
     db.session.commit()
     flash('Your comment has been deleted.', 'info')
     return redirect(url_for('work.work_detail', number=work_id))
+
+
+@work_bp.route('/delete_uploaded_image', methods=['POST'])
+@login_required
+def delete_uploaded_image():
+    data = request.get_json()
+    image_url = data.get('image_url')
+    if not image_url:
+        return jsonify({'error': 'No image URL provided'}), 400
+    if '/static/' in image_url:
+        relative_path = image_url.split('/static/')[-1]  # ควรได้ "uploads/unique_filename.png"
+        image_path = os.path.join(current_app.root_path, 'static', relative_path)
+        if os.path.exists(image_path):
+            try:
+                os.remove(image_path)
+                current_app.logger.info(f"Deleted uploaded image via AJAX: {image_path}")
+                return jsonify({'success': True})
+            except Exception as e:
+                current_app.logger.error(f"Error deleting image file: {e}")
+                return jsonify({'error': 'Error deleting image file'}), 500
+        else:
+            return jsonify({'error': 'File not found'}), 404
+    else:
+        return jsonify({'error': 'Invalid image URL format'}), 400
+
     
 
 # Endpoint สำหรับ AJAX ดึง Location ตาม Line

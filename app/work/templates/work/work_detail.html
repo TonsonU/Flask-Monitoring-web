@@ -119,12 +119,11 @@
         <!-- Comment Form using TinyMCE -->
         <div class="comment-box">
           <h3>Post Your Comment</h3>
-          <form method="POST" action="{{ url_for('work.work_detail', number=works.number) }}" enctype="multipart/form-data">
+          <form method="POST" action="{{ url_for('work.work_detail', number=works.number) }}" enctype="multipart/form-data" novalidate>
             {{ form.hidden_tag() }}
             <div class="form-group">
               {{ form.comment(class="form-control", id="comment", placeholder="Post your comment here...") }}
             </div>
-            
             <div class="form-group mt-2">
               {{ form.submit(class="btn btn-primary custom-login-btn") }}
             </div>
@@ -142,20 +141,37 @@
   <!-- TinyMCE JS -->
   <script src="https://cdn.jsdelivr.net/npm/tinymce@6.2.0/tinymce.min.js" referrerpolicy="origin"></script>
   <script>
+    // ฟังก์ชันสำหรับ normalize URL ให้ได้เฉพาะ path
+    function normalizeUrl(url) {
+      var a = document.createElement('a');
+      a.href = url;
+      return a.pathname; // ตัวอย่าง: "/static/uploads/unique_filename.png"
+    }
+
+    // Global array สำหรับเก็บ URL ของรูปที่อัปโหลดแล้ว
+    window.uploadedImages = [];
+
     tinymce.init({
       selector: '#comment',
       height: 300,
       menubar: false,
-      plugins: 'lists link image code',
+      automatic_uploads: false, // ปิดอัปโหลดอัตโนมัติ
+      plugins: 'lists link image code autoresize',
       toolbar: 'undo redo | formatselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link image | code',
-      images_upload_url: '/knowledge_base/upload_image',
+      autoresize_min_height: 300,
+      autoresize_max_height: 600,
       file_picker_types: 'image',
       file_picker_callback: function(callback, value, meta) {
         let input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/*');
+        input.setAttribute('type','file');
+        input.setAttribute('accept','image/*');
         input.onchange = function() {
           let file = this.files[0];
+          const maxFileSize = 1 * 1024 * 1024; // 1MB limit
+          if(file.size > maxFileSize) {
+            alert("The selected file is too large. Maximum allowed size is 1MB.");
+            return;
+          }
           let formData = new FormData();
           formData.append("file", file);
           fetch('/knowledge_base/upload_image', {
@@ -164,20 +180,71 @@
           })
           .then(response => response.json())
           .then(data => {
+            // data.location ควรมีรูปแบบ URL ที่มี /static/ เช่น "http://yourdomain.com/static/uploads/unique_filename.png"
             callback(data.location, { alt: file.name });
+            window.uploadedImages.push(data.location);
           })
           .catch(error => console.error('Upload failed:', error));
         };
         input.click();
+      },
+      setup: function(editor) {
+        function checkImages() {
+          let content = editor.getContent();
+          let regex = /<img\s+[^>]*src="([^"]+)"[^>]*>/g;
+          let currentImages = [];
+          let match;
+          while ((match = regex.exec(content)) !== null) {
+            // Normalize URL ที่ดึงมา
+            currentImages.push(normalizeUrl(match[1]));
+          }
+          console.log("Normalized current images:", currentImages);
+          if(window.uploadedImages && window.uploadedImages.length > 0) {
+            window.uploadedImages = window.uploadedImages.filter(function(url) {
+              let normalizedUrl = normalizeUrl(url);
+              if(currentImages.indexOf(normalizedUrl) === -1) {
+                console.log("Image removed:", normalizedUrl);
+                // ส่ง AJAX request เพื่อลบไฟล์ออกจากเซิร์ฟเวอร์
+                fetch('/delete_uploaded_image', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ image_url: url })
+                })
+                .then(response => response.json())
+                .then(data => console.log('Deleted image via AJAX:', url, data))
+                .catch(err => console.error('Error deleting image:', err));
+                return false;
+              }
+              return true;
+            });
+          }
+        }
+        // ลงทะเบียน event handler เพื่อจับการเปลี่ยนแปลงใน editor
+        editor.on('Change', checkImages);
+        editor.on('blur', checkImages);
+        editor.on('ExecCommand', function(e) {
+          console.log("ExecCommand event:", e);
+          checkImages();
+        });
       }
     });
-  </script>
-  <!-- Close Button Handler -->
-  <script>
+
+    // ก่อน submit ฟอร์ม ให้ triggerSave() จาก TinyMCE
+    document.addEventListener('DOMContentLoaded', function() {
+      const commentForm = document.querySelector('form');
+      if (commentForm) {
+        commentForm.addEventListener('submit', function(e) {
+          tinymce.triggerSave();
+          console.log("Textarea value on submit:", document.getElementById('comment').value);
+        });
+      }
+    });
+
+    // Close Button Handler
     document.querySelector('.btn-close').addEventListener('click', function(event) {
       event.preventDefault();
       const previousPage = sessionStorage.getItem('previousPage');
-      if (previousPage === '/work/open' || previousPage === '/work/closed' || previousPage === '/') {
+      if(previousPage === '/work/open' || previousPage === '/work/closed' || previousPage === '/') {
         window.location.href = previousPage;
       } else {
         window.location.href = "{{ url_for('main.index') }}";
@@ -185,13 +252,9 @@
     });
     document.addEventListener('DOMContentLoaded', function() {
       const currentPath = window.location.pathname;
-      if (currentPath === '/work/open' || currentPath === '/work/closed' || currentPath === '/') {
+      if(currentPath === '/work/open' || currentPath === '/work/closed' || currentPath === '/') {
         sessionStorage.setItem('previousPage', currentPath);
       }
     });
-    document.querySelector('form').addEventListener('submit', function(e) {
-        tinymce.triggerSave(); // คัดลอกข้อมูลจาก TinyMCE ลงใน textarea
-    });
-
   </script>
 {% endblock scripts %}
