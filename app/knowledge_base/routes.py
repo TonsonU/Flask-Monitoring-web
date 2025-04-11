@@ -10,7 +10,7 @@
 #
 ####################################################
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort, current_app
 from flask_login import login_required, current_user
 from app.models import db, KnowledgeBase
 from .forms import KnowledgeBaseForm, EditKnowledgeBaseForm
@@ -20,7 +20,7 @@ from datetime import datetime
 from app.extensions import db
 from . import knowledge_bp
 from werkzeug.utils import secure_filename
-from app.static import uploads
+# from app.static import uploads
 import os
 
 UPLOAD_FOLDER = 'app/static/uploads'
@@ -134,31 +134,31 @@ def allowed_file(filename):
     """ ตรวจสอบประเภทไฟล์ที่อนุญาต """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @knowledge_bp.route('/upload_image', methods=['POST'])
 @login_required
 def upload_image():
-    """ API สำหรับอัปโหลดรูปจาก Summernote """
     if 'file' not in request.files:
         return jsonify({'error': 'No file uploaded'}), 400
-
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        
-        # สร้างโฟลเดอร์ถ้ายังไม่มี
-        if not os.path.exists(UPLOAD_FOLDER):
-            os.makedirs(UPLOAD_FOLDER)
-
+        import uuid
+        unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        # ใช้โฟลเดอร์ชั่วคราวสำหรับ pending uploads
+        temp_folder = os.path.join(current_app.root_path, 'static', 'temp_uploads')
+        if not os.path.exists(temp_folder):
+            os.makedirs(temp_folder)
+        filepath = os.path.join(temp_folder, unique_filename)
         file.save(filepath)
-
-        # ส่ง URL ของรูปที่อัปโหลดกลับไปให้ Summernote
-        return jsonify({'location': f'/static/uploads/{filename}'})
-
+        # ส่งกลับ URL ที่ชี้ไปยังไฟล์ในโฟลเดอร์ temp_uploads
+        file_url = url_for('static', filename=f'temp_uploads/{unique_filename}', _external=True)
+        return jsonify({'location': file_url})
     return jsonify({'error': 'Invalid file type'}), 400
+
 
 @knowledge_bp.route('/edit_knowledge_base/<int:number>', methods=['GET', 'POST'])
 @login_required

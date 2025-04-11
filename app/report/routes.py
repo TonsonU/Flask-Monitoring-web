@@ -18,7 +18,7 @@ from datetime import datetime
 from app.extensions import db
 from . import report_bp
 from werkzeug.utils import secure_filename
-from app.static import uploads
+# from app.static import uploads
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 import tempfile

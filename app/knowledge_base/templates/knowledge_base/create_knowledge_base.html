@@ -97,9 +97,10 @@
     selector: '#description',  // ✅ ระบุ textarea ที่จะใช้
     height: 300,               // ✅ ตั้งค่าความสูง
     menubar: false,
-    plugins: 'lists link image code',
+    plugins: 'lists link image code autoresize',
     toolbar: 'undo redo | formatselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link image | code',
-    
+    autoresize_min_height: 300,
+    autoresize_max_height: 600,
     
     // ✅ กำหนดให้รองรับการอัปโหลดรูปภาพ
     images_upload_url: '/knowledge_base/upload_image', // ✅ เปลี่ยน URL ตาม Route ของคุณ

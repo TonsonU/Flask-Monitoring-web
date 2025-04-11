@@ -18,7 +18,9 @@
     <div class="card shadow">
       <!-- Card Header -->
       <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
-        <h3 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Task Detail</h3>
+        <h3 class="mb-0">
+          <i class="fa-solid fa-pen-to-square"></i> Task Detail
+        </h3>
         <a href="{{ url_for('main.index') }}" class="btn-close btn-close-white" aria-label="Close"></a>
       </div>
       <!-- Card Body -->
@@ -74,22 +76,28 @@
             </div>
           {% endif %}
         {% endwith %}
+
         <!-- Main Comment (Original Report) -->
         <div class="comment-card mb-3">
           <p>
             <strong>{{ works.report_by }}</strong>
-            <small class="text-muted">on {{ works.create_date.strftime('%d/%m/%Y at %H:%M') }}</small>
+            <small class="text-muted">
+              on {{ works.create_date.strftime('%d/%m/%Y at %H:%M') }}
+            </small>
           </p>
           <p>{{ works.description }}</p>
           <a href="{{ works.link }}" target="_blank">{{ works.link }}</a>
         </div>
+
         <!-- Additional Comments -->
         {% for comment in comments %}
           <div class="comment-card d-flex flex-column mb-3">
             <div>
               <p>
                 <strong>{{ comment.user.username }}</strong>
-                <small class="text-muted">on {{ comment.timestamp.strftime('%d/%m/%Y at %H:%M') }}</small>
+                <small class="text-muted">
+                  on {{ comment.timestamp.strftime('%d/%m/%Y at %H:%M') }}
+                </small>
               </p>
               <!-- ใช้ filter |safe เพื่อให้ HTML จาก TinyMCE ถูก render -->
               <p>{{ comment.content|safe }}</p>
@@ -116,6 +124,7 @@
           </div>
         {% endfor %}
         <hr>
+
         <!-- Comment Form using TinyMCE -->
         <div class="comment-box">
           <h3>Post Your Comment</h3>
@@ -141,76 +150,84 @@
   <!-- TinyMCE JS -->
   <script src="https://cdn.jsdelivr.net/npm/tinymce@6.2.0/tinymce.min.js" referrerpolicy="origin"></script>
   <script>
-    // ฟังก์ชันสำหรับ normalize URL ให้ได้เฉพาะ path
+    // ฟังก์ชัน normalizeUrl: เปลี่ยน URL ให้เหลือแค่ path
     function normalizeUrl(url) {
-      var a = document.createElement('a');
+      let a = document.createElement('a');
       a.href = url;
-      return a.pathname; // ตัวอย่าง: "/static/uploads/unique_filename.png"
+      return a.pathname;
     }
 
-    // Global array สำหรับเก็บ URL ของรูปที่อัปโหลดแล้ว
+    // Global array สำหรับเก็บ URL ของรูปที่อยู่ใน temp_uploads
     window.uploadedImages = [];
 
     tinymce.init({
       selector: '#comment',
       height: 300,
       menubar: false,
-      automatic_uploads: false, // ปิดอัปโหลดอัตโนมัติ
+      automatic_uploads: false, // ไม่อัปโหลดโดยอัตโนมัติ
       plugins: 'lists link image code autoresize',
       toolbar: 'undo redo | formatselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link image | code',
       autoresize_min_height: 300,
       autoresize_max_height: 600,
       file_picker_types: 'image',
+
+      // file_picker_callback: อัปโหลดรูปไปยัง temp_uploads (Pending Uploads)
       file_picker_callback: function(callback, value, meta) {
-        let input = document.createElement('input');
-        input.setAttribute('type','file');
-        input.setAttribute('accept','image/*');
-        input.onchange = function() {
-          let file = this.files[0];
-          const maxFileSize = 1 * 1024 * 1024; // 1MB limit
-          if(file.size > maxFileSize) {
-            alert("The selected file is too large. Maximum allowed size is 1MB.");
-            return;
-          }
-          let formData = new FormData();
-          formData.append("file", file);
-          fetch('/knowledge_base/upload_image', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-            // data.location ควรมีรูปแบบ URL ที่มี /static/ เช่น "http://yourdomain.com/static/uploads/unique_filename.png"
-            callback(data.location, { alt: file.name });
-            window.uploadedImages.push(data.location);
-          })
-          .catch(error => console.error('Upload failed:', error));
-        };
-        input.click();
+        if (meta.filetype === 'image') {
+          let input = document.createElement('input');
+          input.setAttribute('type', 'file');
+          input.setAttribute('accept','image/*');
+          input.onchange = function() {
+            let file = this.files[0];
+            const maxFileSize = 1 * 1024 * 1024; // 1MB
+            if (file.size > maxFileSize) {
+              alert("The selected file is too large. Maximum allowed size is 1MB.");
+              return;
+            }
+            let formData = new FormData();
+            formData.append("file", file);
+            // เรียก /knowledge_base/upload_image ซึ่งบันทึกไฟล์ใน temp_uploads
+            fetch('/knowledge_base/upload_image', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              // data.location = URL ของไฟล์ใน /static/temp_uploads/...
+              callback(data.location, { alt: file.name });
+              // บันทึก URL ที่อัปโหลดใน global array
+              window.uploadedImages.push(data.location);
+            })
+            .catch(err => console.error('Upload failed:', err));
+          };
+          input.click();
+        }
       },
       setup: function(editor) {
+        // ฟังก์ชัน checkImages: ตรวจจับว่ามีรูปใน content หรือไม่
         function checkImages() {
           let content = editor.getContent();
           let regex = /<img\s+[^>]*src="([^"]+)"[^>]*>/g;
           let currentImages = [];
           let match;
           while ((match = regex.exec(content)) !== null) {
-            // Normalize URL ที่ดึงมา
             currentImages.push(normalizeUrl(match[1]));
           }
           console.log("Normalized current images:", currentImages);
-          if(window.uploadedImages && window.uploadedImages.length > 0) {
+
+          // เปรียบเทียบ currentImages กับ uploadedImages
+          if (window.uploadedImages && window.uploadedImages.length > 0) {
             window.uploadedImages = window.uploadedImages.filter(function(url) {
               let normalizedUrl = normalizeUrl(url);
-              if(currentImages.indexOf(normalizedUrl) === -1) {
-                console.log("Image removed:", normalizedUrl);
-                // ส่ง AJAX request เพื่อลบไฟล์ออกจากเซิร์ฟเวอร์
+              if (currentImages.indexOf(normalizedUrl) === -1) {
+                console.log("Image removed from editor:", normalizedUrl);
+                // ส่ง AJAX request เพื่อลบไฟล์จาก temp_uploads (ถ้าไม่ได้ใช้ไฟล์)
                 fetch('/delete_uploaded_image', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ image_url: url })
                 })
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => console.log('Deleted image via AJAX:', url, data))
                 .catch(err => console.error('Error deleting image:', err));
                 return false;
@@ -219,7 +236,7 @@
             });
           }
         }
-        // ลงทะเบียน event handler เพื่อจับการเปลี่ยนแปลงใน editor
+
         editor.on('Change', checkImages);
         editor.on('blur', checkImages);
         editor.on('ExecCommand', function(e) {
@@ -229,7 +246,7 @@
       }
     });
 
-    // ก่อน submit ฟอร์ม ให้ triggerSave() จาก TinyMCE
+    // เรียก triggerSave() เพื่อคัดลอกเนื้อหาจาก TinyMCE ลงใน <textarea>
     document.addEventListener('DOMContentLoaded', function() {
       const commentForm = document.querySelector('form');
       if (commentForm) {
@@ -252,7 +269,7 @@
     });
     document.addEventListener('DOMContentLoaded', function() {
       const currentPath = window.location.pathname;
-      if(currentPath === '/work/open' || currentPath === '/work/closed' || currentPath === '/') {
+      if (currentPath === '/work/open' || currentPath === '/work/closed' || currentPath === '/') {
         sessionStorage.setItem('previousPage', currentPath);
       }
     });

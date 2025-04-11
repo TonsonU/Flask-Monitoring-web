@@ -20,6 +20,7 @@ from pytz import timezone
 from datetime import datetime
 from . import work_bp
 from werkzeug.utils import secure_filename
+from urllib.parse import urlparse
 import os
 import re
 
@@ -221,12 +222,10 @@ def editWork(number):
 @work_bp.route('/worknumber/<int:number>', methods=['GET', 'POST'])
 @login_required
 def work_detail(number):
-    # ดึงข้อมูลจากตาราง Work โดยใช้ number
     works = Work.query.get(number)
     if not works:
         abort(404)
 
-    # ดึงข้อมูลที่เชื่อมโยงกับ Work
     line = works.line
     location = works.location
     device_type = works.device_type
@@ -238,15 +237,14 @@ def work_detail(number):
         if form.image.data:
             image_file = form.image.data
             filename = secure_filename(image_file.filename)
-            # ตรวจสอบไฟล์ extension (ตัวอย่างใช้ .png, .jpg, .jpeg, .gif)
             allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
             if '.' in filename and filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
                 flash('File type not allowed', 'danger')
                 return redirect(url_for('work.work_detail', number=number))
-            # เพิ่มความเป็นเอกลักษณ์ให้กับชื่อไฟล์
             import uuid
             unique_filename = f"{uuid.uuid4().hex}_{filename}"
-            upload_folder = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'static/uploads'))
+            # สำหรับฟอร์ม comment นี้ เราจะบันทึกไฟล์โดยตรงลงในโฟลเดอร์ uploads
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
             image_path = os.path.join(upload_folder, unique_filename)
@@ -257,17 +255,14 @@ def work_detail(number):
                 current_app.logger.error(f"Error saving image: {e}")
                 flash('Error uploading image', 'danger')
                 return redirect(url_for('work.work_detail', number=number))
-                
         pdf_url = form.pdf_url.data.strip() if form.pdf_url.data else None
-
-        # กำหนดเขตเวลาของประเทศไทย
         thailand_tz = pytz.timezone('Asia/Bangkok')
         timestamp = datetime.now(thailand_tz)
 
         comment = Comment(
             content=form.comment.data,
             pdf_url=pdf_url,
-            image_url=image_url,
+            image_url=image_url,  # ค่านี้จะใช้สำหรับไฟล์ที่อัปโหลดจากฟอร์มโดยตรง (ถ้ามี)
             work_id=number,
             user_id=current_user.id,
             timestamp=timestamp
@@ -275,11 +270,62 @@ def work_detail(number):
         db.session.add(comment)
         db.session.commit()
         current_app.logger.info(f"Comment added to DB: {comment}")
+
+        # Post-process: ย้ายไฟล์ใน comment.content ที่อยู่ใน temp_uploads ไปที่ uploads
+        updated = False
+        new_content = comment.content
+
+        # กำหนด prefix ที่เป็นไปได้ของไฟล์ใน temp_uploads
+        temp_prefix1 = '/static/temp_uploads/'
+        temp_prefix2 = '../../static/temp_uploads/'
+        perm_prefix = '/static/uploads/'
+
+        temp_folder = os.path.join(current_app.root_path, 'static', 'temp_uploads')
+        if not os.path.exists(temp_folder):
+            os.makedirs(temp_folder)
+        perm_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+        # หาก permanent folder ไม่มีให้สร้าง
+        if not os.path.exists(perm_folder):
+            os.makedirs(perm_folder)
+
+        # ใช้ regex หา <img> tag และ extract src
+        matches = re.findall(r'src="([^"]+)"', comment.content)
+        for src in matches:
+            relative_path = None
+            
+            if src.startswith(temp_prefix1):
+                # ดึงชื่อไฟล์ออกมา
+                relative_path = src[len(temp_prefix1):]  # เช่น "unique_filename.png"
+            elif src.startswith(temp_prefix2):
+                relative_path = src[len(temp_prefix2):]
+
+            if relative_path:
+                # สร้าง path สำหรับ temp และ permanent  
+                temp_file_path = os.path.join(temp_folder, relative_path)
+                perm_file_path = os.path.join(perm_folder, relative_path)
+                if os.path.exists(temp_file_path):
+                    try:
+                        # ย้ายไฟล์จาก temp ไป permanent
+                        os.rename(temp_file_path, perm_file_path)
+                        new_url = url_for('static', filename=f'uploads/{relative_path}', _external=True)
+                        new_content = new_content.replace(src, new_url)
+                        updated = True
+                        current_app.logger.info(f"Moved file '{relative_path}' from temp to permanent.")
+                    except Exception as e:
+                        current_app.logger.error(f"Error moving file from temp to permanent: {e}")
+                else:
+                    current_app.logger.warning(f"Temporary file not found: {temp_file_path}")
+            else:
+                current_app.logger.warning(f"URL '{src}' does not match expected temp prefixes.")
+
+        if updated:
+            comment.content = new_content
+            db.session.commit()
+
         flash('Your comment has been posted.', 'success')
         return redirect(url_for('work.work_detail', number=number))
 
     comments = Comment.query.filter_by(work_id=number).order_by(Comment.timestamp.desc()).all()
-
     return render_template(
         "work_detail.html", 
         works=works, 
@@ -292,48 +338,58 @@ def work_detail(number):
     )
 
     
+from urllib.parse import urlparse
+
 @work_bp.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_comment(comment_id):
-    import re  # Import โมดูล re สำหรับ regex
+    import re  # สำหรับ regex
     comment = Comment.query.get_or_404(comment_id)
     work_id = comment.work_id
     if comment.user_id != current_user.id:
         abort(403)  # Forbidden
 
-    # Extract image URLs จาก comment.content โดยใช้ regex
+    # ดึง URL ทั้งหมดจาก <img> tag ใน comment.content
     image_srcs = re.findall(r'<img\s+[^>]*src="([^"]+)"', comment.content)
-
-    # ถ้ามี comment.image_url (เก็บแยกไว้) และยังไม่อยู่ใน image_srcs ให้เพิ่มเข้าไป
+    
+    # ถ้ามี comment.image_url (เก็บแยกไว้) แต่ยังไม่อยู่ใน list image_srcs ให้เพิ่มเข้าไปด้วย
     if comment.image_url and comment.image_url not in image_srcs:
         image_srcs.append(comment.image_url)
 
+    # สำหรับแต่ละ URL ใน image_srcs ให้ดึง relative path ของไฟล์
     for src in image_srcs:
-        # หาก src มีรูปแบบ "../../static/..." ให้ตัดเอา relative path ออกมา
-        if src.startswith('../../static/'):
-            relative_path = src.split('../../static/')[-1]
-        # หาก src มีรูปแบบ "/static/..." ให้ตัดเอา relative path ออกมา
-        elif src.startswith('/static/'):
-            relative_path = src.split('/static/')[-1]
+        relative_path = None
+        # ตรวจสอบว่า URL เริ่มต้นด้วย "../../static/uploads/"
+        if src.startswith('../../static/uploads/'):
+            relative_path = src.split('../../static/uploads/')[-1]
+        # ตรวจสอบว่า URL เริ่มต้นด้วย "/static/uploads/"
+        elif src.startswith('/static/uploads/'):
+            relative_path = src.split('/static/uploads/')[-1]
+        else:
+            # หากไม่ตรงกับที่คาดไว้ ลองใช้ urlparse เพื่อดึง path
+            parsed = urlparse(src)
+            if parsed.path.startswith('/static/uploads/'):
+                relative_path = parsed.path.split('/static/uploads/')[-1]
+        
+        if relative_path:
+            # สร้าง absolute path จาก current_app.root_path โดยใช้โฟลเดอร์ static/uploads
+            image_path = os.path.join(current_app.root_path, 'static', 'uploads', relative_path)
+            if os.path.exists(image_path):
+                try:
+                    os.remove(image_path)
+                    current_app.logger.info(f"Deleted image file: {image_path}")
+                except Exception as e:
+                    current_app.logger.error(f"Error deleting image file {image_path}: {e}")
+            else:
+                current_app.logger.warning(f"Image file not found: {image_path}")
         else:
             current_app.logger.warning(f"Unexpected image src format: {src}")
-            continue
-
-        # สร้าง absolute path โดยใช้ current_app.root_path
-        image_path = os.path.join(current_app.root_path, 'static', relative_path)
-        if os.path.exists(image_path):
-            try:
-                os.remove(image_path)
-                current_app.logger.info(f"Deleted image file: {image_path}")
-            except Exception as e:
-                current_app.logger.error(f"Error deleting image file {image_path}: {e}")
-        else:
-            current_app.logger.warning(f"Image file not found: {image_path}")
 
     db.session.delete(comment)
     db.session.commit()
     flash('Your comment has been deleted.', 'info')
     return redirect(url_for('work.work_detail', number=work_id))
+
 
 
 @work_bp.route('/delete_uploaded_image', methods=['POST'])
