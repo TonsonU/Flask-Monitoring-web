@@ -565,20 +565,26 @@ font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่ส
     background-color: #F95454;  /* สีพื้นหลังเมื่อคลิก */
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 /* ทำให้ Sidebar สูงเต็มจอ */
 #bdSidebar {
-    height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
     width: 250px;
-    background-color: #363636; /* เปลี่ยนสีพื้นหลังเป็นสีเขียว */
+    height: 100%;
+    background-color: #363636;
     color: white;
     padding: 15px;
-    overflow-y: auto; /* ให้เลื่อนลงได้ถ้าเมนูเยอะ */
-    display: flex; /* เพิ่ม display: flex; */
-    flex-direction: column; /* เพิ่ม flex-direction: column; */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
+
 
 /* ปรับแต่ง Sidebar Menu */
 .mynav li a {
@@ -612,6 +618,8 @@ font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่ส
     padding: 20px;
     min-height: 100vh;
     overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอน */
+    background-color: #f8f9fa;
+    min-height: 100vh;
 }
 
 /* เพิ่ม margin-top: auto; ให้กับ li ของเมนูออกจากระบบ */
@@ -621,10 +629,37 @@ font-family: 'Ubuntu', sans-serif; /* เลือกฟอนต์ที่ส
 
 .chart-container {
     width: 100%;
-    max-width: 500px;  /* ✅ จำกัดขนาดไม่ให้ใหญ่เกิน */
-    height: 300px; /* ✅ กำหนดความสูงให้พอดี */
-    margin: 0 auto;  /* ✅ จัดกึ่งกลาง */
+    height: 300px; /* ✅ ใส่ความสูงให้แน่นอน */
+    padding: 1rem;
+    transition: opacity 0.5s ease;
 }
+.chart-wrapper {
+    max-width: 300px;
+    margin: 0 auto;
+    height: 300px;
+  }
+  
+  .chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+
+.chart-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+.chart-container canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+      height: 300px;
+    }
+  }
 
 canvas {
     display: block;

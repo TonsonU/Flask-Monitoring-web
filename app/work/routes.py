@@ -270,6 +270,7 @@ def work_detail(number):
         db.session.add(comment)
         db.session.commit()
         current_app.logger.info(f"Comment added to DB: {comment}")
+        flash('บันทึกข้อมูลสำเร็จ', "success")
 
         # Post-process: ย้ายไฟล์ใน comment.content ที่อยู่ใน temp_uploads ไปที่ uploads
         updated = False

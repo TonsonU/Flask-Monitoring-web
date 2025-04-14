@@ -69,6 +69,8 @@ async function loadCMStatusPieChart() {
         });
     } catch (error) {
         console.error("❌ Error fetching CM status data:", error);
+        console.log("📌 Status Chart Element:", document.getElementById("cm-status-pie-chart"));
+
     }
 }
 

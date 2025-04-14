@@ -126,8 +126,8 @@
                     </button>
                 </div>
                 <!-- Section สำหรับแสดงกราฟ -->
-                <div class="chart-container mt-4" style="display:none; overflow-x: auto; white-space: nowrap;">
-                    <canvas id="forceChart" style="min-width: 1000px;"></canvas>
+                <div class="chart-container mt-4" style="display:none; height: 400px;">
+                    <canvas id="forceChart"></canvas>
                 </div>
                 <table class="table table-bordered history-table table-striped table-hover">
                 <br>
@@ -329,6 +329,10 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
+                            animation: {
+                                duration: 1200, // ระยะเวลา 1.2 วินาที
+                                easing: 'easeInOutCubic' // รูปแบบ animation ที่นุ่มนวล
+                            },
                             plugins: {
                                 legend: {
                                     position: 'top',
@@ -409,7 +413,20 @@
             };
 
             // กดปุ่มเพื่อเรียกแสดงกราฟ
-            showGraphButton.addEventListener('click', fetchAndRenderGraph);
+            showGraphButton.addEventListener('click', () => {
+                
+                chartContainer.style.display = 'block';
+                chartContainer.classList.remove('visible');
+
+                void chartContainer.offsetWidth;  // 💡 บังคับ browser reflow
+
+                chartContainer.classList.add('visible');
+
+                
+                fetchAndRenderGraph();
+                
+            });
+            
         });
     </script>
 
