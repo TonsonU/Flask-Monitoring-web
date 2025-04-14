@@ -75,6 +75,8 @@ body {
 }
 .nav-item.dropdown:hover .dropdown-menu {
     display: block; /* แสดง dropdown */
+    padding: 10px 20px;
+    font-size: 0.95rem;
 }
 main {
     flex: 1; /* ให้พื้นที่ของ main ขยายเต็ม */
@@ -97,6 +99,9 @@ footer {
 .navbar-text {
     display: flex;
     align-items: center;
+    margin-right: 1rem;
+    font-weight: 500;
+    font-size: 0.95rem; /* ขนาดฟอนต์ */
 }
 .navbar-text i {
     margin-right: 8px; /* เว้นระยะห่างระหว่างไอคอนกับข้อความ */
@@ -113,12 +118,13 @@ footer {
     background-color: #EC8305; /* สีเขียว */
     color: #FFFAEC; /* ข้อความสีขาว */
     border: none;
-    padding: 5px 20px; /* ขนาดของปุ่ม */
+    padding: 6px 12px; /* ขนาดของปุ่ม 5px 20px*/
     border-radius: 1.25rem; /* ขอบปุ่มเป็นมุมโค้ง */
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    font-weight: 500; /* ขนาดฟอนต์ */
 }
 
 
@@ -643,6 +649,30 @@ canvas {
     max-width: 300px; /* ✅ ป้องกันกว้างเกินไป */
 }
 
+.navbar-nav .nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+    margin-right: 1rem; /* หรือใช้ 1.5rem สำหรับห่างมากขึ้น */
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background-color: #ffc107;
+    transition: width 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: 100%;
+}
+
+html {
+    scroll-behavior: smooth;
+}
 
 
 /* 🎨 ปรับสีพื้นหลัง card */

@@ -114,22 +114,22 @@
 						</a>
 					</li>
 
-					<!-- เพิ่มเมนู Report -->
+					<!-- เพิ่มเมนู Report 
 					<li class="nav-item">
 						<a class="nav-link" href="{{ url_for('report.main') }}">
 							Report
 						</a>
-					</li>
-				</ul>
+					</li> -->
+				</ul> 
 
 				<!-- Right-aligned logout button -->
 				<ul class="navbar-nav ms-auto"> <!-- ms-auto สำหรับให้เมนู Login/Logout อยู่ทางขวา -->
 					{% if current_user.is_authenticated %}
 						<span class="navbar-text text-light me-3 navbar-text"><i class="fa-solid fa-user"></i> {{ current_user.username }}</span>
-						<a class="nav-link custom-login-btn" href="{{ url_for('auth.logout') }}">Sign Out</a>
+						<a class="custom-login-btn" href="{{ url_for('auth.logout') }}">Sign Out</a>
 					{% else %}
 						<!-- ใช้คลาส custom-login-btn สำหรับปุ่ม Login -->
-						<a class="nav-link custom-login-btn" href="{{ url_for('auth.login') }}">Sign In</a>
+						<a class="custom-login-btn" href="{{ url_for('auth.login') }}">Sign In</a>
 					{% endif %}
 				</ul>
 			</div>
@@ -144,7 +144,7 @@
 	<!-- Footer as a Gray Line -->
 	<footer>
 		<div class="footer-line"></div>
-		<p class="footer-text">© 2024 Task List</p>
+		<p class="footer-text">© 2025 Task List</p>
 	</footer>
 
 	<!-- Bootstrap JS -->
