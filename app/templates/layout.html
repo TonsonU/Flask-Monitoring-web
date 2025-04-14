@@ -44,9 +44,31 @@
         main {
             flex-grow: 1; /* เพิ่ม flex-grow: 1; ให้ main */
             padding: 20px;
+			opacity: 0;
         }
         footer{
             flex-shrink: 0;
+        }
+		/* ✅ Smooth Fade-in Effect */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ✅ เพิ่ม spacing เมนูให้อ่านง่าย */
+        .navbar-nav .nav-link {
+            padding-left: 12px;
+            padding-right: 12px;
         }
 
     </style>
@@ -136,7 +158,7 @@
 		</div>
 	</nav>
 
-     <main>
+     <main id="main-content">
         {% block content %}
         {% endblock %}
     </main>
@@ -144,11 +166,21 @@
 	<!-- Footer as a Gray Line -->
 	<footer>
 		<div class="footer-line"></div>
-		<p class="footer-text">© 2024 Task List</p>
+		<p class="footer-text">© 2025 Task List</p>
 	</footer>
 
 	<!-- Bootstrap JS -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+	<!-- ✅ Smooth Load Animation -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const main = document.getElementById("main-content");
+            if (main) {
+                main.classList.add("fade-in");
+            }
+        });
+    </script>
 
 	{% block scripts %}{% endblock %}
 </body>
