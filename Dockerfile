@@ -20,4 +20,4 @@ COPY . /app/
 EXPOSE 5000
 
 # กำหนดคำสั่งให้ Flask รันผ่าน Gunicorn
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "main:app", "--log-level=info"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "run:app", "--log-level=info"]
