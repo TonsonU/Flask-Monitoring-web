@@ -1,0 +1,157 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block dashboard_content %}
+
+<div id="overview" class="container-fluid">
+  <div class="row mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+      <h2 class="fw-bold mb-3 me-3">Overview CM</h2>
+      <!-- Removed dark mode toggle button -->
+    </div>
+
+    <!-- Summary Cards -->
+  <div class="row g-4 summary-container">
+    <!-- Card 1 -->
+    <div class="col-xl-3 col-md-4 col-sm-6 col-12">
+      <div class="card card-stats shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="icon-box">
+            <i class="fa-solid fa-list-check text-primary fa-2xl" aria-hidden="true"></i>
+          </div>
+          <div class="text-end">
+            <h3 class="fw-bold" id="total_cm">{{ total_cm }}</h3>
+            <span class="text-muted">จำนวนงาน CM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="col-xl-3 col-md-4 col-sm-6 col-12">
+      <div class="card card-stats shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="icon-box">
+            <i class="fa-solid fa-spinner text-warning fa-2xl" aria-hidden="true"></i>
+          </div>
+          <div class="text-end">
+            <h3 class="fw-bold" id="open_cm">{{ open_cm }}</h3>
+            <span class="text-muted">งานที่กำลังดำเนินการ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="col-xl-3 col-md-4 col-sm-6 col-12">
+      <div class="card card-stats shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="icon-box">
+            <i class="fa-solid fa-check-circle text-success fa-2xl" aria-hidden="true"></i>
+          </div>
+          <div class="text-end">
+            <h3 class="fw-bold" id="close_cm">{{ close_cm }}</h3>
+            <span class="text-muted">งานที่ซ่อมเสร็จแล้ว</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Charts -->
+    <div class="row g-4 mt-1">
+      <!-- Pie Chart: CM Status -->
+      
+      <div class="col-lg-6 col-md-12">
+        <div class="card shadow-sm rounded-4 text-center h-100">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">จำนวนงาน CM ทั้งหมด</h5>
+            <div class="chart-wrapper">
+              <canvas id="cm-status-pie-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <!-- Pie Chart: Frequent Failure -->
+      <div class="col-lg-6 col-md-12">
+        <div class="card shadow-sm rounded-4 h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">อุปกรณ์ที่เสียบ่อยที่สุด</h5>
+            <canvas id="equipment-failure-pie-chart" style="max-height: 300px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart: Location -->
+      <div class="col-lg-6 col-md-12">
+        <div class="card shadow-sm rounded-4 h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">CM ที่ค้างอยู่ในแต่ละสถานที่</h5>
+            <canvas id="pending-tasks-by-location-bar-chart" style="max-height: 300px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart: By Line -->
+      <div class="col-lg-6 col-md-12">
+        <div class="card shadow-sm rounded-4 h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">งาน CM ทั้งหมดแยกตาม Line</h5>
+            <canvas id="cm-by-line-bar-chart" style="max-height: 300px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card {
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  .icon-box i {
+    transition: transform 0.3s ease;
+  }
+  .card:hover .icon-box i {
+    transform: scale(1.1);
+  }
+  .chart-container {
+    width: 100%;
+    height: auto;
+  }  
+  /* กำหนดสีพื้นหลังให้กับ container ของ Summary Cards */
+  .summary-container {
+    background-color: #f7f7f7; /* สีพื้นหลังของ container */
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  /* กำหนดสีพื้นหลังให้กับแต่ละ Card */
+  .card {
+    background-color: #ffffff; /* สีพื้นหลังของ Card */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  .icon-box i {
+    transition: transform 0.3s ease;
+  }
+  
+  .card:hover .icon-box i {
+    transform: scale(1.1);
+  }
+
+
+</style>
+
+{% endblock %}
