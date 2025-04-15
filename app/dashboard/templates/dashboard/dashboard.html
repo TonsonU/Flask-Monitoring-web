@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- 📌 ครอบ Sidebar + Content ด้วย Flex Container -->
+<div class="d-flex min-vh-100">
+    
+    <!-- Sidebar -->
+    <div id="bdSidebar" class="bg-dark text-white p-3">
+        <ul class="mynav nav flex-column">
+            <li class="nav-item mb-1">
+                <a href="{{ url_for('dashboard.overview_page') }}"><i class="fa-solid fa-house"></i> Overview</a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ url_for('dashboard.location_page') }}"><i class="fa-solid fa-chart-line"></i> Location</a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ url_for('dashboard.equipment_page') }}"><i class="fa-solid fa-box"></i> Equipment</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="content-sidebar flex-grow-1 p-4">
+        {% block dashboard_content %}
+            {% include 'dashboard/overview.html' %}    
+        {% endblock %}
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+
+{% endblock %}

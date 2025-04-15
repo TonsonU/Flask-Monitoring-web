@@ -1,0 +1,139 @@
+<!--
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+-->
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Knowledge Base</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+  <!-- TinyMCE (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/tinymce@6.2.0/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="card shadow">
+      <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0"><i class="fa-solid fa-plus"></i> Create Knowledge Base</h3>
+        <a href="javascript:history.back()" class="btn-close btn-close-white" aria-label="Close"></a>
+      </div>
+      <div class="card-body">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Form -->
+        <form method="POST">
+          {{ form.hidden_tag() }}
+
+          <!-- Create Date -->
+          <div class="mb-3">
+            <label for="create_date" class="form-label">{{ form.create_date.label }}</label>
+            {{ form.create_date(class="form-control", id="create_date", placeholder="YYYY-MM-DD HH:MM") }}
+          </div>
+
+          <!-- Device Type -->
+          <div class="mb-3">
+            <label for="device_type" class="form-label">{{ form.device_type.label }}</label>
+            {{ form.device_type(class="form-control", id="device_type", placeholder="Enter Device Type") }}
+          </div>
+
+          <!-- Topic -->
+          <div class="mb-3">
+            <label for="topic" class="form-label">{{ form.topic.label }}</label>
+            {{ form.topic(class="form-control", id="topic", placeholder="Enter Topic") }}
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">{{ form.description.label }}</label>
+            {{ form.description(class="form-control", id="description") }}
+        </div>
+
+          <!-- Hidden Create By -->
+          <div style="display: none;">
+            <label for="create_by" class="form-label">{{ form.create_by.label }}</label>
+            <input type="text" id="create_by" name="create_by" value="{{ current_user.username }}" readonly>
+          </div>
+
+          <!-- Submit Button -->
+          {{ form.submit(class="btn btn-primary") }}
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- Initialize TinyMCE -->
+<script>
+  tinymce.init({
+    selector: '#description',  // ✅ ระบุ textarea ที่จะใช้
+    height: 300,               // ✅ ตั้งค่าความสูง
+    menubar: false,
+    plugins: 'lists link image code autoresize',
+    toolbar: 'undo redo | formatselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link image | code',
+    autoresize_min_height: 300,
+    autoresize_max_height: 600,
+    
+    // ✅ กำหนดให้รองรับการอัปโหลดรูปภาพ
+    images_upload_url: '/knowledge_base/upload_image', // ✅ เปลี่ยน URL ตาม Route ของคุณ
+    file_picker_types: 'image',
+
+    file_picker_callback: function(callback, value, meta) {
+      let input = document.createElement('input');
+      input.setAttribute('type', 'file');
+      input.setAttribute('accept', 'image/*');
+
+      input.onchange = function() {
+        let file = this.files[0];
+        let formData = new FormData();
+        formData.append("file", file);
+
+        fetch('/knowledge_base/upload_image', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          callback(data.location, { alt: file.name }); // ✅ แทรกภาพลงใน Editor
+        })
+        .catch(error => console.error('Upload failed:', error));
+      };
+
+      input.click();
+    }
+  });
+</script>
+
+
+
+</body>
+</html>
+{% endblock %}
