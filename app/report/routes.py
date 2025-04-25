@@ -34,6 +34,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import Image
 from reportlab.lib.units import cm
+from docxtpl import DocxTemplate
 
 
 
@@ -208,3 +209,56 @@ def generate_tap_pdf():
         abort(500, "PDF generation failed.")
 
     return send_file(pdf_path, as_attachment=True, download_name=filename)
+
+@report_bp.route('/emp_form')
+def emp_form():
+    return render_template('emp_form.html')
+
+@report_bp.route("/generate_emp_pdf", methods=["POST"])
+def generate_emp_pdf():
+    # เก็บค่า text field
+    context = {
+        'leader': request.form.get('leader'),
+        'date': request.form.get('date'),
+        'hh': request.form.get('hh'),
+        'mm': request.form.get('mm'),
+        'coordinate': request.form.get('coordinate'),
+        'station': request.form.get('station'),
+        'location': request.form.get('location'),
+        'apostle': request.form.get('apostle'),
+        'tpr': request.form.get('tpr'),
+        'person1': request.form.get('person1'),
+        'person2': request.form.get('person2'),
+        'person3': request.form.get('person3'),
+        'person4': request.form.get('person4'),
+        'person5': request.form.get('person5'),
+        'person6': request.form.get('person6'),
+        'person7': request.form.get('person7'),
+        'work': request.form.get('work'),
+        'workdes': request.form.get('workdes'),
+        'poi_1': request.form.get('poi_1'),
+        'poi_2': request.form.get('poi_2'),
+        'poi_3': request.form.get('poi_3')
+    }
+
+    # ฟังก์ชันสำหรับแปลง checkbox เป็น ✔ หรือ ☐
+    def markbox(name):
+        return '✔' if request.form.get(name) else '☐'
+
+    # รายการ checkbox ทั้งหมด
+    checkbox_fields = ['checkin', 'checkout', 'earthing_borrow', 'voltage_borrow', 'borrow', 'return', 'tra_in', 'tra_out']
+    for field in checkbox_fields:
+        context[field] = markbox(field)
+
+    # เติมข้อมูลลง Word Template
+    base_dir = os.path.dirname(os.path.abspath(__file__))  # path ของไฟล์ report.py
+    template_path = os.path.join(base_dir, "templates", "forms", "Point M1.docx")
+
+    doc = DocxTemplate(template_path)  # ✅ ใช้ path ที่ถูกต้อง
+    doc.render(context)
+
+    # สร้างไฟล์ชั่วคราวสำหรับ .docx
+    temp_path = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    doc.save(temp_path.name)
+
+    return send_file(temp_path.name, as_attachment=True, download_name="filled_form.docx")

@@ -1,0 +1,56 @@
+<!--
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+-->
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+
+{% block content %}
+
+<body>
+    <h2>แบบฟอร์ม</h2>
+    <form method="POST" action="{{ url_for('report.generate_emp_pdf') }}">
+        <p>ชื่อหัวหน้า: <input name="leader"></p>
+        <p>วันที่: <input type="date" name="date"></p>
+        <p>เวลา: <input name="hh" size="2"> : <input name="mm" size="2"></p>
+        <p>สถานี: <input name="station"> พื้นที่: <input name="location"></p>
+        <p>พิกัด: <input name="coordinate"></p>
+        <p>ผู้ติดตาม (apostle): <input name="apostle"></p>
+        <p>TPR No: <input name="tpr"></p>
+
+        <h3>รายชื่อทีม</h3>
+        {% for i in range(1,8) %}
+            <p>สมาชิก {{ i }}: <input name="person{{i}}"></p>
+        {% endfor %}
+
+        <p>Work Order: <input name="work"></p>
+        <p>รายละเอียดงาน: <input name="workdes"></p>
+
+        <h3>Checkbox</h3>
+        <label><input type="checkbox" name="checkin"> เข้าพื้นที่</label><br>
+        <label><input type="checkbox" name="checkout"> ออกจากพื้นที่</label><br>
+        <label><input type="checkbox" name="earthing_borrow"> ยืม Earthing Device</label><br>
+        <label><input type="checkbox" name="voltage_borrow"> ยืม Voltage Tester</label><br>
+        <label><input type="checkbox" name="borrow"> ยืม</label><br>
+        <label><input type="checkbox" name="return"> คืน</label><br>
+        <label><input type="checkbox" name="tra_in"> แจ้งเข้า CCR</label><br>
+        <label><input type="checkbox" name="tra_out"> แจ้งออก CCR</label><br>
+
+        <h3>Point Number</h3>
+        <input name="poi_1"> <input name="poi_2"> <input name="poi_3">
+
+        <p><button type="submit">สร้างเอกสาร Word</button></p>
+    </form>
+</body>
+
+{% endblock %}
