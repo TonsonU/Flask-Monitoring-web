@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  flaskapp:
+    build: .
+    container_name: flask-monitoring
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app/static/uploads:/app/app/static/uploads
+    restart: always
