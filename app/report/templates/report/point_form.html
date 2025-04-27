@@ -140,7 +140,16 @@
                         </select>
                     </td>
                     <td>TPR NO:</td>
-                    <td colspan="3"><input type="text" name="tpr_no" placeholder="หมายเลข TPR"></td>
+                    <td colspan="3" style="text-align: left;">
+                        <label for="tprCount">เลือกจำนวน TPR NO:</label>
+                        <select id="tprCount" onchange="generateTprInputs()">
+                            <option value="0">-- เลือกจำนวนหมายเลข TPR --</option>
+                            {% for i in range(1, 5) %}
+                                <option value="{{ i }}">{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="tprInputs" style="margin-top: 10px;"></div>
+                    </td>
                 </tr>
                 <tr>
                     <td>TEAM NAME LIST:</td>
@@ -157,7 +166,16 @@
                 </tr>
                 <tr>
                     <td>WORK ORDER NO:</td>
-                    <td colspan="5"><input type="text" name="work_order_no" placeholder="หมายเลขใบงาน"></td>
+                    <td colspan="5" style="text-align: left;">
+                        <label for="workOrderCount">เลือกจำนวนใบงาน:</label>
+                        <select id="workOrderCount" onchange="generateWorkOrderInputs()">
+                            <option value="0">-- เลือกจำนวนใบงาน --</option>
+                            {% for i in range(1, 8) %}
+                                <option value="{{ i }}">{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="workOrderInputs" style="margin-top: 10px;"></div>
+                    </td>
                 </tr>
                 <tr>
                     <td>WORK DESCRIPTION:</td>
@@ -1026,5 +1044,39 @@
             time_24hr: true
         });
         </script>
+    <script>
+        function generateWorkOrderInputs() {
+            const count = document.getElementById('workOrderCount').value;
+            const container = document.getElementById('workOrderInputs');
+            container.innerHTML = ''; // ล้างช่องเก่าก่อน
+        
+            for (let i = 1; i <= count; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = `work_order_no_${i}`;
+                input.placeholder = `หมายเลขใบงานที่ ${i}`;
+                input.style.marginBottom = '5px';
+                input.style.display = 'block'; // ขึ้นบรรทัดใหม่ทุกช่อง
+                container.appendChild(input);
+            }
+        }
+        </script>
+        <script>
+            function generateTprInputs() {
+                const count = document.getElementById('tprCount').value;
+                const container = document.getElementById('tprInputs');
+                container.innerHTML = ''; // เคลียร์ของเก่า
+            
+                for (let i = 1; i <= count; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = `tpr_no_${i}`;
+                    input.placeholder = `หมายเลข TPR ที่ ${i}`;
+                    input.style.marginBottom = '5px';
+                    input.style.display = 'block'; // ขึ้นบรรทัดใหม่
+                    container.appendChild(input);
+                }
+            }
+            </script>
 
 {% endblock %}
