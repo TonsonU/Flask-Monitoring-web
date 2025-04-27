@@ -36,7 +36,28 @@ from reportlab.platypus import Image
 from reportlab.lib.units import cm
 from docxtpl import DocxTemplate
 
+leaders = [
+    "นายสมชาย ใจดี",
+    "นายวิทยา ทองสุข",
+    "นางสาวสุภาพร สวยงาม",
+    "นายกิตติชัย วัฒนศักดิ์",
+    "นายธนกฤต เพชรทอง",
+    "นางสาวชุติมา ปัญญาไว",
+    "นายปกรณ์ เก่งการงาน",
+    "นางสาวศิริพร พรหมรักษ์",
+    "นายอนันต์ สุขใจ",
+    "นางสาววรัญญา จันทร์เพ็ญ",
+    "นายอดิศักดิ์ กาญจนกิจ",
+    "นางสาวนริศรา ทองแท้",
+    "นายพีระศักดิ์ เกิดผล",
+    "นางสาวมนัสชนก มีสุข",
+    "นายธีรยุทธ ตันติวัฒน์"
+]
+apostles = leaders
 
+@report_bp.context_processor
+def inject_names():
+    return dict(leaders=leaders, apostles=apostles)
 
 @report_bp.route('/main')
 @login_required
@@ -218,14 +239,14 @@ def emp_form():
 def generate_emp_pdf():
     # เก็บค่า text field
     context = {
-        'leader': request.form.get('leader'),
+        'leaders': request.form.get('leaders'),
         'date': request.form.get('date'),
         'hh': request.form.get('hh'),
         'mm': request.form.get('mm'),
         'coordinate': request.form.get('coordinate'),
         'station': request.form.get('station'),
         'location': request.form.get('location'),
-        'apostle': request.form.get('apostle'),
+        'apostles': request.form.get('apostles'),
         'tpr': request.form.get('tpr'),
         'person1': request.form.get('person1'),
         'person2': request.form.get('person2'),
@@ -252,7 +273,7 @@ def generate_emp_pdf():
 
     # เติมข้อมูลลง Word Template
     base_dir = os.path.dirname(os.path.abspath(__file__))  # path ของไฟล์ report.py
-    template_path = os.path.join(base_dir, "templates", "forms", "Point M1.docx")
+    template_path = os.path.join(base_dir, "templates", "docx_templates", "Point M1.docx")
 
     doc = DocxTemplate(template_path)  # ✅ ใช้ path ที่ถูกต้อง
     doc.render(context)
@@ -262,3 +283,7 @@ def generate_emp_pdf():
     doc.save(temp_path.name)
 
     return send_file(temp_path.name, as_attachment=True, download_name="filled_form.docx")
+
+@report_bp.route('/point_form')
+def point_form():
+    return render_template('point_form.html')
