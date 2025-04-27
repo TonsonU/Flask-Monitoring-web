@@ -11,6 +11,7 @@
 ####################################################
 
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 from config import Config
 from app.extensions import db, login_manager, migrate, bootstrap
 from app.models import User
@@ -24,12 +25,16 @@ from app.dashboard import dashboard_bp
 from app.report import report_bp
 from app.filters import datetime_bangkok
 
+csrf = CSRFProtect()
+
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object('config.Config')
+    app.config['WTF_CSRF_HEADERS'] = ['X-CSRFToken'] 
 
     # Initialize Flask Extensions
     db.init_app(app)
+    csrf.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bootstrap.init_app(app)

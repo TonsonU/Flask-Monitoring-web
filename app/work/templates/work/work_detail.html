@@ -116,6 +116,7 @@
             </div>
             {% if comment.user_id == current_user.id %}
               <form method="POST" action="{{ url_for('work.delete_comment', comment_id=comment.id) }}" class="align-self-end">
+                {{ form.hidden_tag() }}
                 <button type="submit" class="btn custom-delete-comment-btn">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>

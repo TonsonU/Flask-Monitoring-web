@@ -12,6 +12,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
+from app.auth.forms import LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db
 from app.models import User
@@ -71,6 +72,7 @@ def forgot_password():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    form = LoginForm()
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
 
@@ -85,7 +87,7 @@ def login():
         else:
             flash("Invalid username or password.", "danger")
 
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 @auth_bp.route('/logout')
 @login_required

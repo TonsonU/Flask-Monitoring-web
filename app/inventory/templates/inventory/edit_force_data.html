@@ -26,7 +26,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- เชื่อมต่อไฟล์ CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
 </head>
 <body class="bg-light">
@@ -236,8 +236,10 @@
                         const response = await fetch(`/inventory/delete_force_data/${recordId}`, {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
-                            }
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({ record_id: recordId })
                         });
 
                         const result = await response.json();

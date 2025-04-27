@@ -18,13 +18,15 @@
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.css">
     <!-- เชื่อมต่อไฟล์ CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 <body>
 <div class="container">
@@ -131,6 +133,16 @@
             var form = document.createElement('form');
             form.method = 'POST';  // ใช้ POST method
             form.action = '/work/'+'/delete/' + workNumber;  // ส่งคำขอไปยัง URL สำหรับการลบ
+
+            // ดึง CSRF token จาก meta tag
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            // เพิ่ม input ซ่อนของ CSRF token
+            var csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
 
             // เพิ่มฟอร์มที่ซ่อนอยู่ใน DOM
             document.body.appendChild(form);

@@ -262,11 +262,11 @@ def edit_force_data(device_id):
                 db.session.commit()
                 flash('Force Data updated successfully!', 'success')
 
-                return redirect(url_for('edit_force_data', device_id=device.id))
+                return redirect(url_for('inventory.edit_force_data', device_id=device.id))
 
             except Exception as e:
                 db.session.rollback()
-                current_app.logger.error(f"Error updating force data: {e}")
+                current_app.logger.error(f"Error updating force data for device {device_id}: {e}")
                 flash('เกิดข้อผิดพลาดในการอัปเดตข้อมูล', 'danger')
 
         # ดึงประวัติการเปลี่ยนแปลง

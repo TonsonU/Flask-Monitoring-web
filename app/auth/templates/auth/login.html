@@ -39,15 +39,16 @@
 
         <!-- ฟอร์ม Login -->
         <form method="POST">
+            {{ form.hidden_tag() }} 
             <!-- ช่องกรอกข้อมูล Username -->
             <div class="form-floating mb-3">
-                <input type="text" id="username" name="username" class="form-control custom-input" placeholder="Username" required>
+                {{ form.username(class="form-control custom-input", placeholder="Username") }}
                 <label for="username">Username</label>
             </div>
 
             <!-- ช่องกรอกข้อมูล Password พร้อมปุ่มลูกตา -->
             <div class="form-floating mb-3 position-relative">
-                <input type="password" id="password" name="password" class="form-control custom-input" placeholder="Password" required>
+                {{ form.password(class="form-control custom-input", placeholder="Password") }}
                 <label for="password">Password</label>
                 <!-- ปุ่มลูกตาสำหรับดูรหัสผ่าน -->
                 <button type="button" class="btn position-absolute" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility">

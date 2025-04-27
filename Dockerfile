@@ -4,7 +4,7 @@ FROM python:3.10-slim
 # ตั้งค่า environment
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-
+ENV SECRET_KEY=oF1gr6yQvGVFTExhvZ6QQf6ae5M1_8U1wz8zNB5DRWk=
 # สร้าง directory สำหรับ app
 WORKDIR /app
 
