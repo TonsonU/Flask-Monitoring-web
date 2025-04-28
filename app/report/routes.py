@@ -287,3 +287,96 @@ def generate_emp_pdf():
 @report_bp.route('/point_form')
 def point_form():
     return render_template('point_form.html')
+
+@report_bp.route("/generate_point_y1_pdf", methods=["POST"])
+def generate_point_y1_pdf():
+    context = {}
+
+    # ========== Section 1: ข้อมูลทั่วไป ==========
+    text_fields = [
+        'leaders', 'date', 'coordinate', 'station', 'location', 'apostles', 'work_description'
+    ]
+    for field in text_fields:
+        context[field] = request.form.get(field, "")
+
+    # เวลา
+    context['time1'] = request.form.get('time1', "")
+    context['time2'] = request.form.get('time2', "")
+
+    # Members (person1, person2, ..., person7)
+    for i in range(1, 8):
+        context[f"person{i}"] = request.form.get(f"person{i}", "")
+
+    # Work orders (work1, work2, ..., work7)
+    for i in range(1, 8):
+        context[f"work{i}"] = request.form.get(f"work{i}", "")
+
+    # TPR numbers (tpr1, tpr2, ..., tpr4)
+    for i in range(1, 5):
+        context[f"tpr{i}"] = request.form.get(f"tpr{i}", "")
+
+    # Checkbox กลุ่มแรก
+    def markbox(name):
+        return '✔' if request.form.get(name) else '☐'
+
+    checkbox_fields = [
+        'station_in', 'station_out', 'borrow_earthing', 'borrow_voltage', 'borrow_item',
+        'return_item', 'track_in', 'track_out'
+    ]
+    for field in checkbox_fields:
+        context[field] = markbox(field)
+
+    # ========== Section 2: ตารางงาน Point Machine (30 งาน) ==========
+    for row in range(1, 31):
+        for col in range(1, 5):
+            context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
+
+        # Remark ของแต่ละข้อ
+        context[f"remark1_{row}"] = request.form.get(f"remark1_{row}", "")
+
+    # Row พิเศษ: ข้อ 3, 4, 7 ที่มีแถวเสริม
+    special_rows = [3, 4, 7]
+    for row in special_rows:
+        for sub in range(2, 6 if row == 7 else 4):
+            for col in range(1, 5):
+                context[f"poi1_{col}_{row}_{sub}"] = request.form.get(f"poi1_{col}_{row}_{sub}", "")
+
+    # ========== Section 3: Force & Mark Center Table ==========
+    for i in range(1, 5):  # 4 แถว
+        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
+        for j in range(1, 9):  # 8 ช่อง
+            context[f"poi2_{i}_{j}"] = request.form.get(f"poi2_{i}_{j}", "")
+
+    # ========== Section 4: Contact Resistance, Voltage, Current Table ==========
+    for i in range(1, 5):  # 4 rows
+        for side in [1, 2]:  # Plus (+) and Minus (-)
+            for j in range(1, 13):
+                context[f"poi3_{i}_{side}_{j}"] = request.form.get(f"poi3_{i}_{side}_{j}", "")
+
+    # ========== Section 5: Contact Force 1-10 ==========
+    for i in range(1, 11):  # No. 1-10
+        for j in range(1, 3):  # BF, AT
+            for poi in range(1, 5):  # 4 POs
+                context[f"poi4_{poi}_{i}"] = request.form.get(f"poi4_{poi}_{i}", "")
+        for j in range(21, 41):  # ฝั่ง 11-20
+            for poi in range(1, 5):
+                context[f"poi4_{poi}_{j}"] = request.form.get(f"poi4_{poi}_{j}", "")
+
+    # ========== Section 6: Other Issues ==========
+    for i in range(1, 6):
+        context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
+
+    # ========== Section 7: แนบรูป ==========
+    # (Optionally process files, but you didn't mention storing/uploading)
+
+    # ========== Render Word Template ==========
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(base_dir, "templates", "docx_templates", "Maintenance Report PM Point Machine JA72&JEA73 (Y1)chat.docx")
+
+    doc = DocxTemplate(template_path)
+    doc.render(context)
+
+    temp_path = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    doc.save(temp_path.name)
+
+    return send_file(temp_path.name, as_attachment=True, download_name="filled_point_y1.docx")
