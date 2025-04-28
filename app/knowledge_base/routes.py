@@ -12,6 +12,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort, current_app
 from flask_login import login_required, current_user
+from flask_wtf import FlaskForm
 from app.models import db, KnowledgeBase
 from .forms import KnowledgeBaseForm, EditKnowledgeBaseForm
 import pytz
@@ -29,13 +30,16 @@ import shutil
 UPLOAD_FOLDER = 'app/static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+class DummyForm(FlaskForm):
+    pass
 
 
 @knowledge_bp.route('/main')
 @login_required
 def main():
         items = KnowledgeBase.query.all()
-        return render_template('knowledge_base.html', items=items) 
+        form = DummyForm() # <-- สร้าง instance
+        return render_template('knowledge_base.html', items=items, form=form) 
     
 @knowledge_bp.route('/create_knowledge_base', methods=['GET', 'POST'])
 @login_required

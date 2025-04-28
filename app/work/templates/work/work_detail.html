@@ -185,21 +185,63 @@
               alert("The selected file is too large. Maximum allowed size is 1MB.");
               return;
             }
+            const csrfTokenInput = document.querySelector('input[name="csrf_token"]');
+            const csrfToken = csrfTokenInput ? csrfTokenInput.value : null;
+
+            console.log("CSRF Token Value Retrieved:", csrfToken);
+
+            if (!csrfToken) {
+                console.error("CSRF Token not found in DOM!");
+                alert("Error: Could not find security token. Please refresh the page and try again.");
+                // อาจจะแจ้งเตือนผู้ใช้ หรือหยุดการทำงาน
+                return;
+            }
+
             let formData = new FormData();
             formData.append("file", file);
+
             // เรียก /knowledge_base/upload_image ซึ่งบันทึกไฟล์ใน temp_uploads
             fetch('/knowledge_base/upload_image', {
               method: 'POST',
-              body: formData
+              body: formData,
+              headers: {
+                'X-CSRFToken': csrfToken
+                // ไม่ต้องใส่ 'Content-Type' เองสำหรับ FormData
+              }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        // ลองแสดง HTML ที่ได้จาก Server ใน Console เพื่อดู Error เต็มๆ
+                        console.error("Server response (HTML):", text);
+                        // ดึงข้อความ Error ที่เฉพาะเจาะจงมากขึ้นถ้าเป็นไปได้
+                        // หรือใช้ข้อความทั่วไป
+                        let errorMsg = `Upload failed with status ${response.status}`;
+                        if (text.includes("CSRF token missing")) {
+                            errorMsg += ": CSRF token missing or invalid.";
+                        } else {
+                             // พยายามดึงข้อความจาก tag <p> หรือ <h1> ใน HTML ที่ตอบกลับมา
+                             const match = text.match(/<[h1|p]>(.*?)<\/[h1|p]>/i);
+                             errorMsg += `: ${match ? match[1] : 'Server error'}`;
+                        }
+                        throw new Error(errorMsg);
+                    });
+                }
+                return response.json();
+            })
+
             .then(data => {
               // data.location = URL ของไฟล์ใน /static/temp_uploads/...
               callback(data.location, { alt: file.name });
               // บันทึก URL ที่อัปโหลดใน global array
               window.uploadedImages.push(data.location);
             })
-            .catch(err => console.error('Upload failed:', err));
+            .catch(err => {
+                // แสดง Error ที่ละเอียดขึ้น
+                console.error('Upload failed:', err);
+                // อาจจะแสดง alert ให้ผู้ใช้ทราบ
+                alert(`Image upload failed: ${err.message}`);
+            });
           };
           input.click();
         }

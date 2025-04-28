@@ -93,6 +93,15 @@
 
 <!-- Initialize TinyMCE -->
 <script>
+  // ฟังก์ชัน normalizeUrl: เปลี่ยน URL ให้เหลือแค่ path
+  function normalizeUrl(url) {
+    let a = document.createElement('a');
+    a.href = url;
+    return a.pathname;
+  }
+
+  // Global array สำหรับเก็บ URL ของรูปที่อยู่ใน temp_uploads
+  window.uploadedImages = [];
   tinymce.init({
     selector: '#description',  // ✅ ระบุ textarea ที่จะใช้
     height: 300,               // ✅ ตั้งค่าความสูง
@@ -105,31 +114,160 @@
     // ✅ กำหนดให้รองรับการอัปโหลดรูปภาพ
     images_upload_url: '/knowledge_base/upload_image', // ✅ เปลี่ยน URL ตาม Route ของคุณ
     file_picker_types: 'image',
+    automatic_uploads: false, // ✅ เพิ่มเข้ามา: ไม่อัปโหลดโดยอัตโนมัติ 
 
+
+    // --- file_picker_callback ที่ปรับปรุงแล้ว (รวมการจัดการ CSRF) ---
     file_picker_callback: function(callback, value, meta) {
-      let input = document.createElement('input');
-      input.setAttribute('type', 'file');
-      input.setAttribute('accept', 'image/*');
+      if (meta.filetype === 'image') {
+        let input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept','image/*');
+        input.onchange = function() {
+          let file = this.files[0];
+          // --- เพิ่มการตรวจสอบขนาดไฟล์ (เหมือนใน work_detail.html) ---
+          const maxFileSize = 1 * 1024 * 1024; // 1MB (หรือขนาดที่คุณต้องการ)
+          if (file.size > maxFileSize) {
+            alert("The selected file is too large. Maximum allowed size is 1MB.");
+            return;
+          }
+          // --- จบการตรวจสอบขนาดไฟล์ ---
 
-      input.onchange = function() {
-        let file = this.files[0];
-        let formData = new FormData();
-        formData.append("file", file);
+          // --- ดึง CSRF Token ---
+          const csrfTokenInput = document.querySelector('input[name="csrf_token"]');
+          const csrfToken = csrfTokenInput ? csrfTokenInput.value : null;
 
-        fetch('/knowledge_base/upload_image', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          callback(data.location, { alt: file.name }); // ✅ แทรกภาพลงใน Editor
-        })
-        .catch(error => console.error('Upload failed:', error));
-      };
+          console.log("CSRF Token Value Retrieved:", csrfToken); // สำหรับ Debug
 
-      input.click();
+          if (!csrfToken) {
+              console.error("CSRF Token not found in DOM!");
+              alert("Error: Could not find security token. Please refresh the page and try again.");
+              return;
+          }
+          // --- จบส่วนดึง CSRF Token ---
+
+          let formData = new FormData();
+          formData.append("file", file);
+
+          // เรียก /knowledge_base/upload_image
+          fetch('/knowledge_base/upload_image', {
+            method: 'POST',
+            body: formData,
+            // --- เพิ่ม Header สำหรับ CSRF Token ---
+            headers: {
+              'X-CSRFToken': csrfToken
+            }
+            // --- จบส่วน Header ---
+          })
+          .then(response => {
+              // --- จัดการ Response และ Error (เหมือนใน work_detail.html) ---
+              if (!response.ok) {
+                  // ถ้า response ไม่ใช่ 2xx (เช่น 400, 403, 500)
+                  return response.text().then(text => {
+                      console.error("Server response (HTML):", text);
+                      let errorMsg = `Upload failed with status ${response.status}`;
+                      // พยายามดึงข้อความ Error ที่เฉพาะเจาะจงมากขึ้น
+                      if (text.includes("CSRF token missing")) {
+                          errorMsg += ": CSRF token missing or invalid.";
+                      } else {
+                           // พยายามดึงข้อความจาก tag <p> หรือ <h1>
+                           const match = text.match(/<[h1|p]>(.*?)<\/[h1|p]>/i);
+                           errorMsg += `: ${match ? match[1] : 'Server error'}`;
+                      }
+                      throw new Error(errorMsg);
+                  });
+              }
+              // ถ้า response.ok (สถานะ 2xx) ค่อยแปลงเป็น JSON
+              return response.json();
+              // --- จบส่วนจัดการ Response ---
+          })
+          .then(data => {
+            // data.location ควรเป็น URL ของรูปที่อัปโหลดสำเร็จ
+            callback(data.location, { alt: file.name }); // แทรกภาพลงใน Editor
+          })
+          .catch(err => {
+              // แสดง Error ที่ละเอียดขึ้น
+              console.error('Upload failed:', err);
+              alert(`Image upload failed: ${err.message}`); // แสดง Alert ให้ผู้ใช้
+          });
+        };
+        input.click();
+      }
+    },
+    // --- เพิ่ม setup function เข้ามา (เหมือน work_detail.html) ---
+    setup: function(editor) {
+      // ฟังก์ชัน checkImages: ตรวจจับว่ามีรูปใน content หรือไม่
+      function checkImages() {
+        let content = editor.getContent();
+        let regex = /<img\s+[^>]*src="([^"]+)"[^>]*>/g;
+        let currentImages = [];
+        let match;
+        while ((match = regex.exec(content)) !== null) {
+          currentImages.push(normalizeUrl(match[1]));
+        }
+        console.log("Normalized current images:", currentImages);
+
+        // เปรียบเทียบ currentImages กับ uploadedImages
+        if (window.uploadedImages && window.uploadedImages.length > 0) {
+          window.uploadedImages = window.uploadedImages.filter(function(url) {
+            let normalizedUrl = normalizeUrl(url);
+            if (currentImages.indexOf(normalizedUrl) === -1) {
+              console.log("Image removed from editor:", normalizedUrl);
+              // ส่ง AJAX request เพื่อลบไฟล์จาก temp_uploads (ถ้าไม่ได้ใช้ไฟล์)
+              // *** ตรวจสอบให้แน่ใจว่ามี route '/delete_uploaded_image' ใน Flask ***
+              fetch('/delete_uploaded_image', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  // *** เพิ่ม CSRF Token ที่นี่ด้วย ถ้า route นี้ต้องการ ***
+                  'X-CSRFToken': document.querySelector('input[name="csrf_token"]')?.value || ''
+                 },
+                body: JSON.stringify({ image_url: url })
+              })
+              .then(res => res.json())
+              .then(data => console.log('Deleted image via AJAX:', url, data))
+              .catch(err => console.error('Error deleting image:', err));
+              return false; // ลบ URL ออกจาก window.uploadedImages
+            }
+            return true; // เก็บ URL ไว้ใน window.uploadedImages
+          });
+        }
+      }
+
+      // เรียก checkImages เมื่อมีการเปลี่ยนแปลงใน editor
+      editor.on('Change', checkImages);
+      editor.on('blur', checkImages); // เมื่อ editor หลุด focus
+      editor.on('ExecCommand', function(e) { // เมื่อมีการใช้คำสั่ง เช่น ลบ
+        console.log("ExecCommand event:", e);
+        checkImages();
+      });
+
+      // เพิ่ม event listener เพื่อลบรูปภาพที่ไม่ได้ใช้เมื่อปิดหน้าต่าง/เปลี่ยนหน้า
+      // (อาจจะไม่จำเป็นสำหรับหน้า create แต่ใส่ไว้ให้เหมือน)
+      window.addEventListener('beforeunload', function() {
+          // ส่ง request ไปลบรูปทั้งหมดใน window.uploadedImages
+          // (ต้องมี route ใน Flask ที่จัดการเรื่องนี้)
+          if (window.uploadedImages && window.uploadedImages.length > 0) {
+              navigator.sendBeacon('/cleanup_temp_images', JSON.stringify({ images: window.uploadedImages }));
+              // ใช้ sendBeacon เพื่อให้ request ถูกส่งแม้หน้าจะปิดไปแล้ว
+          }
+      });
+    }
+    // --- จบส่วน setup function ---
+  });
+
+  // --- เพิ่มส่วนนี้เข้ามา (เหมือน work_detail.html) ---
+  // เรียก triggerSave() เพื่อคัดลอกเนื้อหาจาก TinyMCE ลงใน <textarea> ก่อน submit form หลัก
+  document.addEventListener('DOMContentLoaded', function() {
+    const mainForm = document.querySelector('form[method="POST"]'); // หา form หลัก
+    if (mainForm) {
+      mainForm.addEventListener('submit', function(e) {
+        tinymce.triggerSave(); // บังคับให้ TinyMCE อัปเดตค่าใน textarea ที่ซ่อนอยู่
+        console.log("Textarea value on submit:", document.getElementById('description').value);
+      });
     }
   });
+  // --- จบส่วนที่เพิ่มเข้ามา ---
 </script>
 
 
