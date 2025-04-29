@@ -294,14 +294,10 @@ def generate_point_y1_pdf():
 
     # ========== Section 1: ข้อมูลทั่วไป ==========
     text_fields = [
-        'leaders', 'date', 'coordinate', 'station', 'location', 'apostles', 'work_description'
+        'leaders', 'date', 'coordinate', 'station', 'location', 'apostles', 'work_description', 'time1', 'time2', 'apostles'
     ]
     for field in text_fields:
         context[field] = request.form.get(field, "")
-
-    # เวลา
-    context['time1'] = request.form.get('time1', "")
-    context['time2'] = request.form.get('time2', "")
 
     # Members (person1, person2, ..., person7)
     for i in range(1, 8):
@@ -327,16 +323,28 @@ def generate_point_y1_pdf():
         context[field] = markbox(field)
 
     # ========== Section 2: ตารางงาน Point Machine (30 งาน) ==========
+    special_rows = [3, 4, 7]
+
     for row in range(1, 31):
         for col in range(1, 5):
-            context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
-
-        # Remark ของแต่ละข้อ
-        context[f"remark1_{row}"] = request.form.get(f"remark1_{row}", "")
+            if row == 1:
+                # ✅ ข้อ 1: ใช้ input text
+                context[f"poi1_{col}_{row}"] = request.form.get(f"poi1_{col}_{row}", "")
+            elif row in special_rows:
+                # ✅ ข้อ 3, 4, 7: ใช้ checkbox (key มี _1 ต่อท้าย)
+                context[f"poi1_{col}_{row}_1"] = markbox(f"poi1_{col}_{row}_1")
+            else:
+                # ✅ ข้ออื่น: ใช้ checkbox แบบปกติ
+                context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
 
     # Row พิเศษ: ข้อ 3, 4, 7 ที่มีแถวเสริม
     special_rows = [3, 4, 7]
     for row in special_rows:
+        # sub-row 1: ย้ำให้แน่ใจว่าอ่าน markbox อีกครั้ง (สำคัญมาก)
+        for col in range(1, 5):
+            context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
+
+        # sub-row 2,3 (และ 4,5 เฉพาะข้อ 7): อ่านเป็น text
         for sub in range(2, 6 if row == 7 else 4):
             for col in range(1, 5):
                 context[f"poi1_{col}_{row}_{sub}"] = request.form.get(f"poi1_{col}_{row}_{sub}", "")
@@ -354,13 +362,9 @@ def generate_point_y1_pdf():
                 context[f"poi3_{i}_{side}_{j}"] = request.form.get(f"poi3_{i}_{side}_{j}", "")
 
     # ========== Section 5: Contact Force 1-10 ==========
-    for i in range(1, 11):  # No. 1-10
-        for j in range(1, 3):  # BF, AT
-            for poi in range(1, 5):  # 4 POs
-                context[f"poi4_{poi}_{i}"] = request.form.get(f"poi4_{poi}_{i}", "")
-        for j in range(21, 41):  # ฝั่ง 11-20
-            for poi in range(1, 5):
-                context[f"poi4_{poi}_{j}"] = request.form.get(f"poi4_{poi}_{j}", "")
+    for i in range(1, 41):  # i = 1 ถึง 40
+        for poi in range(1, 5):  # 4 POs
+            context[f"poi4_{poi}_{i}"] = request.form.get(f"poi4_{poi}_{i}", "")
 
     # ========== Section 6: Other Issues ==========
     for i in range(1, 6):

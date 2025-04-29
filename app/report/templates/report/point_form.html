@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
   <!-- TinyMCE (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/tinymce@6.2.0/tinymce.min.js" referrerpolicy="origin"></script>
+  
     <meta charset="UTF-8">
     <title>Form Layout</title>
     <style>
@@ -73,7 +74,7 @@
     </script>
 </head>
 <body>
-    <form method="POST" action="{{ url_for('report.generate_point_y1_pdf') }}">
+    <form method="POST" action="{{ url_for('report.generate_point_y1_pdf') }}" enctype="multipart/form-data">
     <body class="bg-light">
         <div class="container py-5">
           <div class="card shadow">
@@ -118,8 +119,8 @@
                         <td><input type="date" name="date" placeholder="เลือกวันที่"></td>
                         <td>TIME:</td>
                         <td colspan="3">
-                            <input id="time1" type="text" placeholder="เวลาเริ่ม" style="width: 45%; display: inline-block;">
-                            <input id="time2" type="text" placeholder="เวลาสิ้นสุด" style="width: 45%; display: inline-block; margin-left: 5%;">
+                            <input name="time1" type="time" placeholder="เวลาเริ่ม" style="width: 45%; display: inline-block;">
+                            <input name="time2" type="time" placeholder="เวลาสิ้นสุด" style="width: 45%; display: inline-block; margin-left: 5%;">
                         </td>
                     </tr>
                     <tr>
@@ -158,7 +159,7 @@
                             <label for="memberCount">เลือกจำนวนสมาชิก:</label>
                             <select id="memberCount" onchange="generateMemberInputs()">
                                 <option value="0">-- เลือกจำนวนสมาชิก --</option>
-                                {% for i in range(1,8) %}
+                                {% for i in range(1, 8) %}
                                     <option value="{{ i }}">{{ i }}</option>
                                 {% endfor %}
                             </select>
@@ -646,7 +647,7 @@
         <tbody>
             <tr>
                 <td>1</td>
-                <td><input name="poi_1"  placeholder="Point no.1" class="form-control"></td>
+                <td><input name="poi_1"  placeholder="Point no.1" class="form-control" readonly></td>
                 <td><input name="poi2_1_1"  class="form-control"></td>
                 <td><input name="poi2_1_2"  class="form-control"></td>
                 <td><input name="poi2_1_3"  class="form-control"></td>
@@ -658,7 +659,7 @@
             </tr>
             <tr>
                 <td>2</td>
-                <td><input name="poi_2" placeholder="Point no.2" class="form-control"></td>
+                <td><input name="poi_2" placeholder="Point no.2" class="form-control" readonly></td>
                 <td><input name="poi2_2_1"  class="form-control"></td>
                 <td><input name="poi2_2_2"  class="form-control"></td>
                 <td><input name="poi2_2_3"  class="form-control"></td>
@@ -670,7 +671,7 @@
             </tr>
             <tr>
                 <td>3</td>
-                <td><input name="poi_3" placeholder="Point no.3" class="form-control"></td>
+                <td><input name="poi_3" placeholder="Point no.3" class="form-control" readonly></td>
                 <td><input name="poi2_3_1"  class="form-control"></td>
                 <td><input name="poi2_3_2"  class="form-control"></td>
                 <td><input name="poi2_3_3"  class="form-control"></td>
@@ -682,7 +683,7 @@
             </tr>
             <tr>
                 <td>4</td>
-                <td><input name="poi_4" placeholder="Point no.4"  class="form-control"></td>
+                <td><input name="poi_4" placeholder="Point no.4"  class="form-control" readonly></td>
                 <td><input name="poi2_4_1"  class="form-control"></td>
                 <td><input name="poi2_4_2"  class="form-control"></td>
                 <td><input name="poi2_4_3"  class="form-control"></td>
@@ -730,7 +731,7 @@
                 <!-- Row 1 -->
                 <tr>
                     <td rowspan="2">1</td>
-                    <td rowspan="2"><input type="text" name="poi_1" placeholder="Point no.1" style="width:90%;"></td>
+                    <td rowspan="2"><input type="text" name="poi_1" placeholder="Point no.1" style="width:90%;" readonly></td>
                     <td>Plus (+)</td>
                     <td><input type="text" name="poi3_1_1_1" ></td>
                     <td><input type="text" name="poi3_1_1_2" ></td>
@@ -764,7 +765,7 @@
                         <!-- Row 2 -->
                 <tr>
                     <td rowspan="2">2</td>
-                    <td rowspan="2"><input type="text" name="poi_2" placeholder="Point no.2" style="width:90%;"></td>
+                    <td rowspan="2"><input type="text" name="poi_2" placeholder="Point no.2" style="width:90%;" readonly></td>
                     <td>Plus (+)</td>
                     <td><input type="text" name="poi3_2_1_1" ></td>
                     <td><input type="text" name="poi3_2_1_2" ></td>
@@ -798,7 +799,7 @@
                 <!-- Row 3 -->
                 <tr>
                     <td rowspan="2">3</td>
-                    <td rowspan="2"><input type="text" name="poi_3" placeholder="Point no.3" style="width:90%;"></td>
+                    <td rowspan="2"><input type="text" name="poi_3" placeholder="Point no.3" style="width:90%;" readonly></td>
                     <td>Plus (+)</td>
                     <td><input type="text" name="poi3_3_1_1" ></td>
                     <td><input type="text" name="poi3_3_1_2" ></td>
@@ -832,7 +833,7 @@
                 <!-- Row 4 -->
                 <tr>
                     <td rowspan="2">4</td>
-                    <td rowspan="2"><input type="text" name="poi_4" placeholder="Point no.4" style="width:90%;"></td>
+                    <td rowspan="2"><input type="text" name="poi_4" placeholder="Point no.4" style="width:90%;" readonly></td>
                     <td>Plus (+)</td>
                     <td><input type="text" name="poi3_4_1_1" ></td>
                     <td><input type="text" name="poi3_4_1_2" ></td>
@@ -880,29 +881,29 @@
                 <tr style="background-color: #ddd;">
                     <th rowspan="2">No.</th>
                     <th colspan="2">
-                        <input type="text" name="poi_1" placeholder="Point no.1" style="width: 80px;">
+                        <input type="text" name="poi_1" placeholder="Point no.1" style="width: 80px;" readonly>
                     </th>
                     <th colspan="2">
-                        <input type="text" name="poi_2" placeholder="Point no.2" style="width: 80px;">
+                        <input type="text" name="poi_2" placeholder="Point no.2" style="width: 80px;" readonly>
                     </th>
                     <th colspan="2">
-                        <input type="text" name="poi_3" placeholder="Point no.3" style="width: 80px;">
+                        <input type="text" name="poi_3" placeholder="Point no.3" style="width: 80px;" readonly>
                     </th>
                     <th colspan="2">
-                        <input type="text" name="poi_4" placeholder="Point no.4" style="width: 80px;">
+                        <input type="text" name="poi_4" placeholder="Point no.4" style="width: 80px;" readonly>
                     </th>
                     <th rowspan="2">No.</th>
                     <th colspan="2">
-                        <input type="text" name="poi_1" placeholder="Point no.1" style="width: 80px;">
+                        <input type="text" name="poi_1" placeholder="Point no.1" style="width: 80px;" readonly>
                     </th>
                     <th colspan="2">
-                        <input type="text" name="poi_2" placeholder="Point no.2" style="width: 80px;">
+                        <input type="text" name="poi_2" placeholder="Point no.2" style="width: 80px;" readonly>
                     </th>
                     <th colspan="2">
-                        <input type="text" name="poi_3" placeholder="Point no.3" style="width: 80px;">
+                        <input type="text" name="poi_3" placeholder="Point no.3" style="width: 80px;" readonly>
                     </th>
                     <th colspan="2">
-                        <input type="text" name="poi_4" placeholder="Point no.4" style="width: 80px;">
+                        <input type="text" name="poi_4" placeholder="Point no.4" style="width: 80px;" readonly>
                     </th>
                 </tr>
                 <tr style="background-color: #eee;">
@@ -1195,19 +1196,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </body>
 </html>
-<script>
-    function generateMemberInputs() {
-        var count = document.getElementById('memberCount').value;
-        var container = document.getElementById('memberInputs');
-        container.innerHTML = ''; // เคลียร์ของเก่า
-    
-        for (var i = 1; i <= count; i++) {
-            container.innerHTML += `
-                สมาชิก ${i}: <input type="text" name="person${i}" style="width:50%; margin-bottom:5px;"><br>
-            `;
-        }
-    }
-    </script>
     <script>
         flatpickr("#time1", {
             enableTime: true,
@@ -1256,5 +1244,63 @@
                 }
             }
             </script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const allMemberNames = {{ apostles|tojson }};
+                    const memberCountSelect = document.getElementById('memberCount');
+                    const memberInputsContainer = document.getElementById('memberInputs');
+                
+                    memberCountSelect.addEventListener('change', generateMemberInputs);
+                
+                    function generateMemberInputs() {
+                        const memberCount = parseInt(memberCountSelect.value) || 0;
+                        memberInputsContainer.innerHTML = '';
+
+                        for (let i = 0; i < memberCount; i++) {
+                            const select = document.createElement('select');
+
+                            // 👇 ตั้งชื่อให้ตรงกับ template Word
+                            select.name = `person${i + 1}`;
+                            
+                            select.classList.add('form-select', 'mb-2');
+                            select.dataset.index = i;
+
+                            select.addEventListener('change', updateSelectOptions);
+                            memberInputsContainer.appendChild(select);
+                        }
+
+                        updateSelectOptions();
+                    }
+                
+                    function updateSelectOptions() {
+                        const selects = memberInputsContainer.querySelectorAll('select');
+                        const selectedNames = Array.from(selects)
+                            .map(select => select.value)
+                            .filter(name => name !== "");
+                
+                        selects.forEach(select => {
+                            const currentValue = select.value;
+                            select.innerHTML = '';
+                
+                            const optionDefault = document.createElement('option');
+                            optionDefault.value = "";
+                            optionDefault.textContent = "-- เลือกสมาชิก --";
+                            select.appendChild(optionDefault);
+                
+                            allMemberNames.forEach(name => {
+                                if (!selectedNames.includes(name) || name === currentValue) {
+                                    const option = document.createElement('option');
+                                    option.value = name;
+                                    option.textContent = name;
+                                    if (name === currentValue) {
+                                        option.selected = true;
+                                    }
+                                    select.appendChild(option);
+                                }
+                            });
+                        });
+                    }
+                });
+                </script>
 
 {% endblock %}
