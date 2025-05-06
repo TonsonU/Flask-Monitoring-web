@@ -1,11 +1,24 @@
 version: '3.8'
 
 services:
-  flaskapp:
+  web:
     build: .
     container_name: flask-monitoring
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"  # ใช้ expose แทน ports เพราะ nginx เป็นตัวรับ request จริง
     volumes:
+      - ./instance:/app/instance
       - ./app/static/uploads:/app/app/static/uploads
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./app/static:/app/static
+    depends_on:
+      - web
     restart: always

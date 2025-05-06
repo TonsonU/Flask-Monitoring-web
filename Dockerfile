@@ -19,4 +19,5 @@ COPY . /app/
 EXPOSE 5000
 
 # รันแอปด้วย gunicorn
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "run:app"]
+#CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "run:app"]
+CMD ["gunicorn", "-w", "8", "-k", "gevent", "--timeout", "120", "-b", "0.0.0.0:5000", "run:app"]
