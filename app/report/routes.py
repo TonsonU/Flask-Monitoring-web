@@ -144,6 +144,7 @@ def generate_point_y1_pdf():
 
     # ========== Section 4: Contact Resistance, Voltage, Current Table ==========
     for i in range(1, 5):  # 4 rows
+        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
         for side in [1, 2]:  # Plus (+) and Minus (-)
             for j in range(1, 13):
                 context[f"poi3_{i}_{side}_{j}"] = request.form.get(f"poi3_{i}_{side}_{j}", "")
