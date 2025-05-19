@@ -35,23 +35,26 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import Image
 from reportlab.lib.units import cm
 from docxtpl import DocxTemplate
+from docxtpl import InlineImage
+from docx.shared import Cm
+
 
 leaders = [
-    "นายสมชาย ใจดี",
-    "นายวิทยา ทองสุข",
-    "นางสาวสุภาพร สวยงาม",
-    "นายกิตติชัย วัฒนศักดิ์",
-    "นายธนกฤต เพชรทอง",
-    "นางสาวชุติมา ปัญญาไว",
-    "นายปกรณ์ เก่งการงาน",
-    "นางสาวศิริพร พรหมรักษ์",
-    "นายอนันต์ สุขใจ",
-    "นางสาววรัญญา จันทร์เพ็ญ",
-    "นายอดิศักดิ์ กาญจนกิจ",
-    "นางสาวนริศรา ทองแท้",
-    "นายพีระศักดิ์ เกิดผล",
-    "นางสาวมนัสชนก มีสุข",
-    "นายธีรยุทธ ตันติวัฒน์"
+    "นายบุญล้อม รังแก้ว",
+    "นายภาษิต บุณยรัตผลิน",
+    "นายกฤษณะ ดวลมีสุข",
+    "นายธนวัฒน์ เขียวอ่อน",
+    "นายต้นสน อุบลศรี  ",
+    "นายธนภูมิ สุขรินทร์",
+    "นายจิรายุทธ จังคุณดี",
+    "นายอมรเทพ ตั้งดำรงธรรม",
+    "นายนราธิป จันทร์ใจ",
+    "นายนครินทร์ คุณมั่ง",
+    "นายจิตรภณ นนทสิงห์",
+    "นายพงศกร อินทร์พันงาม",
+    "นายสุธี ล้ำลิขิตการ",
+    "นายอภิชัย อ่อนก้อน",
+    "นายดนูศิษฏ์ เนียนทะศาสตร์"
 ]
 apostles = leaders
 
@@ -349,6 +352,10 @@ def generate_point_y1_pdf():
             for col in range(1, 5):
                 context[f"poi1_{col}_{row}_{sub}"] = request.form.get(f"poi1_{col}_{row}_{sub}", "")
 
+    # ✅ เพิ่ม remark แยกต่อข้อ
+    for row in range(1, 31):
+        context[f"remark1_{row}"] = request.form.get(f"remark1_{row}", "")
+
     # ========== Section 3: Force & Mark Center Table ==========
     for i in range(1, 5):  # 4 แถว
         context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
@@ -370,14 +377,25 @@ def generate_point_y1_pdf():
     for i in range(1, 6):
         context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
 
-    # ========== Section 7: แนบรูป ==========
-    # (Optionally process files, but you didn't mention storing/uploading)
-
-    # ========== Render Word Template ==========
+    # ========== Render Word Template (สร้าง doc ก่อนใช้) ==========
     base_dir = os.path.dirname(os.path.abspath(__file__))
     template_path = os.path.join(base_dir, "templates", "docx_templates", "Maintenance Report PM Point Machine JA72&JEA73 (Y1)chat.docx")
-
     doc = DocxTemplate(template_path)
+
+    # ========== Section 7: แนบรูป ==========
+    image_keys = ['work_picture_1', 'work_picture_2', 'work_picture_3', 'work_picture_4']  # ตามชื่อใน template.docx
+
+    for key in image_keys:
+        file = request.files.get(key)
+        if file and file.filename:
+            temp_dir = tempfile.mkdtemp()
+            file_path = os.path.join(temp_dir, file.filename)
+            file.save(file_path)
+            context[key] = InlineImage(doc, file_path, width=Cm(6))
+        else:
+            context[key] = ""
+
+    # ========== สร้าง Word จาก context ==========
     doc.render(context)
 
     temp_path = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
