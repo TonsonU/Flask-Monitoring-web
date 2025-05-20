@@ -40,21 +40,21 @@ from docx.shared import Cm
 
 
 leaders = [
-    "นายบุญล้อม รังแก้ว",
-    "นายภาษิต บุณยรัตผลิน",
-    "นายกฤษณะ ดวลมีสุข",
-    "นายธนวัฒน์ เขียวอ่อน",
-    "นายต้นสน อุบลศรี  ",
-    "นายธนภูมิ สุขรินทร์",
-    "นายจิรายุทธ จังคุณดี",
-    "นายอมรเทพ ตั้งดำรงธรรม",
-    "นายนราธิป จันทร์ใจ",
-    "นายนครินทร์ คุณมั่ง",
-    "นายจิตรภณ นนทสิงห์",
-    "นายพงศกร อินทร์พันงาม",
-    "นายสุธี ล้ำลิขิตการ",
-    "นายอภิชัย อ่อนก้อน",
-    "นายดนูศิษฏ์ เนียนทะศาสตร์"
+    "Boonlom R",
+    "Bhasit  B",
+    "Kritsana D",
+    "Thanawat K",
+    "Tonson U",
+    "Thanapoom S",
+    "Jirayut J",
+    "Amornthep T",
+    "Naratip C",
+    "Nakarin K",
+    "Jittaphon N",
+    "Pongsakorn I",
+    "Sutee L",
+    "Apichai O",
+    "Danusit N"
 ]
 apostles = leaders
 
@@ -182,4 +182,18 @@ def generate_point_y1_pdf():
     temp_path = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
     doc.save(temp_path.name)
 
-    return send_file(temp_path.name, as_attachment=True, download_name="filled_point_y1.docx")
+    # ---------- ✨ สร้างชื่อไฟล์ตามรูปแบบที่ต้องการ ✨ ----------
+    today_str = datetime.today().strftime("%Y-%m-%d")             # YYYY-MM-DD
+    job_name   = context.get("work_description", "Job")
+    location   = context.get("location", "Location")
+    # ป้องกันอักขระต้องห้ามในชื่อไฟล์ (Windows ฯลฯ)
+    job_name = secure_filename(job_name) or "Job"
+    location = secure_filename(location) or "Location"
+
+    download_filename = (
+        f"KK-{today_str} PM (Y1) Point {job_name} At {location}.docx"
+    )
+
+    # ---------- ส่งไฟล์ให้ดาวน์โหลด ----------
+
+    return send_file(temp_path.name, as_attachment=True, download_name=download_filename)

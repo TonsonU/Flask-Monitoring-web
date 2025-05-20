@@ -96,8 +96,8 @@
               {% endwith %}
         <!-- Section: Header -->
         <div class="section-header">
-            <h2>MAINTENANCE REPORT</h2>
-            <h3>PM (Y1) : POINT MACHINE (JEA72&amp;JEA73)</h3>
+            <h4>MAINTENANCE REPORT</h4>
+            <h4>PM (Y1) : POINT MACHINE (JEA72&amp;JEA73)</h4>
         </div>
     
         <form>
@@ -210,6 +210,9 @@
             <br>
     
             <!-- Section 2: ตารางงาน -->
+            <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+                Visual Inspection & Cleaning Procedure (Y1)
+            </p>
             <table>
                 <thead style="background-color: #ddd;">
                     <tr>
@@ -624,6 +627,9 @@
             <br>
     
             <!-- Section 3: ตาราง Force & Mark Center -->
+             <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+                ตารางบันทึกค่า Point Machine Force & Mark Center of Detector Rod
+            </p>
             <table class="table table-bordered table-sm text-center align-middle">
         <thead class="table-light">
             <tr>
@@ -695,8 +701,10 @@
             </tr>
         </tbody>
     </table>
-    
-    
+        <!-- Section 4: ตารางบันทึกค่าความต้านทานที่หน้า Contact, แรงดันไฟฟ้า (VAC), กระแสไฟฟ้า และแรงดันไฟฟ้า (VDC) -->
+        <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+            ตารางบันทึกค่าความต้านทานที่หน้า Contact, แรงดันไฟฟ้า (VAC), กระแสไฟฟ้า และแรงดันไฟฟ้า (VDC)
+        </p>
         <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: center;">
             <thead>
                 <tr>
@@ -707,23 +715,19 @@
                     <th rowspan="3">Point Machine<br>Number</th>
                     <th rowspan="3">Mode</th>
                     <th colspan="6">Contact Resistance (Ω)</th>
-                    <th colspan="4">Voltage (VAC)</th>
-                    <th colspan="2">Current (A)</th>
+                    <th colspan="3" rowspan="2">Voltage (VAC)</th>
+                    <th colspan="2" rowspan="2">Current (A)</th>
                     <th rowspan="3">Terminal Detect (VDC)<br>19,25 (+)<br>18,24 (–)</th>
                 </tr>
                 <tr style="background-color: #ddd;">
                     <th colspan="3">Positive Contact</th>
                     <th colspan="3">Negative Contact</th>
-                    <th colspan="2">Positive Voltage</th>
-                    <th colspan="2">Negative Voltage</th>
-                    <th rowspan="2">Start</th>
-                    <th rowspan="2">Run</th>
                 </tr>
                 <tr style="background-color: #ddd;">
                     <th>2,3</th><th>11,12</th><th>13,14</th>
                     <th>1,2</th><th>3,4</th><th>12,13</th>
-                    <th>L1L2</th><th>L1L3</th>
-                    <th>L2L3</th><th>L2L3</th>
+                    <th>L1L2</th><th>L1L3</th><th>L2L3</th>
+                    <th>Start</th><th>Run</th>
                 </tr>
             </thead>
         
@@ -745,6 +749,7 @@
                     <td><input type="text" name="poi3_1_1_10" ></td>
                     <td><input type="text" name="poi3_1_1_11" ></td>
                     <td><input type="text" name="poi3_1_1_12" ></td>
+                    
                 </tr>
                 <tr>
                     <td>Minus (–)</td>
@@ -760,6 +765,7 @@
                     <td><input type="text" name="poi3_1_2_10" ></td>
                     <td><input type="text" name="poi3_1_2_11" ></td>
                     <td><input type="text" name="poi3_1_2_12" ></td>
+                    
                 </tr>
         
                         <!-- Row 2 -->
@@ -779,6 +785,7 @@
                     <td><input type="text" name="poi3_2_1_10" ></td>
                     <td><input type="text" name="poi3_2_1_11" ></td>
                     <td><input type="text" name="poi3_2_1_12" ></td>
+                    
                 </tr>
                 <tr>
                     <td>Minus (–)</td>
@@ -794,6 +801,7 @@
                     <td><input type="text" name="poi3_2_2_10" ></td>
                     <td><input type="text" name="poi3_2_2_11" ></td>
                     <td><input type="text" name="poi3_2_2_12" ></td>
+                    
                 </tr>
     
                 <!-- Row 3 -->
@@ -813,6 +821,7 @@
                     <td><input type="text" name="poi3_3_1_10" ></td>
                     <td><input type="text" name="poi3_3_1_11" ></td>
                     <td><input type="text" name="poi3_3_1_12" ></td>
+                    
                 </tr>
                 <tr>
                     <td>Minus (–)</td>
@@ -828,6 +837,7 @@
                     <td><input type="text" name="poi3_3_2_10" ></td>
                     <td><input type="text" name="poi3_3_2_11" ></td>
                     <td><input type="text" name="poi3_3_2_12" ></td>
+                    
                 </tr>
     
                 <!-- Row 4 -->
@@ -847,6 +857,7 @@
                     <td><input type="text" name="poi3_4_1_10" ></td>
                     <td><input type="text" name="poi3_4_1_11" ></td>
                     <td><input type="text" name="poi3_4_1_12" ></td>
+                    
                 </tr>
                 <tr>
                     <td>Minus (–)</td>
@@ -862,6 +873,7 @@
                     <td><input type="text" name="poi3_4_2_10" ></td>
                     <td><input type="text" name="poi3_4_2_11" ></td>
                     <td><input type="text" name="poi3_4_2_12" ></td>
+                    
                 </tr>
     
             </tbody>
@@ -872,6 +884,11 @@
                 </tr>
             </tfoot>
         </table>
+        <!-- Section 5: ค่าแรงกดที่ Contact ของ Point Machine -->
+             <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+                ค่าแรงกดที่ Contact ของ Point Machine
+            </p>
+        
         <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: center;">
             <thead>
                 <tr>
