@@ -237,41 +237,39 @@ def generate_point_m6_pdf():
         context[field] = markbox(field)
 
     # ========== Section 2: ตารางงาน Point Machine (30 งาน) ==========
-    special_rows = [3, 4, 7]
+    # ปรับให้ข้อ 6 (เดิมข้อ 7) เป็น special row แทน
+    special_rows = [3, 4, 6]
 
-    for row in range(1, 31):
+    for i in range(1, 5):  # 4 แถว
+        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
+
+    for row in range(1, 23):
         for col in range(1, 5):
             if row == 1:
                 # ✅ ข้อ 1: ใช้ input text
                 context[f"poi1_{col}_{row}"] = request.form.get(f"poi1_{col}_{row}", "")
             elif row in special_rows:
-                # ✅ ข้อ 3, 4, 7: ใช้ checkbox (key มี _1 ต่อท้าย)
+                # ✅ ข้อ 3, 4, 6: ใช้ checkbox (key มี _1 ต่อท้าย)
                 context[f"poi1_{col}_{row}_1"] = markbox(f"poi1_{col}_{row}_1")
             else:
                 # ✅ ข้ออื่น: ใช้ checkbox แบบปกติ
                 context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
 
-    # Row พิเศษ: ข้อ 3, 4, 7 ที่มีแถวเสริม
-    special_rows = [3, 4, 7]
+    # Row พิเศษ: ข้อ 3, 4, 6 ที่มีแถวเสริม (ข้อ 6 มี 5 แถว)
+    special_rows = [3, 4, 6]
     for row in special_rows:
-        # sub-row 1: ย้ำให้แน่ใจว่าอ่าน markbox อีกครั้ง (สำคัญมาก)
+        # sub-row 1: อ่าน markbox ซ้ำ
         for col in range(1, 5):
             context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
 
-        # sub-row 2,3 (และ 4,5 เฉพาะข้อ 7): อ่านเป็น text
-        for sub in range(2, 6 if row == 7 else 4):
+        # sub-row 2–5 (ข้อ 6 เดิมคือข้อ 7 มี 5 แถว)
+        for sub in range(2, 6 if row == 6 else 4):
             for col in range(1, 5):
                 context[f"poi1_{col}_{row}_{sub}"] = request.form.get(f"poi1_{col}_{row}_{sub}", "")
 
-    # ✅ เพิ่ม remark แยกต่อข้อ
-    for row in range(1, 31):
+    # ✅ เพิ่ม remark แยกต่อข้อ (รวม remark1_6, remark1_7)
+    for row in range(1, 23):
         context[f"remark1_{row}"] = request.form.get(f"remark1_{row}", "")
-
-    # ========== Section 3: Force & Mark Center Table ==========
-    for i in range(1, 5):  # 4 แถว
-        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
-        for j in range(1, 9):  # 8 ช่อง
-            context[f"poi2_{i}_{j}"] = request.form.get(f"poi2_{i}_{j}", "")
 
     # ========== Section 4: Contact Resistance, Voltage, Current Table ==========
     for i in range(1, 5):  # 4 rows
@@ -280,18 +278,13 @@ def generate_point_m6_pdf():
             for j in range(1, 13):
                 context[f"poi3_{i}_{side}_{j}"] = request.form.get(f"poi3_{i}_{side}_{j}", "")
 
-    # ========== Section 5: Contact Force 1-10 ==========
-    for i in range(1, 41):  # i = 1 ถึง 40
-        for poi in range(1, 5):  # 4 POs
-            context[f"poi4_{poi}_{i}"] = request.form.get(f"poi4_{poi}_{i}", "")
-
     # ========== Section 6: Other Issues ==========
     for i in range(1, 6):
         context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
 
     # ========== Render Word Template (สร้าง doc ก่อนใช้) ==========
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    template_path = os.path.join(base_dir, "templates", "docx_templates", "Point (Y1).docx")
+    template_path = os.path.join(base_dir, "templates", "docx_templates", "Point (M6).docx")
     doc = DocxTemplate(template_path)
 
     # ========== Section 7: แนบรูป ==========
@@ -322,7 +315,7 @@ def generate_point_m6_pdf():
     location = secure_filename(location) or "Location"
 
     download_filename = (
-        f"KK-{today_str} PM (Y1) Point {job_name} At {location}.docx"
+        f"KK-{today_str} PM (M6) Point {job_name} At {location}.docx"
     )
 
     # ---------- ส่งไฟล์ให้ดาวน์โหลด ----------
@@ -368,53 +361,39 @@ def generate_point_m2_pdf():
         context[field] = markbox(field)
 
     # ========== Section 2: ตารางงาน Point Machine (30 งาน) ==========
-    special_rows = [3, 4, 7]
+    # ปรับให้ข้อ 6 (เดิมข้อ 7) เป็น special row แทน
+    special_rows = [3, 4, 6]
 
-    for row in range(1, 31):
+    for i in range(1, 5):  # 4 แถว
+        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
+
+    for row in range(1, 23):
         for col in range(1, 5):
             if row == 1:
                 # ✅ ข้อ 1: ใช้ input text
                 context[f"poi1_{col}_{row}"] = request.form.get(f"poi1_{col}_{row}", "")
             elif row in special_rows:
-                # ✅ ข้อ 3, 4, 7: ใช้ checkbox (key มี _1 ต่อท้าย)
+                # ✅ ข้อ 3, 4, 6: ใช้ checkbox (key มี _1 ต่อท้าย)
                 context[f"poi1_{col}_{row}_1"] = markbox(f"poi1_{col}_{row}_1")
             else:
                 # ✅ ข้ออื่น: ใช้ checkbox แบบปกติ
                 context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
 
-    # Row พิเศษ: ข้อ 3, 4, 7 ที่มีแถวเสริม
-    special_rows = [3, 4, 7]
+    # Row พิเศษ: ข้อ 3, 4, 6 ที่มีแถวเสริม (ข้อ 6 มี 5 แถว)
+    special_rows = [3, 4, 6]
     for row in special_rows:
-        # sub-row 1: ย้ำให้แน่ใจว่าอ่าน markbox อีกครั้ง (สำคัญมาก)
+        # sub-row 1: อ่าน markbox ซ้ำ
         for col in range(1, 5):
             context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
 
-        # sub-row 2,3 (และ 4,5 เฉพาะข้อ 7): อ่านเป็น text
-        for sub in range(2, 6 if row == 7 else 4):
+        # sub-row 2–5 (ข้อ 6 เดิมคือข้อ 7 มี 5 แถว)
+        for sub in range(2, 6 if row == 6 else 4):
             for col in range(1, 5):
                 context[f"poi1_{col}_{row}_{sub}"] = request.form.get(f"poi1_{col}_{row}_{sub}", "")
 
-    # ✅ เพิ่ม remark แยกต่อข้อ
-    for row in range(1, 31):
+    # ✅ เพิ่ม remark แยกต่อข้อ (รวม remark1_6, remark1_7)
+    for row in range(1, 23):
         context[f"remark1_{row}"] = request.form.get(f"remark1_{row}", "")
-
-    # ========== Section 3: Force & Mark Center Table ==========
-    for i in range(1, 5):  # 4 แถว
-        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
-        for j in range(1, 9):  # 8 ช่อง
-            context[f"poi2_{i}_{j}"] = request.form.get(f"poi2_{i}_{j}", "")
-
-    # ========== Section 4: Contact Resistance, Voltage, Current Table ==========
-    for i in range(1, 5):  # 4 rows
-        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
-        for side in [1, 2]:  # Plus (+) and Minus (-)
-            for j in range(1, 13):
-                context[f"poi3_{i}_{side}_{j}"] = request.form.get(f"poi3_{i}_{side}_{j}", "")
-
-    # ========== Section 5: Contact Force 1-10 ==========
-    for i in range(1, 41):  # i = 1 ถึง 40
-        for poi in range(1, 5):  # 4 POs
-            context[f"poi4_{poi}_{i}"] = request.form.get(f"poi4_{poi}_{i}", "")
 
     # ========== Section 6: Other Issues ==========
     for i in range(1, 6):
@@ -422,7 +401,7 @@ def generate_point_m2_pdf():
 
     # ========== Render Word Template (สร้าง doc ก่อนใช้) ==========
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    template_path = os.path.join(base_dir, "templates", "docx_templates", "Point (Y1).docx")
+    template_path = os.path.join(base_dir, "templates", "docx_templates", "Point (M2).docx")
     doc = DocxTemplate(template_path)
 
     # ========== Section 7: แนบรูป ==========
@@ -453,7 +432,7 @@ def generate_point_m2_pdf():
     location = secure_filename(location) or "Location"
 
     download_filename = (
-        f"KK-{today_str} PM (Y1) Point {job_name} At {location}.docx"
+        f"KK-{today_str} PM (M2) Point {job_name} At {location}.docx"
     )
 
     # ---------- ส่งไฟล์ให้ดาวน์โหลด ----------
@@ -499,53 +478,39 @@ def generate_point_m1_pdf():
         context[field] = markbox(field)
 
     # ========== Section 2: ตารางงาน Point Machine (30 งาน) ==========
-    special_rows = [3, 4, 7]
+    # ปรับให้ข้อ 6 (เดิมข้อ 7) เป็น special row แทน
+    special_rows = [3, 4, 6]
 
-    for row in range(1, 31):
+    for i in range(1, 5):  # 4 แถว
+        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
+
+    for row in range(1, 23):
         for col in range(1, 5):
             if row == 1:
                 # ✅ ข้อ 1: ใช้ input text
                 context[f"poi1_{col}_{row}"] = request.form.get(f"poi1_{col}_{row}", "")
             elif row in special_rows:
-                # ✅ ข้อ 3, 4, 7: ใช้ checkbox (key มี _1 ต่อท้าย)
+                # ✅ ข้อ 3, 4, 6: ใช้ checkbox (key มี _1 ต่อท้าย)
                 context[f"poi1_{col}_{row}_1"] = markbox(f"poi1_{col}_{row}_1")
             else:
                 # ✅ ข้ออื่น: ใช้ checkbox แบบปกติ
                 context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
 
-    # Row พิเศษ: ข้อ 3, 4, 7 ที่มีแถวเสริม
-    special_rows = [3, 4, 7]
+    # Row พิเศษ: ข้อ 3, 4, 6 ที่มีแถวเสริม (ข้อ 6 มี 5 แถว)
+    special_rows = [3, 4, 6]
     for row in special_rows:
-        # sub-row 1: ย้ำให้แน่ใจว่าอ่าน markbox อีกครั้ง (สำคัญมาก)
+        # sub-row 1: อ่าน markbox ซ้ำ
         for col in range(1, 5):
             context[f"poi1_{col}_{row}"] = markbox(f"poi1_{col}_{row}")
 
-        # sub-row 2,3 (และ 4,5 เฉพาะข้อ 7): อ่านเป็น text
-        for sub in range(2, 6 if row == 7 else 4):
+        # sub-row 2–5 (ข้อ 6 เดิมคือข้อ 7 มี 5 แถว)
+        for sub in range(2, 6 if row == 6 else 4):
             for col in range(1, 5):
                 context[f"poi1_{col}_{row}_{sub}"] = request.form.get(f"poi1_{col}_{row}_{sub}", "")
 
-    # ✅ เพิ่ม remark แยกต่อข้อ
-    for row in range(1, 31):
+    # ✅ เพิ่ม remark แยกต่อข้อ (รวม remark1_6, remark1_7)
+    for row in range(1, 23):
         context[f"remark1_{row}"] = request.form.get(f"remark1_{row}", "")
-
-    # ========== Section 3: Force & Mark Center Table ==========
-    for i in range(1, 5):  # 4 แถว
-        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
-        for j in range(1, 9):  # 8 ช่อง
-            context[f"poi2_{i}_{j}"] = request.form.get(f"poi2_{i}_{j}", "")
-
-    # ========== Section 4: Contact Resistance, Voltage, Current Table ==========
-    for i in range(1, 5):  # 4 rows
-        context[f"poi_{i}"] = request.form.get(f"poi_{i}", "")
-        for side in [1, 2]:  # Plus (+) and Minus (-)
-            for j in range(1, 13):
-                context[f"poi3_{i}_{side}_{j}"] = request.form.get(f"poi3_{i}_{side}_{j}", "")
-
-    # ========== Section 5: Contact Force 1-10 ==========
-    for i in range(1, 41):  # i = 1 ถึง 40
-        for poi in range(1, 5):  # 4 POs
-            context[f"poi4_{poi}_{i}"] = request.form.get(f"poi4_{poi}_{i}", "")
 
     # ========== Section 6: Other Issues ==========
     for i in range(1, 6):
@@ -553,7 +518,7 @@ def generate_point_m1_pdf():
 
     # ========== Render Word Template (สร้าง doc ก่อนใช้) ==========
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    template_path = os.path.join(base_dir, "templates", "docx_templates", "Point (Y1).docx")
+    template_path = os.path.join(base_dir, "templates", "docx_templates", "Point (M1).docx")
     doc = DocxTemplate(template_path)
 
     # ========== Section 7: แนบรูป ==========
@@ -584,7 +549,7 @@ def generate_point_m1_pdf():
     location = secure_filename(location) or "Location"
 
     download_filename = (
-        f"KK-{today_str} PM (Y1) Point {job_name} At {location}.docx"
+        f"KK-{today_str} PM (M1) Point {job_name} At {location}.docx"
     )
 
     # ---------- ส่งไฟล์ให้ดาวน์โหลด ----------

@@ -21,7 +21,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-  <title> Report Point (Y1)</title>
+  <title> Report Point (M6)</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
@@ -74,12 +74,12 @@
     </script>
 </head>
 <body>
-    <form method="POST" action="{{ url_for('report.generate_point_y1_pdf') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('report.generate_point_m6_pdf') }}" enctype="multipart/form-data">
     <body class="bg-light">
         <div class="container py-5">
           <div class="card shadow">
             <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
-              <h3 class="mb-0"><i class="fa-solid fa-plus"></i> Report Point (Y1)</h3>
+              <h3 class="mb-0"><i class="fa-solid fa-plus"></i> Report Point (M6)</h3>
               <a href="javascript:history.back()" class="btn-close btn-close-white" aria-label="Close"></a>
             </div>
             <div class="card-body">
@@ -97,7 +97,7 @@
         <!-- Section: Header -->
         <div class="section-header">
             <h4>MAINTENANCE REPORT</h4>
-            <h4>PM (Y1) : POINT MACHINE (JEA72&amp;JEA73)</h4>
+            <h4>PM (M6) : POINT MACHINE (JEA72&amp;JEA73)</h4>
         </div>
     
         <form>
@@ -286,7 +286,7 @@
                         <td rowspan="3">4.</td>
                         <td style="text-align: left;">
                             Switch บวก และลบ กับ CCR Test 5 mm. ด้วย Steel Template<br>
-                            <small>(สถานะไม่คล้องไม่ End Position ทั้งด้านบวก และด้านลบ)</small>
+                            <small>(สถานะปกติต้องไม่ End Position ทั้งด้านบวก และด้านลบ)</small>
                         </td>
                         <td><input type="checkbox" name="poi1_1_4_1"></td>
                         <td><input type="checkbox" name="poi1_2_4_1"></td>
@@ -311,8 +311,7 @@
                 
                     <tr>
                         <td>5.</td>
-                        <td style="text-align: left;">ทดสอบแรงกด (Force) ของ Point Machine โดยใช้เครื่อง Force Gauge
-                            (บันทึกค่าในตารางด้านล่าง)
+                        <td style="text-align: left;">แจ้ง CCR ขอ Off Point Machine และยืนยันสถานะอีกครั้ง
                             </td>
                         <td><input type="checkbox" name="poi1_1_5"></td>
                         <td><input type="checkbox" name="poi1_2_5"></td>
@@ -321,59 +320,60 @@
                         <td><input type="text" name="remark1_5" placeholder="หมายเหตุข้อ 5" style="width:95%;"></td>
                     </tr>
                     
+                    <!-- แถว 6 แบบพิเศษ มี 5 แถวย่อย (ย้ายจากข้อ 7 เดิม) -->
                     <tr>
-                        <td>6.</td>
-                        <td style="text-align: left;">แจ้ง CCR ขอ Off Point Machine และยืนยันสถานะอีกครั้ง</td>
-                        <td><input type="checkbox" name="poi1_1_6"></td>
-                        <td><input type="checkbox" name="poi1_2_6"></td>
-                        <td><input type="checkbox" name="poi1_3_6"></td>
-                        <td><input type="checkbox" name="poi1_4_6"></td>
-                        <td><input type="text" name="remark1_6" placeholder="หมายเหตุข้อ 6" style="width:95%;"></td>
-                    </tr>
-                    
-                    <!-- แถว 7 แบบพิเศษ มี 5 แถวย่อย -->
-                    <tr>
-                        <td rowspan="5">7.</td>
+                        <td rowspan="5">6.</td>
                         <td style="text-align: left;">ตรวจสอบระยะ Center ที่ Detector Rod (2 mm. – 3 mm.)</td>
-                        <td><input type="checkbox" name="poi1_1_7_1"></td>
-                        <td><input type="checkbox" name="poi1_2_7_1"></td>
-                        <td><input type="checkbox" name="poi1_3_7_1"></td>
-                        <td><input type="checkbox" name="poi1_4_7_1"></td>
-                        <td rowspan="5"><input type="text" name="remark1_7" placeholder="หมายเหตุข้อ 7" style="width:95%;"></td>
+                        <td><input type="checkbox" name="poi1_1_6_1"></td>
+                        <td><input type="checkbox" name="poi1_2_6_1"></td>
+                        <td><input type="checkbox" name="poi1_3_6_1"></td>
+                        <td><input type="checkbox" name="poi1_4_6_1"></td>
+                        <td rowspan="5"><input type="text" name="remark1_6" placeholder="หมายเหตุข้อ 6" style="width:95%;"></td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">Detector Rod ปรับเข้า ด้านบวก (mm.)</td>
-                        <td><input type="text" name="poi1_1_7_2"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_2_7_2"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_3_7_2"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_4_7_2"  style="width:90%;"></td>
+                        <td style="text-align: left;">Detector Rod มีการปรับเข้า ด้านบวก ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_6_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_6_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_6_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_6_2"  style="width:90%;"></td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">Detector Rod ปรับเข้า ด้านลบ (mm.)</td>
-                        <td><input type="text" name="poi1_1_7_3"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_2_7_3"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_3_7_3"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_4_7_3"  style="width:90%;"></td>
+                        <td style="text-align: left;">Detector Rod มีการปรับเข้า ด้านลบ ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_6_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_6_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_6_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_6_3"  style="width:90%;"></td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">Detector Rod ปรับออก ด้านบวก (mm.)</td>
-                        <td><input type="text" name="poi1_1_7_4"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_2_7_4"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_3_7_4"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_4_7_4"  style="width:90%;"></td>
+                        <td style="text-align: left;">Detector Rod มีการปรับออก ด้านบวก ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_6_4"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_6_4"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_6_4"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_6_4"  style="width:90%;"></td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">Detector Rod ปรับออก ด้านลบ (mm.)</td>
-                        <td><input type="text" name="poi1_1_7_5"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_2_7_5"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_3_7_5"  style="width:90%;"></td>
-                        <td><input type="text" name="poi1_4_7_5"  style="width:90%;"></td>
+                        <td style="text-align: left;">Detector Rod มีการปรับออก ด้านลบ ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_6_5"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_6_5"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_6_5"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_6_5"  style="width:90%;"></td>
+                    </tr>
+
+                    <!-- ข้อ 7 ธรรมดา (ย้ายจากข้อ 6 เดิม) -->
+                    <tr>
+                        <td>7.</td>
+                        <td style="text-align: left;">ทำความสะอาดจารบีเก่า และทาจารบีใหม่ในตัว Point Machine </td>
+                        <td><input type="checkbox" name="poi1_1_7"></td>
+                        <td><input type="checkbox" name="poi1_2_7"></td>
+                        <td><input type="checkbox" name="poi1_3_7"></td>
+                        <td><input type="checkbox" name="poi1_4_7"></td>
+                        <td><input type="text" name="remark1_7" placeholder="หมายเหตุข้อ 7" style="width:95%;"></td>
                     </tr>
                     
                     <!-- แถว 8 ถึง 30 -->
                     <tr>
                         <td>8.</td>
-                        <td style="text-align: left;">ตรวจสอบสภาพ Parallel Rod, Power Rod, Detector Rod</td>
+                        <td style="text-align: left;">ตรวจสอบหน้า Contact Spring Set เช็ค Marker</td>
                         <td><input type="checkbox" name="poi1_1_8"></td>
                         <td><input type="checkbox" name="poi1_2_8"></td>
                         <td><input type="checkbox" name="poi1_3_8"></td>
@@ -383,7 +383,7 @@
                     
                     <tr>
                         <td>9.</td>
-                        <td style="text-align: left;">ทำความสะอาดจารบีเก่า และทาจารบีใหม่ในตัว Point Machine </td>
+                        <td style="text-align: left;">ตรวจสอบความแน่นหนาของจุดเชื่อมต่อต่างๆใน Point Machine</td>
                         <td><input type="checkbox" name="poi1_1_9"></td>
                         <td><input type="checkbox" name="poi1_2_9"></td>
                         <td><input type="checkbox" name="poi1_3_9"></td>
@@ -393,7 +393,9 @@
     
                     <tr>
                         <td>10.</td>
-                        <td style="text-align: left;">ตรวจสอบความแน่นหนาของจุดเชื่อมต่อต่างๆ ใน Point Machine</td>
+                        <td style="text-align: left;">ตรวจสอบรอยแตกร้าวที่บริเวณฐานปูนของ Point Machine
+                            (ความกว้างของรอยแตกร้าวต้องไม่เกิน 2 mm.)
+                            </td>
                         <td><input type="checkbox" name="poi1_1_10"></td>
                         <td><input type="checkbox" name="poi1_2_10"></td>
                         <td><input type="checkbox" name="poi1_3_10"></td>
@@ -403,7 +405,9 @@
                     
                     <tr>
                         <td>11.</td>
-                        <td style="text-align: left;">ตรวจสอบสภาพ Insulated Bolt และ Insulated Jaw</td>
+                        <td style="text-align: left;">ตรวจสอบสภาพอุปกรณ์จากการกัดกร่อนและความเสียหายอื่นๆ 
+                            ทั้งภายในและภายนอก
+                            </td>
                         <td><input type="checkbox" name="poi1_1_11"></td>
                         <td><input type="checkbox" name="poi1_2_11"></td>
                         <td><input type="checkbox" name="poi1_3_11"></td>
@@ -413,7 +417,9 @@
                     
                     <tr>
                         <td>12.</td>
-                        <td style="text-align: left;">ตรวจสอบ Marker ของน๊อตทุกตัว และน๊อต Contract Spring Set</td>
+                        <td style="text-align: left;">ตรวจสอบระดับน้ำมันเกียร์ 
+                            (ถ้าต่ำกว่าขีดด้านล่างของเกจ ให้เติมเพิ่ม)
+                            </td>
                         <td><input type="checkbox" name="poi1_1_12"></td>
                         <td><input type="checkbox" name="poi1_2_12"></td>
                         <td><input type="checkbox" name="poi1_3_12"></td>
@@ -423,8 +429,7 @@
                     
                     <tr>
                         <td>13.</td>
-                        <td style="text-align: left;">ตรวจสอบรอยแตกร้าวที่บริเวณฐานปูนของ Point Machine
-                            (ความกว้างของรอยแตกร้าวต้องไม่เกิน 2 mm.)
+                        <td style="text-align: left;">ตรวจสอบ Ground Cable ระหว่าง Point Machine กับ Running Rail
                             </td>
                         <td><input type="checkbox" name="poi1_1_13"></td>
                         <td><input type="checkbox" name="poi1_2_13"></td>
@@ -435,8 +440,9 @@
                     
                     <tr>
                         <td>14.</td>
-                        <td style="text-align: left;">ตรวจสอบสภาพอุปกรณ์จากการกัดกร่อนและความเสียหายอื่นๆ 
-                            ทั้งภายในและภายนอก
+                        <td style="text-align: left;">วัดค่าความต้านทาน (Impedance: Ω) ที่ Contact Spring Set Point Machine
+                            (บันทึกค่าในตารางด้านล่าง)
+                            
                             </td>
                         <td><input type="checkbox" name="poi1_1_14"></td>
                         <td><input type="checkbox" name="poi1_2_14"></td>
@@ -444,10 +450,10 @@
                         <td><input type="checkbox" name="poi1_4_14"></td>
                         <td><input type="text" name="remark1_14" placeholder="หมายเหตุข้อ 14" style="width:95%;"></td>
                     </tr>
-                    
+                                      
                     <tr>
                         <td>15.</td>
-                        <td style="text-align: left;">เปลี่ยนน้ำมันเกียร์</td>
+                        <td style="text-align: left;">ทำความสะอาดภายในและภายนอกของ Point Machine </td>
                         <td><input type="checkbox" name="poi1_1_15"></td>
                         <td><input type="checkbox" name="poi1_2_15"></td>
                         <td><input type="checkbox" name="poi1_3_15"></td>
@@ -457,7 +463,7 @@
                     
                     <tr>
                         <td>16.</td>
-                        <td style="text-align: left;">ทำความสะอาดภายในและภายนอกของ Point Machine </td>
+                        <td style="text-align: left;">ทำความสะอาดภายในและภายนอกของ Terminal Box</td>
                         <td><input type="checkbox" name="poi1_1_16"></td>
                         <td><input type="checkbox" name="poi1_2_16"></td>
                         <td><input type="checkbox" name="poi1_3_16"></td>
@@ -467,7 +473,7 @@
                     
                     <tr>
                         <td>17.</td>
-                        <td style="text-align: left;">ตรวจสอบฉนวนสายไฟบริเวณจุดเชื่อมต่อต่างๆ ใน Point Machine </td>
+                        <td style="text-align: left;">เปลี่ยน Silica Gel ภายใน Terminal Box</td>
                         <td><input type="checkbox" name="poi1_1_17"></td>
                         <td><input type="checkbox" name="poi1_2_17"></td>
                         <td><input type="checkbox" name="poi1_3_17"></td>
@@ -477,7 +483,10 @@
                     
                     <tr>
                         <td>18.</td>
-                        <td style="text-align: left;">ตรวจสอบฉนวนสายไฟบริเวณจุดเชื่อมต่อต่างๆ ใน Terminal Box และ Diode Terminal </td>
+                        <td style="text-align: left;">Crank Point Machine ให้อยู่ในตำแหน่งเริ่มต้นก่อนการทำงาน
+                            และทำการ On Point Machine
+                            
+                            </td>
                         <td><input type="checkbox" name="poi1_1_18"></td>
                         <td><input type="checkbox" name="poi1_2_18"></td>
                         <td><input type="checkbox" name="poi1_3_18"></td>
@@ -487,20 +496,22 @@
                     
                     <tr>
                         <td>19.</td>
-                        <td style="text-align: left;">วัดค่าแรงกดสปริงที่ Contact Spring Set ของ Point Machine
-                            (บันทึกค่าในตารางด้านล่าง)
+                        <td style="text-align: left;">Switch บวก และลบ กับ CCR 
+                            เพื่อตรวจสอบสถานะ Point Machine
+                           
                             </td>
                         <td><input type="checkbox" name="poi1_1_19"></td>
                         <td><input type="checkbox" name="poi1_2_19"></td>
                         <td><input type="checkbox" name="poi1_3_19"></td>
                         <td><input type="checkbox" name="poi1_4_19"></td>
-                        <td><input type="text" name="remark1_19" placeholder="หมายเหตุข้อ 19" style="width:95%;"></td>
+                        <td><input type="text" name="remark1_20" placeholder="หมายเหตุข้อ 19" style="width:95%;"></td>
                     </tr>
                     
                     <tr>
                         <td>20.</td>
-                        <td style="text-align: left;">วัดค่าความต้านทาน (Impedance: Ω) ที่ Contact Spring Set Point Machine
-                            (บันทึกค่าในตารางด้านล่าง)
+                        <td style="text-align: left;">Switch บวก และ ลบ กับ CCR Test 3 mm. ด้วย Steel Template
+                            (สถานะปกติต้อง End Position ทั้งด้านบวก และ ด้านลบ)
+                            
                             </td>
                         <td><input type="checkbox" name="poi1_1_20"></td>
                         <td><input type="checkbox" name="poi1_2_20"></td>
@@ -511,8 +522,8 @@
                     
                     <tr>
                         <td>21.</td>
-                        <td style="text-align: left;">Crank Point Machine ให้อยู่ในตำแหน่งเริ่มต้นก่อนการทำงาน
-                            และทำการ On Point Machine
+                        <td style="text-align: left;">Switch บวก และ ลบ กับ CCR Test 5 mm. ด้วย Steel Template
+                            (สถานะปกติต้องไม่ End Position ทั้งด้านบวก และ ด้านลบ)
                             </td>
                         <td><input type="checkbox" name="poi1_1_21"></td>
                         <td><input type="checkbox" name="poi1_2_21"></td>
@@ -523,7 +534,9 @@
                     
                     <tr>
                         <td>22.</td>
-                        <td style="text-align: left;">วัดค่าแรงดันไฟฟ้าที่ Point Machine (บันทึกค่าในตารางด้านล่าง)</td>
+                        <td style="text-align: left;">Apostle ตรวจสอบอุปกรณ์ทั้งหมด ก่อนออกจากพื้นที่ 
+                            และยืนยันกับ CCR ว่าปฏิบัติงานเสร็จเรียบร้อย
+                            </td>
                         <td><input type="checkbox" name="poi1_1_22"></td>
                         <td><input type="checkbox" name="poi1_2_22"></td>
                         <td><input type="checkbox" name="poi1_3_22"></td>
@@ -531,176 +544,12 @@
                         <td><input type="text" name="remark1_22" placeholder="หมายเหตุข้อ 22" style="width:95%;"></td>
                     </tr>
                     
-                    <tr>
-                        <td>23.</td>
-                        <td style="text-align: left;">วัดค่ากระแสไฟฟ้าที่ Point Machine (บันทึกค่าในตารางด้านล่าง)</td>
-                        <td><input type="checkbox" name="poi1_1_23"></td>
-                        <td><input type="checkbox" name="poi1_2_23"></td>
-                        <td><input type="checkbox" name="poi1_3_23"></td>
-                        <td><input type="checkbox" name="poi1_4_23"></td>
-                        <td><input type="text" name="remark1_23" placeholder="หมายเหตุข้อ 23" style="width:95%;"></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>24.</td>
-                        <td style="text-align: left;">Switch บวก และลบ กับ CCR 
-                            เพื่อตรวจสอบสถานะ Point Machine
-                           </td>
-                        <td><input type="checkbox" name="poi1_1_24"></td>
-                        <td><input type="checkbox" name="poi1_2_24"></td>
-                        <td><input type="checkbox" name="poi1_3_24"></td>
-                        <td><input type="checkbox" name="poi1_4_24"></td>
-                        <td><input type="text" name="remark1_24" placeholder="หมายเหตุข้อ 24" style="width:95%;"></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>25.</td>
-                        <td style="text-align: left;">Switch บวก และ ลบ กับ CCR Test 3 mm. ด้วย Steel Template
-                            (สถานะปกติต้อง End Position ทั้งด้านบวก และ ด้านลบ)
-                            </td>
-                        <td><input type="checkbox" name="poi1_1_25"></td>
-                        <td><input type="checkbox" name="poi1_2_25"></td>
-                        <td><input type="checkbox" name="poi1_3_25"></td>
-                        <td><input type="checkbox" name="poi1_4_25"></td>
-                        <td><input type="text" name="remark1_25" placeholder="หมายเหตุข้อ 25" style="width:95%;"></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>26.</td>
-                        <td style="text-align: left;">Switch บวก และ ลบ กับ CCR Test 5 mm. ด้วย Steel Template
-                            (สถานะปกติต้องไม่ End Position ทั้งด้านบวก และ ด้านลบ)
-                            </td>
-                        <td><input type="checkbox" name="poi1_1_26"></td>
-                        <td><input type="checkbox" name="poi1_2_26"></td>
-                        <td><input type="checkbox" name="poi1_3_26"></td>
-                        <td><input type="checkbox" name="poi1_4_26"></td>
-                        <td><input type="text" name="remark1_26" placeholder="หมายเหตุข้อ 26" style="width:95%;"></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>27.</td>
-                        <td style="text-align: left;">ตรวจสอบความเป็นฉนวนระหว่าง Point Machine กับฐานของ Point Machine โดยวิธีการ Bell Test (ต้องไม่เชื่อมต่อถึงกัน)</td>
-                        <td><input type="checkbox" name="poi1_1_27"></td>
-                        <td><input type="checkbox" name="poi1_2_27"></td>
-                        <td><input type="checkbox" name="poi1_3_27"></td>
-                        <td><input type="checkbox" name="poi1_4_27"></td>
-                        <td><input type="text" name="remark1_27" placeholder="หมายเหตุข้อ 27" style="width:95%;"></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>28.</td>
-                        <td style="text-align: left;">ตรวจสอบการเชื่อมต่อระหว่างฐานของ Point Machine กับ Running Rail โดยวิธีการ Bell Test (ต้องเชื่อมต่อถึงกัน)</td>
-                        <td><input type="checkbox" name="poi1_1_28"></td>
-                        <td><input type="checkbox" name="poi1_2_28"></td>
-                        <td><input type="checkbox" name="poi1_3_28"></td>
-                        <td><input type="checkbox" name="poi1_4_28"></td>
-                        <td><input type="text" name="remark1_28" placeholder="หมายเหตุข้อ 28" style="width:95%;"></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>29.</td>
-                        <td style="text-align: left;">ตรวจสอบการเชื่อมต่อระหว่าง  Point Machine กับ Running Rail 
-                            โดยวิธีการ Bell Test (ต้องไม่เชื่อมต่อถึงกัน)
-                            </td>
-                        <td><input type="checkbox" name="poi1_1_29"></td>
-                        <td><input type="checkbox" name="poi1_2_29"></td>
-                        <td><input type="checkbox" name="poi1_3_29"></td>
-                        <td><input type="checkbox" name="poi1_4_29"></td>
-                        <td><input type="text" name="remark1_29" placeholder="หมายเหตุข้อ 29" style="width:95%;"></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>30.</td>
-                        <td style="text-align: left;">Apostle ตรวจสอบอุปกรณ์ทั้งหมด ก่อนออกจากพื้นที่ 
-                            และยืนยันกับ CCR ว่าปฏิบัติงานเสร็จเรียบร้อย
-                            </td>
-                        <td><input type="checkbox" name="poi1_1_30"></td>
-                        <td><input type="checkbox" name="poi1_2_30"></td>
-                        <td><input type="checkbox" name="poi1_3_30"></td>
-                        <td><input type="checkbox" name="poi1_4_30"></td>
-                        <td><input type="text" name="remark1_30" placeholder="หมายเหตุข้อ 30" style="width:95%;"></td>
-                    </tr>
                 
                 </tbody>
             </table>
     
             <br>
     
-            <!-- Section 3: ตาราง Force & Mark Center -->
-             <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
-                ตารางบันทึกค่า Point Machine Force & Mark Center of Detector Rod
-            </p>
-            <table class="table table-bordered table-sm text-center align-middle">
-        <thead class="table-light">
-            <tr>
-                <th colspan="10">Point Machine Force & Mark Center of Detector Rod Measurement</th>
-            </tr>
-            <tr>
-                <th rowspan="2">No.</th>
-                <th rowspan="2">Point Machine Number</th>
-                <th colspan="2">Force Before Adjustment (Nm)</th>
-                <th colspan="2">Force After Adjustment (Nm)</th>
-                <th colspan="2">Mark Center Before Adjustment (mm)</th>
-                <th colspan="2">Mark Center After Adjustment (mm)</th>
-            </tr>
-            <tr>
-                <th>ด้านบวก</th><th>ด้านลบ</th>
-                <th>ด้านบวก</th><th>ด้านลบ</th>
-                <th>ด้านบวก</th><th>ด้านลบ</th>
-                <th>ด้านบวก</th><th>ด้านลบ</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td><input name="poi_1"  placeholder="Point no.1" class="form-control" readonly></td>
-                <td><input name="poi2_1_1"  class="form-control"></td>
-                <td><input name="poi2_1_2"  class="form-control"></td>
-                <td><input name="poi2_1_3"  class="form-control"></td>
-                <td><input name="poi2_1_4"  class="form-control"></td>
-                <td><input name="poi2_1_5"  class="form-control"></td>
-                <td><input name="poi2_1_6"  class="form-control"></td>
-                <td><input name="poi2_1_7"  class="form-control"></td>
-                <td><input name="poi2_1_8"  class="form-control"></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td><input name="poi_2" placeholder="Point no.2" class="form-control" readonly></td>
-                <td><input name="poi2_2_1"  class="form-control"></td>
-                <td><input name="poi2_2_2"  class="form-control"></td>
-                <td><input name="poi2_2_3"  class="form-control"></td>
-                <td><input name="poi2_2_4"  class="form-control"></td>
-                <td><input name="poi2_2_5"  class="form-control"></td>
-                <td><input name="poi2_2_6"  class="form-control"></td>
-                <td><input name="poi2_2_7"  class="form-control"></td>
-                <td><input name="poi2_2_8"  class="form-control"></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td><input name="poi_3" placeholder="Point no.3" class="form-control" readonly></td>
-                <td><input name="poi2_3_1"  class="form-control"></td>
-                <td><input name="poi2_3_2"  class="form-control"></td>
-                <td><input name="poi2_3_3"  class="form-control"></td>
-                <td><input name="poi2_3_4"  class="form-control"></td>
-                <td><input name="poi2_3_5"  class="form-control"></td>
-                <td><input name="poi2_3_6"  class="form-control"></td>
-                <td><input name="poi2_3_7"  class="form-control"></td>
-                <td><input name="poi2_3_8"  class="form-control"></td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td><input name="poi_4" placeholder="Point no.4"  class="form-control" readonly></td>
-                <td><input name="poi2_4_1"  class="form-control"></td>
-                <td><input name="poi2_4_2"  class="form-control"></td>
-                <td><input name="poi2_4_3"  class="form-control"></td>
-                <td><input name="poi2_4_4"  class="form-control"></td>
-                <td><input name="poi2_4_5"  class="form-control"></td>
-                <td><input name="poi2_4_6"  class="form-control"></td>
-                <td><input name="poi2_4_7"  class="form-control"></td>
-                <td><input name="poi2_4_8"  class="form-control"></td>
-            </tr>
-        </tbody>
-    </table>
         <!-- Section 4: ตารางบันทึกค่าความต้านทานที่หน้า Contact, แรงดันไฟฟ้า (VAC), กระแสไฟฟ้า และแรงดันไฟฟ้า (VDC) -->
         <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
             ตารางบันทึกค่าความต้านทานที่หน้า Contact, แรงดันไฟฟ้า (VAC), กระแสไฟฟ้า และแรงดันไฟฟ้า (VDC)
@@ -884,267 +733,7 @@
                 </tr>
             </tfoot>
         </table>
-        <!-- Section 5: ค่าแรงกดที่ Contact ของ Point Machine -->
-             <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
-                ค่าแรงกดที่ Contact ของ Point Machine
-            </p>
         
-        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: center;">
-            <thead>
-                <tr>
-                    <th colspan="9" style="background-color: #ddd;">ค่าแรงกดที่ Contact ฝั่ง 1-10 (Nm)</th>
-                    <th colspan="9" style="background-color: #ddd;">ค่าแรงกดที่ Contact ฝั่ง 11-20 (Nm)</th>
-                </tr>
-                <tr style="background-color: #ddd;">
-                    <th rowspan="2">No.</th>
-                    <th colspan="2">
-                        <input type="text" name="poi_1" placeholder="Point no.1" style="width: 80px;" readonly>
-                    </th>
-                    <th colspan="2">
-                        <input type="text" name="poi_2" placeholder="Point no.2" style="width: 80px;" readonly>
-                    </th>
-                    <th colspan="2">
-                        <input type="text" name="poi_3" placeholder="Point no.3" style="width: 80px;" readonly>
-                    </th>
-                    <th colspan="2">
-                        <input type="text" name="poi_4" placeholder="Point no.4" style="width: 80px;" readonly>
-                    </th>
-                    <th rowspan="2">No.</th>
-                    <th colspan="2">
-                        <input type="text" name="poi_1" placeholder="Point no.1" style="width: 80px;" readonly>
-                    </th>
-                    <th colspan="2">
-                        <input type="text" name="poi_2" placeholder="Point no.2" style="width: 80px;" readonly>
-                    </th>
-                    <th colspan="2">
-                        <input type="text" name="poi_3" placeholder="Point no.3" style="width: 80px;" readonly>
-                    </th>
-                    <th colspan="2">
-                        <input type="text" name="poi_4" placeholder="Point no.4" style="width: 80px;" readonly>
-                    </th>
-                </tr>
-                <tr style="background-color: #eee;">
-                    <th>BF</th><th>AT</th>
-                    <th>BF</th><th>AT</th>
-                    <th>BF</th><th>AT</th>
-                    <th>BF</th><th>AT</th>
-                    <th>BF</th><th>AT</th>
-                    <th>BF</th><th>AT</th>
-                    <th>BF</th><th>AT</th>
-                    <th>BF</th><th>AT</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td><input type="text" name="poi4_1_1"></td>
-                    <td><input type="text" name="poi4_1_2"></td>
-                    <td><input type="text" name="poi4_2_1"></td>
-                    <td><input type="text" name="poi4_2_2"></td>
-                    <td><input type="text" name="poi4_3_1"></td>
-                    <td><input type="text" name="poi4_3_2"></td>
-                    <td><input type="text" name="poi4_4_1"></td>
-                    <td><input type="text" name="poi4_4_2"></td>
-                    <td>11</td>
-                    <td><input type="text" name="poi4_1_21"></td>
-                    <td><input type="text" name="poi4_1_22"></td>
-                    <td><input type="text" name="poi4_2_21"></td>
-                    <td><input type="text" name="poi4_2_22"></td>
-                    <td><input type="text" name="poi4_3_21"></td>
-                    <td><input type="text" name="poi4_3_22"></td>
-                    <td><input type="text" name="poi4_4_21"></td>
-                    <td><input type="text" name="poi4_4_22"></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td><input type="text" name="poi4_1_3"></td>
-                    <td><input type="text" name="poi4_1_4"></td>
-                    <td><input type="text" name="poi4_2_3"></td>
-                    <td><input type="text" name="poi4_2_4"></td>
-                    <td><input type="text" name="poi4_3_3"></td>
-                    <td><input type="text" name="poi4_3_4"></td>
-                    <td><input type="text" name="poi4_4_3"></td>
-                    <td><input type="text" name="poi4_4_4"></td>
-                    <td>12</td>
-                    <td><input type="text" name="poi4_1_23"></td>
-                    <td><input type="text" name="poi4_1_24"></td>
-                    <td><input type="text" name="poi4_2_23"></td>
-                    <td><input type="text" name="poi4_2_24"></td>
-                    <td><input type="text" name="poi4_3_23"></td>
-                    <td><input type="text" name="poi4_3_24"></td>
-                    <td><input type="text" name="poi4_4_23"></td>
-                    <td><input type="text" name="poi4_4_24"></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td><input type="text" name="poi4_1_5"></td>
-                    <td><input type="text" name="poi4_1_6"></td>
-                    <td><input type="text" name="poi4_2_5"></td>
-                    <td><input type="text" name="poi4_2_6"></td>
-                    <td><input type="text" name="poi4_3_5"></td>
-                    <td><input type="text" name="poi4_3_6"></td>
-                    <td><input type="text" name="poi4_4_5"></td>
-                    <td><input type="text" name="poi4_4_6"></td>
-                    <td>13</td>
-                    <td><input type="text" name="poi4_1_25"></td>
-                    <td><input type="text" name="poi4_1_26"></td>
-                    <td><input type="text" name="poi4_2_25"></td>
-                    <td><input type="text" name="poi4_2_26"></td>
-                    <td><input type="text" name="poi4_3_25"></td>
-                    <td><input type="text" name="poi4_3_26"></td>
-                    <td><input type="text" name="poi4_4_25"></td>
-                    <td><input type="text" name="poi4_4_26"></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td><input type="text" name="poi4_1_7"></td>
-                    <td><input type="text" name="poi4_1_8"></td>
-                    <td><input type="text" name="poi4_2_7"></td>
-                    <td><input type="text" name="poi4_2_8"></td>
-                    <td><input type="text" name="poi4_3_7"></td>
-                    <td><input type="text" name="poi4_3_8"></td>
-                    <td><input type="text" name="poi4_4_7"></td>
-                    <td><input type="text" name="poi4_4_8"></td>
-                    <td>14</td>
-                    <td><input type="text" name="poi4_1_27"></td>
-                    <td><input type="text" name="poi4_1_28"></td>
-                    <td><input type="text" name="poi4_2_27"></td>
-                    <td><input type="text" name="poi4_2_28"></td>
-                    <td><input type="text" name="poi4_3_27"></td>
-                    <td><input type="text" name="poi4_3_28"></td>
-                    <td><input type="text" name="poi4_4_27"></td>
-                    <td><input type="text" name="poi4_4_28"></td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td><input type="text" name="poi4_1_9"></td>
-                    <td><input type="text" name="poi4_1_10"></td>
-                    <td><input type="text" name="poi4_2_9"></td>
-                    <td><input type="text" name="poi4_2_10"></td>
-                    <td><input type="text" name="poi4_3_9"></td>
-                    <td><input type="text" name="poi4_3_10"></td>
-                    <td><input type="text" name="poi4_4_9"></td>
-                    <td><input type="text" name="poi4_4_10"></td>
-                    <td>15</td>
-                    <td><input type="text" name="poi4_1_29"></td>
-                    <td><input type="text" name="poi4_1_30"></td>
-                    <td><input type="text" name="poi4_2_29"></td>
-                    <td><input type="text" name="poi4_2_30"></td>
-                    <td><input type="text" name="poi4_3_29"></td>
-                    <td><input type="text" name="poi4_3_30"></td>
-                    <td><input type="text" name="poi4_4_29"></td>
-                    <td><input type="text" name="poi4_4_30"></td>
-                </tr>
-            <tr>
-                    <td>6</td>
-                    <td><input type="text" name="poi4_1_11"></td>
-                    <td><input type="text" name="poi4_1_12"></td>
-                    <td><input type="text" name="poi4_2_11"></td>
-                    <td><input type="text" name="poi4_2_12"></td>
-                    <td><input type="text" name="poi4_3_11"></td>
-                    <td><input type="text" name="poi4_3_12"></td>
-                    <td><input type="text" name="poi4_4_11"></td>
-                    <td><input type="text" name="poi4_4_12"></td>
-                    <td>16</td>
-                    <td><input type="text" name="poi4_1_31"></td>
-                    <td><input type="text" name="poi4_1_32"></td>
-                    <td><input type="text" name="poi4_2_31"></td>
-                    <td><input type="text" name="poi4_2_32"></td>
-                    <td><input type="text" name="poi4_3_31"></td>
-                    <td><input type="text" name="poi4_3_32"></td>
-                    <td><input type="text" name="poi4_4_31"></td>
-                    <td><input type="text" name="poi4_4_32"></td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td><input type="text" name="poi4_1_13"></td>
-                    <td><input type="text" name="poi4_1_14"></td>
-                    <td><input type="text" name="poi4_2_13"></td>
-                    <td><input type="text" name="poi4_2_14"></td>
-                    <td><input type="text" name="poi4_3_13"></td>
-                    <td><input type="text" name="poi4_3_14"></td>
-                    <td><input type="text" name="poi4_4_13"></td>
-                    <td><input type="text" name="poi4_4_14"></td>
-                    <td>17</td>
-                    <td><input type="text" name="poi4_1_33"></td>
-                    <td><input type="text" name="poi4_1_34"></td>
-                    <td><input type="text" name="poi4_2_33"></td>
-                    <td><input type="text" name="poi4_2_34"></td>
-                    <td><input type="text" name="poi4_3_33"></td>
-                    <td><input type="text" name="poi4_3_34"></td>
-                    <td><input type="text" name="poi4_4_33"></td>
-                    <td><input type="text" name="poi4_4_34"></td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td><input type="text" name="poi4_1_15"></td>
-                    <td><input type="text" name="poi4_1_16"></td>
-                    <td><input type="text" name="poi4_2_15"></td>
-                    <td><input type="text" name="poi4_2_16"></td>
-                    <td><input type="text" name="poi4_3_15"></td>
-                    <td><input type="text" name="poi4_3_16"></td>
-                    <td><input type="text" name="poi4_4_15"></td>
-                    <td><input type="text" name="poi4_4_16"></td>
-                    <td>18</td>
-                    <td><input type="text" name="poi4_1_35"></td>
-                    <td><input type="text" name="poi4_1_36"></td>
-                    <td><input type="text" name="poi4_2_35"></td>
-                    <td><input type="text" name="poi4_2_36"></td>
-                    <td><input type="text" name="poi4_3_35"></td>
-                    <td><input type="text" name="poi4_3_36"></td>
-                    <td><input type="text" name="poi4_4_35"></td>
-                    <td><input type="text" name="poi4_4_36"></td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td><input type="text" name="poi4_1_17"></td>
-                    <td><input type="text" name="poi4_1_18"></td>
-                    <td><input type="text" name="poi4_2_17"></td>
-                    <td><input type="text" name="poi4_2_18"></td>
-                    <td><input type="text" name="poi4_3_17"></td>
-                    <td><input type="text" name="poi4_3_18"></td>
-                    <td><input type="text" name="poi4_4_17"></td>
-                    <td><input type="text" name="poi4_4_18"></td>
-                    <td>19</td>
-                    <td><input type="text" name="poi4_1_37"></td>
-                    <td><input type="text" name="poi4_1_38"></td>
-                    <td><input type="text" name="poi4_2_37"></td>
-                    <td><input type="text" name="poi4_2_38"></td>
-                    <td><input type="text" name="poi4_3_37"></td>
-                    <td><input type="text" name="poi4_3_38"></td>
-                    <td><input type="text" name="poi4_4_37"></td>
-                    <td><input type="text" name="poi4_4_38"></td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td><input type="text" name="poi4_1_19"></td>
-                    <td><input type="text" name="poi4_1_20"></td>
-                    <td><input type="text" name="poi4_2_19"></td>
-                    <td><input type="text" name="poi4_2_20"></td>
-                    <td><input type="text" name="poi4_3_19"></td>
-                    <td><input type="text" name="poi4_3_20"></td>
-                    <td><input type="text" name="poi4_4_19"></td>
-                    <td><input type="text" name="poi4_4_20"></td>
-                    <td>20</td>
-                    <td><input type="text" name="poi4_1_39"></td>
-                    <td><input type="text" name="poi4_1_40"></td>
-                    <td><input type="text" name="poi4_2_39"></td>
-                    <td><input type="text" name="poi4_2_40"></td>
-                    <td><input type="text" name="poi4_3_39"></td>
-                    <td><input type="text" name="poi4_3_40"></td>
-                    <td><input type="text" name="poi4_4_39"></td>
-                    <td><input type="text" name="poi4_4_40"></td>
-                </tr>
-            </tbody>
-            
-            <tfoot>
-                <tr>
-                    <td colspan="18" style="text-align: left; padding: 8px;">
-                        <strong>Remark:</strong> Criteria = 3–5 Nm // BF = Before, AT = After // บันทึกค่าแรงกดทุกค่าเป็น Before และถ้ามีการปรับตั้ง ให้บันทึกลงใน After ด้วย
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
         <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <thead style="background-color: #ddd;">
                 <tr>
