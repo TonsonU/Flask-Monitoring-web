@@ -1,0 +1,238 @@
+<!--
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+-->
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Visual Inspection & Cleaning Procedure (Y3)</h2>
+    <table>
+        <thead>
+            <tr>
+            <th>No.</th>
+            <th>Description</th>
+            <th>Result</th>
+            <th>Remark</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1.</td>
+            <td>ตรวจสอบสถานะ Alarm ของ MITRAC PSDC กับ CCR</td>
+            <td><input type="checkbox" name="result1" /></td>
+            <td><input type="text" name="remark1" placeholder="หมายเหตุข้อ 1" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>2.</td>
+            <td>ตรวจสอบไฟแสดงสถานะ POWER FAULT ที่ประตูตู้ MITRAC PSDC 
+                <br>(สถานะไฟแดงต้องไม่ติด)
+            </td>
+            <td><input type="checkbox" name="result2" /></td>
+            <td><input type="text" name="remark2" placeholder="หมายเหตุข้อ 2" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>3.</td>
+            <td>ตรวจสอบถาดรองน้ำและท่อระบายน้ำ</td>
+            <td><input type="checkbox" name="result3" /></td>
+            <td><input type="text" name="remark3" placeholder="หมายเหตุข้อ 3" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>4.</td>
+            <td>ตรวจสอบการทำงานของพัดลมและระบายอากาศ</td>
+            <td><input type="checkbox" name="result4" /></td>
+            <td><input type="text" name="remark4" placeholder="หมายเหตุข้อ 4" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>5.</td>
+            <td>ตรวจสอบ Circuit Breaker 1-10 อยู่ตำแหน่ง ON</td>
+            <td><input type="checkbox" name="result5" /></td>
+            <td><input type="text" name="remark5" placeholder="หมายเหตุข้อ 5" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>6.</td>
+            <td>
+            ตรวจสอบจุดยึดของ Unit และสภาพโดยรวมของ Unit<br />
+            ● VCU-Lite ● VDX1 ● VDX2 ● DX1<br />
+            ● VDX3 ● VDX4 ● DX2
+            </td>
+            <td><input type="checkbox" name="result6" /></td>
+            <td><input type="text" name="remark6" placeholder="หมายเหตุข้อ 6" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>7.</td>
+            <td>
+            ตรวจสอบ Connector และ MVB Cable ระหว่าง Unit<br />
+            ● VCU-Lite ● VDX1 ● VDX2 ● DX1<br />
+            ● VDX3 ● VDX4 ● DX2
+            </td>
+            <td><input type="checkbox" name="result7" /></td>
+            <td><input type="text" name="remark7" placeholder="หมายเหตุข้อ 7" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>8.</td>
+            <td>ตรวจสอบ Connector M12 ที่ตำแหน่ง X9 ของ VCU-Lite Unit</td>
+            <td><input type="checkbox" name="result8" /></td>
+            <td><input type="text" name="remark8" placeholder="หมายเหตุข้อ 8" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>9.</td>
+            <td>ตรวจสอบสภาพ Relay MITRAC ไม่มีรอยไหม้หรือแตกร้าว</td>
+            <td><input type="checkbox" name="result9" /></td>
+            <td><input type="text" name="remark9" placeholder="หมายเหตุข้อ 9" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>10.</td>
+            <td>ตรวจสอบ Cable ที่ต่อกับ Socket ของ Relay MITRAC</td>
+            <td><input type="checkbox" name="result10" /></td>
+            <td><input type="text" name="remark10" placeholder="หมายเหตุข้อ 10" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>11.</td>
+            <td>ตรวจสอบไฟแสดงสถานะของ VCU-Lite Unit
+                <br>(บันทึกสถานะของ VCU-Lite ลงตารางที่ 1)
+            </td>
+            <td><input type="checkbox" name="result11" /></td>
+            <td><input type="text" name="remark11" placeholder="หมายเหตุข้อ 11" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>12.</td>
+            <td>วัดแรงดันขาเข้า-ขาออกของ Power Supply
+                <br>(บันทึกลงตารางที่ 2)
+            </td>
+            <td><input type="checkbox" name="result12" /></td>
+            <td><input type="text" name="remark12" placeholder="หมายเหตุข้อ 12" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>13.</td>
+            <td>
+            ตรวจสอบสถานะของ Unit MITRAC ผ่านโปรแกรม DCUTerm ก่อนทำการ Reset Unit MITRAC
+            <br>(ใช้คำสั่ง dbs, read_psd, read_sda, time, ae) 
+            </td>
+            <td><input type="checkbox" name="result13" /></td>
+            <td><input type="text" name="remark13" placeholder="หมายเหตุข้อ 13" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>14.</td>
+            <td>เปลี่ยน Mobad</td>
+            <td><input type="checkbox" name="result14" /></td>
+            <td><input type="text" name="remark14" placeholder="หมายเหตุข้อ 14" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>15.</td>
+            <td>Off Unit MITRAC (Off MCB 1)</td>
+            <td><input type="checkbox" name="result15" /></td>
+            <td><input type="text" name="remark15" placeholder="หมายเหตุข้อ 15" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>16.</td>
+            <td>
+            วัดค่า Contact Impedance Relay<br />
+            (ถอด Relay ออกมา วัดค่า Contact Impedance โดยจ่ายไฟ และ บันทึกสถานะ Relay ลงตารางที่ 3)
+            </td>
+            <td><input type="checkbox" name="result16" /></td>
+            <td><input type="text" name="remark16" placeholder="หมายเหตุข้อ 16" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>17.</td>
+            <td>
+            ขันน็อต Socket ให้แน่นด้วยไขควง Torque ก่อนติดตั้ง Relay กลับเข้าไป<br />
+            (Torque ที่ค่า 0.55 Nm)
+            </td>
+            <td><input type="checkbox" name="result17" /></td>
+            <td><input type="text" name="remark17" placeholder="หมายเหตุข้อ 17" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>18.</td>
+            <td>On Unit MITRAC (On MCB 1)</td>
+            <td><input type="checkbox" name="result18" /></td>
+            <td><input type="text" name="remark18" placeholder="หมายเหตุข้อ 18" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>19.</td>
+            <td>ตรวจสอบสถานะของ Unit MITRAC ผ่านโปรแกรม DCUTerm หลังทำการ On Unit MITRAC
+                <br>(ใช้คำสั่ง dbs, read_psd, read_sda, time)
+                <br>*ตั้งเวลา VCU Lite ใหม่ หากเวลาคลาดเคลื่อนเกิน 1 นาที
+            </td>
+            <td><input type="checkbox" name="result19" /></td>
+            <td><input type="text" name="remark19" placeholder="หมายเหตุข้อ 19" style="width:95%;"></td>
+        </tr>
+<tr>
+            <td>20.</td>
+            <td>ทดสอบทำ Manual Bypass MITRAC<br>
+                <input type="checkbox" name="type1_20" id="type1_20"> <label for="type1_20">Type 1</label>
+                <input type="checkbox" name="type2_20" id="type2_20"> <label for="type2_20">Type 2</label>
+            </td>
+            <td><input type="checkbox" name="result20" /></td>
+            <td><input type="text" name="remark20" placeholder="หมายเหตุข้อ 20" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>21.</td>
+            <td>ตรวจสอบสถานะ Alarm ของ MITRAC กับ CCR</td>
+            <td><input type="checkbox" name="result21" /></td>
+            <td><input type="text" name="remark21" placeholder="หมายเหตุข้อ 21" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>22.</td>
+            <td>ตรวจสอบไฟแสดงสถานะ POWER FAULT ที่ประตูตู้ MITRAC PSDC
+                <br>(สถานะไฟแดงต้องติด)
+            </td>
+            <td><input type="checkbox" name="result22" /></td>
+            <td><input type="text" name="remark22" placeholder="หมายเหตุข้อ 22" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>23.</td>
+            <td>คืน Manual Bypass MITRAC</td>
+            <td><input type="checkbox" name="result23" /></td>
+            <td><input type="text" name="remark23" placeholder="หมายเหตุข้อ 23" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>24.</td>
+            <td>ตรวจสอบสถานะของ Unit MITRAC ผ่านโปรแกรม DCUTerm หลังคืน Manual Bypass MITRAC
+                <br>(ใช้คำสั่ง dbs, read_psd, read_sda, time)
+            </td>
+            <td><input type="checkbox" name="result24" /></td>
+            <td><input type="text" name="remark24" placeholder="หมายเหตุข้อ 24" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>25.</td>
+            <td>ตรวจสอบ Relay Status 
+                <br>(บันทึกสถานะของ Relay Status ลงตารางที่ 4)
+            </td>
+            <td><input type="checkbox" name="result25" /></td>
+            <td><input type="text" name="remark25" placeholder="หมายเหตุข้อ 25" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>26.</td>
+            <td>ดูดฝุ่นทำความสะอาดภายในและภายนอกตู้ MITRAC</td>
+            <td><input type="checkbox" name="result26" /></td>
+            <td><input type="text" name="remark26" placeholder="หมายเหตุข้อ 26" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>27.</td>
+            <td>ตรวจสอบสถานะ Alarm ของ MITRAC กับ CCR</td>
+            <td><input type="checkbox" name="result27" /></td>
+            <td><input type="text" name="remark27" placeholder="หมายเหตุข้อ 27" style="width:95%;"></td>
+        </tr>
+        <tr>
+            <td>28.</td>
+            <td>ทีมงานตรวจสอบอุปกรณ์ทั้งหมด ก่อนออกจากพื้นที่</td>
+            <td><input type="checkbox" name="result28" /></td>
+            <td><input type="text" name="remark28" placeholder="หมายเหตุข้อ 28" style="width:95%;"></td>
+        </tr>
+        </tbody>
+    </table>
+
+
+{% endblock %}

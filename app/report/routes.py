@@ -555,3 +555,7 @@ def generate_point_m1_pdf():
     # ---------- ส่งไฟล์ให้ดาวน์โหลด ----------
 
     return send_file(temp_path.name, as_attachment=True, download_name=download_filename)
+
+@report_bp.route('/mitrac_y3_form')
+def mitrac_y3_form():
+    return render_template('mitrac_y3_form.html')
