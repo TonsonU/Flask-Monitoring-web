@@ -427,188 +427,665 @@
         </tbody>
 
     </table>
+    <!-- Section 3: VCU-Lite Unit Status -->
 
-            <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-size: 14px;">
-            <thead style="background-color: #ddd;">
-                <tr>
-                    <th style="text-align: left; font-size: 16px;">
-                        รายละเอียดอื่นๆ และปัญหาที่พบ (Other Issues and Problems)
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" name="other_issue_1" placeholder="รายละเอียดเพิ่มเติม 1" style="width: 100%; padding: 5px;"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" name="other_issue_2" placeholder="รายละเอียดเพิ่มเติม 2" style="width: 100%; padding: 5px;"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" name="other_issue_3" placeholder="รายละเอียดเพิ่มเติม 3" style="width: 100%; padding: 5px;"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" name="other_issue_4" placeholder="รายละเอียดเพิ่มเติม 4" style="width: 100%; padding: 5px;"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" name="other_issue_5" placeholder="รายละเอียดเพิ่มเติม 5" style="width: 100%; padding: 5px;"></td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <br>
-        
-        <!-- แนบรูปภาพประกอบการทำงาน -->
-        <h4 style="margin-top: 30px;">แนบรูปภาพประกอบการทำงาน (Upload Work Images)</h4>
-        <div style="border: 1px dashed gray; padding: 20px; text-align: left;">
-            <div style="margin-bottom: 10px;">
-                <label>แนบรูปที่ 1:</label><br>
-                <input type="file" name="work_picture_1" accept="image/*">
-            </div>
-            <div style="margin-bottom: 10px;">
-                <label>แนบรูปที่ 2:</label><br>
-                <input type="file" name="work_picture_2" accept="image/*">
-            </div>
-            <div style="margin-bottom: 10px;">
-                <label>แนบรูปที่ 3:</label><br>
-                <input type="file" name="work_picture_3" accept="image/*">
-            </div>
-            <div style="margin-bottom: 10px;">
-                <label>แนบรูปที่ 4:</label><br>
-                <input type="file" name="work_picture_4" accept="image/*">
-            </div>
-        </div>
-    </body>
-    </html>
+    <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+            ตารางที่ 1 VCU-Lite Unit Status
+        </p>
 
-    <div class="text-center mt-4">
-        <button type="submit" class="btn btn-primary btn-lg">
-            บันทึกข้อมูล
-        </button>
-    </div>
-</form>
+<table>
+  <thead>
+    <tr>
+      <th>Indicator</th>
+      <th>Normal Status</th>
+      <th colspan="3">LED Status</th>
+      <th>Remark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>POW</td>
+      <td class="bold">ON</td>
+      <td><input type="checkbox" name="POW_ON"> ON</td>
+      <td><input type="checkbox" name="POW_OFF"> OFF</td>
+      <td><input type="checkbox" name="POW_BLINK"> BLINK</td>
+      <td><input type="text" name="POW_remark"></td>
+    </tr>
+    <tr>
+      <td>ERR</td>
+      <td class="bold">OFF</td>
+      <td><input type="checkbox" name="ERR_ON"> ON</td>
+      <td><input type="checkbox" name="ERR_OFF"> OFF</td>
+      <td><input type="checkbox" name="ERR_BLINK"> BLINK</td>
+      <td><input type="text" name="ERR_remark"></td>
+    </tr>
+    <tr>
+      <td>TX</td>
+      <td class="bold">BLINK</td>
+      <td><input type="checkbox" name="TX_ON"> ON</td>
+      <td><input type="checkbox" name="TX_OFF"> OFF</td>
+      <td><input type="checkbox" name="TX_BLINK"> BLINK</td>
+      <td><input type="text" name="TX_remark"></td>
+    </tr>
+    <tr>
+      <td>RX</td>
+      <td class="bold">BLINK</td>
+      <td><input type="checkbox" name="RX_ON"> ON</td>
+      <td><input type="checkbox" name="RX_OFF"> OFF</td>
+      <td><input type="checkbox" name="RX_BLINK"> BLINK</td>
+      <td><input type="text" name="RX_remark"></td>
+    </tr>
+    <tr>
+      <td>MVB</td>
+      <td class="bold">ON</td>
+      <td><input type="checkbox" name="MVB_ON"> ON</td>
+      <td><input type="checkbox" name="MVB_OFF"> OFF</td>
+      <td><input type="checkbox" name="MVB_BLINK"> BLINK</td>
+      <td><input type="text" name="MVB_remark"></td>
+    </tr>
+    <tr>
+      <td>S-C</td>
+      <td class="bold">OFF</td>
+      <td><input type="checkbox" name="SC_ON"> ON</td>
+      <td><input type="checkbox" name="SC_OFF"> OFF</td>
+      <td><input type="checkbox" name="SC_BLINK"> BLINK</td>
+      <td><input type="text" name="SC_remark"></td>
+    </tr>
+    <tr>
+      <td>WA</td>
+      <td class="bold">OFF</td>
+      <td><input type="checkbox" name="WA_ON"> ON</td>
+      <td><input type="checkbox" name="WA_OFF"> OFF</td>
+      <td><input type="checkbox" name="WA_BLINK"> BLINK</td>
+      <td><input type="text" name="WA_remark"></td>
+    </tr>
+    <tr>
+      <td>RTS</td>
+      <td class="bold">ON</td>
+      <td><input type="checkbox" name="RTS_ON"> ON</td>
+      <td><input type="checkbox" name="RTS_OFF"> OFF</td>
+      <td><input type="checkbox" name="RTS_BLINK"> BLINK</td>
+      <td><input type="text" name="RTS_remark"></td>
+    </tr>
+  </tbody>
+</table>
+
+    <!-- Section 4: แรงดันไฟฟ้าของ Power Supply -->
+
+    <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+ตารางที่ 2 แรงดันไฟฟ้าของ Power Supply
+    </p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th>Result</th>
+      <th>Remark</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>วัดแรงดันขาเข้าของ Power Supply <small>(Input Terminal 8, 9 / 220-230 Vac)</small></td>
+      <td><input type="text" name="input_result" placeholder="Vac"></td>
+      <td><input type="text" name="input_remark"></td>
+    </tr>
+    <tr>
+      <td>วัดแรงดันขาออกของ Power Supply <small>(Output Terminal 1, 3 or 2, 4 / 20-24 Vdc)</small></td>
+      <td><input type="text" name="output_result" placeholder="Vdc"></td>
+      <td><input type="text" name="output_remark"></td>
+    </tr>
+  </tbody>
+</table>
+
+   <!-- Section 5: บันทึกค่า Contact Impedance Relay -->
+
+    <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+ตารางที่ 3 บันทึกค่า Contact Impedance Relay
+    </p>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="10" style="text-align:center;">Contact Impedance Relay (&lt; 1 Ω)</th>
+    </tr>
+    <tr>
+      <th rowspan="2">Platform Side</th>
+      <th rowspan="2">Relay</th>
+      <th colspan="4">Energize</th>
+      <th colspan="4">De-energize</th>
+    </tr>
+    <tr>
+      <th>A2 – B2</th>
+      <th>A2 – B2</th>
+      <th>A3 – B3</th>
+      <th>A4 – B4</th>
+      <th>A2 – B2</th>
+      <th>A2 – B2</th>
+      <th>A3 – B3</th>
+      <th>A4 – B4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- NB Relays -->
+    <tr>
+      <td rowspan="10">NB</td>
+      <td>FSR_1</td>
+      <td><input type="text" name="FSR_1_en1"></td>
+      <td><input type="text" name="FSR_1_en2"></td>
+      <td><input type="text" name="FSR_1_en3"></td>
+      <td><input type="text" name="FSR_1_en4"></td>
+      <td><input type="text" name="FSR_1_de1"></td>
+      <td><input type="text" name="FSR_1_de2"></td>
+      <td><input type="text" name="FSR_1_de3"></td>
+      <td><input type="text" name="FSR_1_de4"></td>
+    </tr>
+    <tr>
+      <td>DCR_1</td>
+      <td><input type="text" name="DCR_1_en1"></td>
+      <td><input type="text" name="DCR_1_en2"></td>
+      <td><input type="text" name="DCR_1_en3"></td>
+      <td><input type="text" name="DCR_1_en4"></td>
+      <td><input type="text" name="DCR_1_de1"></td>
+      <td><input type="text" name="DCR_1_de2"></td>
+      <td><input type="text" name="DCR_1_de3"></td>
+      <td><input type="text" name="DCR_1_de4"></td>
+    </tr>
+    <tr>
+      <td>NDR_1</td>
+      <td><input type="text" name="NDR_1_en1"></td>
+      <td><input type="text" name="NDR_1_en2"></td>
+      <td><input type="text" name="NDR_1_en3"></td>
+      <td><input type="text" name="NDR_1_en4"></td>
+      <td><input type="text" name="NDR_1_de1"></td>
+      <td><input type="text" name="NDR_1_de2"></td>
+      <td><input type="text" name="NDR_1_de3"></td>
+      <td><input type="text" name="NDR_1_de4"></td>
+    </tr>
+    <tr>
+      <td>FIR_2</td>
+      <td><input type="text" name="FIR_2_en1"></td>
+      <td><input type="text" name="FIR_2_en2"></td>
+      <td><input type="text" name="FIR_2_en3"></td>
+      <td><input type="text" name="FIR_2_en4"></td>
+      <td><input type="text" name="FIR_2_de1"></td>
+      <td><input type="text" name="FIR_2_de2"></td>
+      <td><input type="text" name="FIR_2_de3"></td>
+      <td><input type="text" name="FIR_2_de4"></td>
+    </tr>
+    <tr>
+      <td>DOR_2</td>
+      <td><input type="text" name="DOR_2_en1"></td>
+      <td><input type="text" name="DOR_2_en2"></td>
+      <td><input type="text" name="DOR_2_en3"></td>
+      <td><input type="text" name="DOR_2_en4"></td>
+      <td><input type="text" name="DOR_2_de1"></td>
+      <td><input type="text" name="DOR_2_de2"></td>
+      <td><input type="text" name="DOR_2_de3"></td>
+      <td><input type="text" name="DOR_2_de4"></td>
+    </tr>
+    <tr>
+      <td>RDR_2</td>
+      <td><input type="text" name="RDR_2_en1"></td>
+      <td><input type="text" name="RDR_2_en2"></td>
+      <td><input type="text" name="RDR_2_en3"></td>
+      <td><input type="text" name="RDR_2_en4"></td>
+      <td><input type="text" name="RDR_2_de1"></td>
+      <td><input type="text" name="RDR_2_de2"></td>
+      <td><input type="text" name="RDR_2_de3"></td>
+      <td><input type="text" name="RDR_2_de4"></td>
+    </tr>
+    <tr>
+      <td>ADCLR_2</td>
+      <td><input type="text" name="ADCLR_2_en1"></td>
+      <td><input type="text" name="ADCLR_2_en2"></td>
+      <td><input type="text" name="ADCLR_2_en3"></td>
+      <td><input type="text" name="ADCLR_2_en4"></td>
+      <td><input type="text" name="ADCLR_2_de1"></td>
+      <td><input type="text" name="ADCLR_2_de2"></td>
+      <td><input type="text" name="ADCLR_2_de3"></td>
+      <td><input type="text" name="ADCLR_2_de4"></td>
+    </tr>
+    <tr>
+      <td>3CTR_1</td>
+      <td><input type="text" name="3CTR_1_en1"></td>
+      <td><input type="text" name="3CTR_1_en2"></td>
+      <td><input type="text" name="3CTR_1_en3"></td>
+      <td><input type="text" name="3CTR_1_en4"></td>
+      <td><input type="text" name="3CTR_1_de1"></td>
+      <td><input type="text" name="3CTR_1_de2"></td>
+      <td><input type="text" name="3CTR_1_de3"></td>
+      <td><input type="text" name="3CTR_1_de4"></td>
+    </tr>
+    <tr>
+      <td>4CTR_1</td>
+      <td><input type="text" name="4CTR_1_en1"></td>
+      <td><input type="text" name="4CTR_1_en2"></td>
+      <td><input type="text" name="4CTR_1_en3"></td>
+      <td><input type="text" name="4CTR_1_en4"></td>
+      <td><input type="text" name="4CTR_1_de1"></td>
+      <td><input type="text" name="4CTR_1_de2"></td>
+      <td><input type="text" name="4CTR_1_de3"></td>
+      <td><input type="text" name="4CTR_1_de4"></td>
+    </tr>
+    <tr>
+      <td>6CTR_1</td>
+      <td><input type="text" name="6CTR_1_en1"></td>
+      <td><input type="text" name="6CTR_1_en2"></td>
+      <td><input type="text" name="6CTR_1_en3"></td>
+      <td><input type="text" name="6CTR_1_en4"></td>
+      <td><input type="text" name="6CTR_1_de1"></td>
+      <td><input type="text" name="6CTR_1_de2"></td>
+      <td><input type="text" name="6CTR_1_de3"></td>
+      <td><input type="text" name="6CTR_1_de4"></td>
+    </tr>
+
+    <!-- EB Relays -->
+    <tr>
+      <td rowspan="10">EB</td>
+      <td>FSR_3</td>
+      <td><input type="text" name="FSR_3_en1"></td>
+      <td><input type="text" name="FSR_3_en2"></td>
+      <td><input type="text" name="FSR_3_en3"></td>
+      <td><input type="text" name="FSR_3_en4"></td>
+      <td><input type="text" name="FSR_3_de1"></td>
+      <td><input type="text" name="FSR_3_de2"></td>
+      <td><input type="text" name="FSR_3_de3"></td>
+      <td><input type="text" name="FSR_3_de4"></td>
+    </tr>
+    <tr>
+    <td>DCR_3</td>
+    <td><input type="text" name="DCR_3_en1"></td>
+    <td><input type="text" name="DCR_3_en2"></td>
+    <td><input type="text" name="DCR_3_en3"></td>
+    <td><input type="text" name="DCR_3_en4"></td>
+    <td><input type="text" name="DCR_3_de1"></td>
+    <td><input type="text" name="DCR_3_de2"></td>
+    <td><input type="text" name="DCR_3_de3"></td>
+    <td><input type="text" name="DCR_3_de4"></td>
+    </tr>
+    <tr>
+    <td>NDR_3</td>
+    <td><input type="text" name="NDR_3_en1"></td>
+    <td><input type="text" name="NDR_3_en2"></td>
+    <td><input type="text" name="NDR_3_en3"></td>
+    <td><input type="text" name="NDR_3_en4"></td>
+    <td><input type="text" name="NDR_3_de1"></td>
+    <td><input type="text" name="NDR_3_de2"></td>
+    <td><input type="text" name="NDR_3_de3"></td>
+    <td><input type="text" name="NDR_3_de4"></td>
+    </tr>
+    <tr>
+    <td>FIR_4</td>
+    <td><input type="text" name="FIR_4_en1"></td>
+    <td><input type="text" name="FIR_4_en2"></td>
+    <td><input type="text" name="FIR_4_en3"></td>
+    <td><input type="text" name="FIR_4_en4"></td>
+    <td><input type="text" name="FIR_4_de1"></td>
+    <td><input type="text" name="FIR_4_de2"></td>
+    <td><input type="text" name="FIR_4_de3"></td>
+    <td><input type="text" name="FIR_4_de4"></td>
+    </tr>
+    <tr>
+    <td>DOR_4</td>
+    <td><input type="text" name="DOR_4_en1"></td>
+    <td><input type="text" name="DOR_4_en2"></td>
+    <td><input type="text" name="DOR_4_en3"></td>
+    <td><input type="text" name="DOR_4_en4"></td>
+    <td><input type="text" name="DOR_4_de1"></td>
+    <td><input type="text" name="DOR_4_de2"></td>
+    <td><input type="text" name="DOR_4_de3"></td>
+    <td><input type="text" name="DOR_4_de4"></td>
+    </tr>
+    <tr>
+    <td>RDR_4</td>
+    <td><input type="text" name="RDR_4_en1"></td>
+    <td><input type="text" name="RDR_4_en2"></td>
+    <td><input type="text" name="RDR_4_en3"></td>
+    <td><input type="text" name="RDR_4_en4"></td>
+    <td><input type="text" name="RDR_4_de1"></td>
+    <td><input type="text" name="RDR_4_de2"></td>
+    <td><input type="text" name="RDR_4_de3"></td>
+    <td><input type="text" name="RDR_4_de4"></td>
+    </tr>
+    <tr>
+    <td>ADCLR_4</td>
+    <td><input type="text" name="ADCLR_4_en1"></td>
+    <td><input type="text" name="ADCLR_4_en2"></td>
+    <td><input type="text" name="ADCLR_4_en3"></td>
+    <td><input type="text" name="ADCLR_4_en4"></td>
+    <td><input type="text" name="ADCLR_4_de1"></td>
+    <td><input type="text" name="ADCLR_4_de2"></td>
+    <td><input type="text" name="ADCLR_4_de3"></td>
+    <td><input type="text" name="ADCLR_4_de4"></td>
+    </tr>
+    <tr>
+    <td>3CTR_2</td>
+    <td><input type="text" name="3CTR_2_en1"></td>
+    <td><input type="text" name="3CTR_2_en2"></td>
+    <td><input type="text" name="3CTR_2_en3"></td>
+    <td><input type="text" name="3CTR_2_en4"></td>
+    <td><input type="text" name="3CTR_2_de1"></td>
+    <td><input type="text" name="3CTR_2_de2"></td>
+    <td><input type="text" name="3CTR_2_de3"></td>
+    <td><input type="text" name="3CTR_2_de4"></td>
+    </tr>
+    <tr>
+    <td>4CTR_2</td>
+    <td><input type="text" name="4CTR_2_en1"></td>
+    <td><input type="text" name="4CTR_2_en2"></td>
+    <td><input type="text" name="4CTR_2_en3"></td>
+    <td><input type="text" name="4CTR_2_en4"></td>
+    <td><input type="text" name="4CTR_2_de1"></td>
+    <td><input type="text" name="4CTR_2_de2"></td>
+    <td><input type="text" name="4CTR_2_de3"></td>
+    <td><input type="text" name="4CTR_2_de4"></td>
+    </tr>
+    <tr>
+    <td>6CTR_2</td>
+    <td><input type="text" name="6CTR_2_en1"></td>
+    <td><input type="text" name="6CTR_2_en2"></td>
+    <td><input type="text" name="6CTR_2_en3"></td>
+    <td><input type="text" name="6CTR_2_en4"></td>
+    <td><input type="text" name="6CTR_2_de1"></td>
+    <td><input type="text" name="6CTR_2_de2"></td>
+    <td><input type="text" name="6CTR_2_de3"></td>
+    <td><input type="text" name="6CTR_2_de4"></td>
+    </tr>
+    </table>
+    </form>
 </body>
 
-   
+<body>
+       <!-- Section 6: Relay Status -->
+
+    <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+ตารางที่ 4 Relay Status
+    </p>
+    <table>
+        <tr>
+            <th>Platform Side</th>
+            <th>Relay</th>
+            <th>Normal Status</th>
+            <th colspan="3">LED Status</th>
+            <th>Remark</th>
+        </tr>
+        <tr>
+            <td rowspan="10">NB</td>
+            <td>FSR_1</td>
+            <td>ON</td>
+            <td><input type="checkbox" name="led_fsr_1_on"> ON</td>
+            <td><input type="checkbox" name="led_fsr_1_off"> OFF</td>
+            <td><input type="checkbox" name="led_fsr_1_blink"> BLINK</td>
+            <td><input type="text" name="remark_fsr_1"></td>
+        </tr>
+        <tr>
+            <td>DCR_1</td>
+            <td>BLINK</td>
+            <td><input type="checkbox" name="led_dcr_1_on"> ON</td>
+            <td><input type="checkbox" name="led_dcr_1_off"> OFF</td>
+            <td><input type="checkbox" name="led_dcr_1_blink"> BLINK</td>
+            <td><input type="text" name="remark_dcr_1"></td>
+        </tr>
+        <tr>
+            <td>NDR_1</td>
+            <td>BLINK</td>
+            <td><input type="checkbox" name="led_ndr_1_on"> ON</td>
+            <td><input type="checkbox" name="led_ndr_1_off"> OFF</td>
+            <td><input type="checkbox" name="led_ndr_1_blink"> BLINK</td>
+            <td><input type="text" name="remark_ndr_1"></td>
+        </tr>
+        <tr>
+            <td>FIR_2</td>
+            <td>ON</td>
+            <td><input type="checkbox" name="led_fir_2_on"> ON</td>
+            <td><input type="checkbox" name="led_fir_2_off"> OFF</td>
+            <td><input type="checkbox" name="led_fir_2_blink"> BLINK</td>
+            <td><input type="text" name="remark_fir_2"></td>
+        </tr>
+        <tr>
+            <td>DOR_2</td>
+            <td>BLINK</td>
+            <td><input type="checkbox" name="led_dor_2_on"> ON</td>
+            <td><input type="checkbox" name="led_dor_2_off"> OFF</td>
+            <td><input type="checkbox" name="led_dor_2_blink"> BLINK</td>
+            <td><input type="text" name="remark_dor_2"></td>
+        </tr>
+        <tr>
+            <td>RDR_2</td>
+            <td>BLINK</td>
+            <td><input type="checkbox" name="led_rdr_2_on"> ON</td>
+            <td><input type="checkbox" name="led_rdr_2_off"> OFF</td>
+            <td><input type="checkbox" name="led_rdr_2_blink"> BLINK</td>
+            <td><input type="text" name="remark_rdr_2"></td>
+        </tr>
+        <tr>
+            <td>ADCLR_2</td>
+            <td>ON</td>
+            <td><input type="checkbox" name="led_adclr_2_on"> ON</td>
+            <td><input type="checkbox" name="led_adclr_2_off"> OFF</td>
+            <td><input type="checkbox" name="led_adclr_2_blink"> BLINK</td>
+            <td><input type="text" name="remark_adclr_2"></td>
+        </tr>
+        <tr>
+            <td>3CTR_1</td>
+            <td>OFF</td>
+            <td><input type="checkbox" name="led_3ctr_1_on"> ON</td>
+            <td><input type="checkbox" name="led_3ctr_1_off"> OFF</td>
+            <td><input type="checkbox" name="led_3ctr_1_blink"> BLINK</td>
+            <td><input type="text" name="remark_3ctr_1"></td>
+        </tr>
+        <tr>
+            <td>4CTR_1</td>
+            <td>OFF</td>
+            <td><input type="checkbox" name="led_4ctr_1_on"> ON</td>
+            <td><input type="checkbox" name="led_4ctr_1_off"> OFF</td>
+            <td><input type="checkbox" name="led_4ctr_1_blink"> BLINK</td>
+            <td><input type="text" name="remark_4ctr_1"></td>
+        </tr>
+        <tr>
+            <td>6CTR_1</td>
+            <td>OFF</td>
+            <td><input type="checkbox" name="led_6ctr_1_on"> ON</td>
+            <td><input type="checkbox" name="led_6ctr_1_off"> OFF</td>
+            <td><input type="checkbox" name="led_6ctr_1_blink"> BLINK</td>
+            <td><input type="text" name="remark_6ctr_1"></td>
+        </tr>
+        <tr>
+            <td rowspan="10">EB</td>
+            <td>FSR_3</td>
+            <td>ON</td>
+            <td><input type="checkbox" name="led_fsr_3_on"> ON</td>
+            <td><input type="checkbox" name="led_fsr_3_off"> OFF</td>
+            <td><input type="checkbox" name="led_fsr_3_blink"> BLINK</td>
+            <td><input type="text" name="remark_fsr_3"></td>
+        </tr>
+        <tr>
+            <td>DCR_3</td>
+            <td>BLINK</td>
+            <td><input type="checkbox" name="led_dcr_3_on"> ON</td>
+            <td><input type="checkbox" name="led_dcr_3_off"> OFF</td>
+            <td><input type="checkbox" name="led_dcr_3_blink"> BLINK</td>
+            <td><input type="text" name="remark_dcr_3"></td>
+        </tr>
+        <tr>
+            <td>NDR_3</td>
+            <td>BLINK</td>
+            <td><input type="checkbox" name="led_ndr_3_on"> ON</td>
+            <td><input type="checkbox" name="led_ndr_3_off"> OFF</td>
+            <td><input type="checkbox" name="led_ndr_3_blink"> BLINK</td>
+            <td><input type="text" name="remark_ndr_3"></td>
+        </tr>
+        <tr>
+            <td>FIR_4</td>
+            <td>ON</td>
+            <td><input type="checkbox" name="led_fir_4_on"> ON</td>
+            <td><input type="checkbox" name="led_fir_4_off"> OFF</td>
+            <td><input type="checkbox" name="led_fir_4_blink"> BLINK</td>
+            <td><input type="text" name="remark_fir_4"></td>
+        </tr>
+        <tr>
+            <td>DOR_4</td>
+            <td>BLINK</td>
+            <td><input type="checkbox" name="led_dor_4_on"> ON</td>
+            <td><input type="checkbox" name="led_dor_4_off"> OFF</td>
+            <td><input type="checkbox" name="led_dor_4_blink"> BLINK</td>
+            <td><input type="text" name="remark_dor_4"></td>
+        </tr>
+        <tr>
+            <td>RDR_4</td>
+            <td>BLINK</td>
+            <td><input type="checkbox" name="led_rdr_4_on"> ON</td>
+            <td><input type="checkbox" name="led_rdr_4_off"> OFF</td>
+            <td><input type="checkbox" name="led_rdr_4_blink"> BLINK</td>
+            <td><input type="text" name="remark_rdr_4"></td>
+        </tr>
+        <tr>
+            <td>ADCLR_4</td>
+            <td>ON</td>
+            <td><input type="checkbox" name="led_adclr_4_on"> ON</td>
+            <td><input type="checkbox" name="led_adclr_4_off"> OFF</td>
+            <td><input type="checkbox" name="led_adclr_4_blink"> BLINK</td>
+            <td><input type="text" name="remark_adclr_4"></td>
+        </tr>
+        <tr>
+            <td>3CTR_2</td>
+            <td>OFF</td>
+            <td><input type="checkbox" name="led_3ctr_2_on"> ON</td>
+            <td><input type="checkbox" name="led_3ctr_2_off"> OFF</td>
+            <td><input type="checkbox" name="led_3ctr_2_blink"> BLINK</td>
+            <td><input type="text" name="remark_3ctr_2"></td>
+        </tr>
+        <tr>
+            <td>4CTR_2</td>
+            <td>OFF</td>
+            <td><input type="checkbox" name="led_4ctr_2_on"> ON</td>
+            <td><input type="checkbox" name="led_4ctr_2_off"> OFF</td>
+            <td><input type="checkbox" name="led_4ctr_2_blink"> BLINK</td>
+            <td><input type="text" name="remark_4ctr_2"></td>
+        </tr>
+        <tr>
+            <td>6CTR_2</td>
+            <td>OFF</td>
+            <td><input type="checkbox" name="led_6ctr_2_on"> ON</td>
+            <td><input type="checkbox" name="led_6ctr_2_off"> OFF</td>
+            <td><input type="checkbox" name="led_6ctr_2_blink"> BLINK</td>
+            <td><input type="text" name="remark_6ctr_2"></td>
+        </tr>
+    </table>
+</body>
+<br>
+
+            <!-- Section 7: รายละเอียดอื่นๆ และปัญหาที่พบ -->
+            <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+    <thead style="background-color: #ddd;">
+        <tr>
+            <th style="text-align: left; font-size: 16px;">
+                รายละเอียดอื่นๆ และปัญหาที่พบ (Other Issues and Problems)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><input type="text" name="other_issue_1" placeholder="รายละเอียดเพิ่มเติม 1" style="width: 100%; padding: 5px;"></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="other_issue_2" placeholder="รายละเอียดเพิ่มเติม 2" style="width: 100%; padding: 5px;"></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="other_issue_3" placeholder="รายละเอียดเพิ่มเติม 3" style="width: 100%; padding: 5px;"></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="other_issue_4" placeholder="รายละเอียดเพิ่มเติม 4" style="width: 100%; padding: 5px;"></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="other_issue_5" placeholder="รายละเอียดเพิ่มเติม 5" style="width: 100%; padding: 5px;"></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<!-- Section 8: แนบรูปภาพประกอบการทำงาน -->
+<h4 style="margin-top: 30px;">แนบรูปภาพประกอบการทำงาน (Upload Work Images)</h4>
+<div style="border: 1px dashed gray; padding: 20px; text-align: left;">
+    <div style="margin-bottom: 10px;">
+        <label>แนบรูปที่ 1:</label><br>
+        <input type="file" name="work_picture_1" accept="image/*">
+    </div>
+    <div style="margin-bottom: 10px;">
+        <label>แนบรูปที่ 2:</label><br>
+        <input type="file" name="work_picture_2" accept="image/*">
+    </div>
+    <div style="margin-bottom: 10px;">
+        <label>แนบรูปที่ 3:</label><br>
+        <input type="file" name="work_picture_3" accept="image/*">
+    </div>
+    <div style="margin-bottom: 10px;">
+        <label>แนบรูปที่ 4:</label><br>
+        <input type="file" name="work_picture_4" accept="image/*">
+    </div>
+</div>
+<div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary btn-lg">
+        บันทึกข้อมูล
+    </button>
+</div>
 
 <!-- โหลด Flatpickr -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-</body>
-</html>
-    <script>
-        flatpickr("#time1", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true
-        });
-        flatpickr("#time2", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true
-        });
-        </script>
-    <script>
-        function generateWorkOrderInputs() {
-            const count = document.getElementById('workOrderCount').value;
-            const container = document.getElementById('workOrderInputs');
-            container.innerHTML = ''; // ล้างช่องเก่าก่อน
-        
-            for (let i = 1; i <= count; i++) {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.name = `work${i}`;
-                input.placeholder = `หมายเลขใบงานที่ ${i}`;
-                input.style.marginBottom = '5px';
-                input.style.display = 'block'; // ขึ้นบรรทัดใหม่ทุกช่อง
-                container.appendChild(input);
-            }
-        }
-        </script>
-        <script>
-            function generateTprInputs() {
-                const count = document.getElementById('tprCount').value;
-                const container = document.getElementById('tprInputs');
-                container.innerHTML = ''; // เคลียร์ของเก่า
-            
-                for (let i = 1; i <= count; i++) {
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.name = `tpr${i}`;
-                    input.placeholder = `หมายเลข TPR ที่ ${i}`;
-                    input.style.marginBottom = '5px';
-                    input.style.display = 'block'; // ขึ้นบรรทัดใหม่
-                    container.appendChild(input);
-                }
-            }
-            </script>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const allMemberNames = {{ apostles|tojson }};
-                    const memberCountSelect = document.getElementById('memberCount');
-                    const memberInputsContainer = document.getElementById('memberInputs');
-                
-                    memberCountSelect.addEventListener('change', generateMemberInputs);
-                
-                    function generateMemberInputs() {
-                        const memberCount = parseInt(memberCountSelect.value) || 0;
-                        memberInputsContainer.innerHTML = '';
-
-                        for (let i = 0; i < memberCount; i++) {
-                            const select = document.createElement('select');
-
-                            // 👇 ตั้งชื่อให้ตรงกับ template Word
-                            select.name = `person${i + 1}`;
-                            
-                            select.classList.add('form-select', 'mb-2');
-                            select.dataset.index = i;
-
-                            select.addEventListener('change', updateSelectOptions);
-                            memberInputsContainer.appendChild(select);
-                        }
-
-                        updateSelectOptions();
-                    }
-                
-                    function updateSelectOptions() {
-                        const selects = memberInputsContainer.querySelectorAll('select');
-                        const selectedNames = Array.from(selects)
-                            .map(select => select.value)
-                            .filter(name => name !== "");
-                
-                        selects.forEach(select => {
-                            const currentValue = select.value;
-                            select.innerHTML = '';
-                
-                            const optionDefault = document.createElement('option');
-                            optionDefault.value = "";
-                            optionDefault.textContent = "-- เลือกสมาชิก --";
-                            select.appendChild(optionDefault);
-                
-                            allMemberNames.forEach(name => {
-                                if (!selectedNames.includes(name) || name === currentValue) {
-                                    const option = document.createElement('option');
-                                    option.value = name;
-                                    option.textContent = name;
-                                    if (name === currentValue) {
-                                        option.selected = true;
-                                    }
-                                    select.appendChild(option);
-                                }
-                            });
-                        });
-                    }
-                });
-                </script>
 <script>
-function closeOrRedirect() {
-    window.close();
-    setTimeout(function() {
-        window.location.href = "{{ url_for('report.main') }}";
-    }, 200);
-}
+    flatpickr("#time1", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+    });
+    flatpickr("#time2", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+    });
 </script>
-
+<script>
+    function generateWorkOrderInputs() {
+        const count = document.getElementById('workOrderCount').value;
+        const container = document.getElementById('workOrderInputs');
+        container.innerHTML = '';
+        for (let i = 1; i <= count; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = `work${i}`;
+            input.placeholder = `หมายเลขใบงานที่ ${i}`;
+            input.style.marginBottom = '5px';
+            input.style.display = 'block';
+            container.appendChild(input);
+        }
+    }
+</script>
+<script>
+    function generateTprInputs() {
+        const count = document.getElementById('tprCount').value;
+        const container = document.getElementById('tprInputs');
+        container.innerHTML = '';
+        for (let i = 1; i <= count; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = `tpr${i}`;
+            input.placeholder = `TPR ที่ ${i}`;
+            input.style.marginBottom = '5px';
+            input.style.display = 'block';
+            container.appendChild(input);
+        }
+    }
+</script>
+<script>
+    function closeOrRedirect() {
+        window.close();
+        setTimeout(function() {
+            window.location.href = "{{ url_for('report.main') }}";
+        }, 200);
+    }
+</script>
 
 {% endblock %}
