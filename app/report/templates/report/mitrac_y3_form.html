@@ -16,8 +16,201 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+  <title> Report Point (Y1)</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+  <!-- TinyMCE (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/tinymce@6.2.0/tinymce.min.js" referrerpolicy="origin"></script>
+  
+    <meta charset="UTF-8">
+    <title>Form Layout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px dotted gray;
+            padding: 5px;
+            vertical-align: middle;
+            text-align: center;
+        }
+        input[type="text"], input[type="date"], input[type="time"], select {
+            width: 95%;
+            padding: 4px;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 
-<h2>Visual Inspection & Cleaning Procedure (Y3)</h2>
+    <script>
+        function generateMemberInputs() {
+            const count = document.getElementById("memberCount").value;
+            const container = document.getElementById("memberInputs");
+            container.innerHTML = "";
+            for (let i = 1; i <= count; i++) {
+                container.innerHTML += `สมาชิก ${i}: <input type="text" name="person${i}"><br>`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <form method="POST" action="{{ url_for('report.generate_point_y1_pdf') }}" enctype="multipart/form-data">
+    <body class="bg-light">
+        <div class="container py-5">
+          <div class="card shadow">
+            <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
+              <h3 class="mb-0"><i class="fa-solid fa-plus"></i> Report Mitrac (Y3)</h3>
+              <a href="#" onclick="closeOrRedirect();" class="btn-close btn-close-white" aria-label="Close"></a>
+            </div>
+            <div class="card-body">
+              <!-- Flash Messages -->
+              {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+              {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              {% endfor %}
+              {% endif %}
+              {% endwith %}
+        <!-- Section: Header -->
+        <div class="section-header">
+            <h4>MAINTENANCE REPORT</h4>
+            <h4>PM (Y3) : MITRAC PSDC </h4>
+        </div>
+    
+        <form>
+    
+            <!-- Section 1: ข้อมูลทั่วไป -->
+            <table>
+                <tbody>
+                    <tr>
+                        <td>LEADER WAYSIDE:</td>
+                        <td>
+                            <select name="leaders">
+                                <option value="">-- กรุณาเลือก LEADER WAYSIDE --</option>
+                                {% for name in leaders %}
+                                    <option value="{{ name }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>DATE:</td>
+                        <td><input type="date" name="date" placeholder="เลือกวันที่"></td>
+                        <td>TIME:</td>
+                        <td colspan="3">
+                            <input name="time1" type="time" placeholder="เวลาเริ่ม" style="width: 45%; display: inline-block;">
+                            <input name="time2" type="time" placeholder="เวลาสิ้นสุด" style="width: 45%; display: inline-block; margin-left: 5%;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>COORDINATE PERSON:</td>
+                        <td><input type="text" name="coordinate" placeholder="ชื่อผู้ประสานงาน CCR, LC"></td>
+                        <td>STATION:</td>
+                        <td><input type="text" name="station" placeholder="สถานี"></td>
+                        <td>LOCATION AREA:</td>
+                        <td><input type="text" name="location" placeholder="พื้นที่ทำงาน N9-N10"></td>
+                    </tr>
+                    <tr>
+                        <td>APOSTLE:</td>
+                        <td colspan="2">
+                            <select name="apostles">
+                                <option value="">-- กรุณาเลือก APOSTLE --</option>
+                                {% for name in apostles %}
+                                    <option value="{{ name }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>TPR NO:</td>
+                        <td colspan="3" style="text-align: left;">
+                            <label for="tprCount">เลือกจำนวน TPR NO:</label>
+                            <select id="tprCount" onchange="generateTprInputs()">
+                                <option value="0">-- เลือกจำนวนหมายเลข TPR --</option>
+                                {% for i in range(1, 5) %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <div id="tprInputs" style="margin-top: 10px;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>TEAM NAME LIST:</td>
+                        <td colspan="5" style="text-align: left;">
+                            <label for="memberCount">เลือกจำนวนสมาชิก:</label>
+                            <select id="memberCount" onchange="generateMemberInputs()">
+                                <option value="0">-- เลือกจำนวนสมาชิก --</option>
+                                {% for i in range(1, 8) %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <div id="memberInputs" style="margin-top: 10px;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>WORK ORDER NO:</td>
+                        <td colspan="5" style="text-align: left;">
+                            <label for="workOrderCount">เลือกจำนวนใบงาน:</label>
+                            <select id="workOrderCount" onchange="generateWorkOrderInputs()">
+                                <option value="0">-- เลือกจำนวนใบงาน --</option>
+                                {% for i in range(1, 8) %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <div id="workOrderInputs" style="margin-top: 10px;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>WORK DESCRIPTION:</td>
+                        <td colspan="5"><input type="text" name="work_description" placeholder="รายละเอียดงาน"></td>
+                    </tr>
+                    <tr>
+                        <td>ลงชื่อเข้า / ออก พื้นที่สถานี:</td>
+                        <td colspan="2" class="checkbox-group">
+                            <label><input type="checkbox" name="station_in"> เข้า</label>
+                            <label><input type="checkbox" name="station_out"> ออก</label>
+                        </td>
+                        <td>ยืม / คืน อุปกรณ์:</td>
+                        <td colspan="2" class="checkbox-group">
+                            <label><input type="checkbox" name="borrow_earthing"> Earthing Device</label>
+                            <label><input type="checkbox" name="borrow_voltage"> Voltage Tester</label>
+                            <label><input type="checkbox" name="borrow_item"> ยืม</label>
+                            <label><input type="checkbox" name="return_item"> คืน</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>แจ้งเข้า / ออก พื้นที่ตาม Track Possession กับ CCR:</td>
+                        <td colspan="5" class="checkbox-group">
+                            <label><input type="checkbox" name="track_in"> เข้า</label>
+                            <label><input type="checkbox" name="track_out"> ออก</label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    
+            <br>
+            <!-- Section 2: รายการตรวจสอบและทำความสะอาด -->
+<p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+ Visual Inspection & Cleaning Procedure (Y3)
+</p>
     <table>
         <thead>
             <tr>
@@ -30,13 +223,13 @@
         <tbody>
         <tr>
             <td>1.</td>
-            <td>ตรวจสอบสถานะ Alarm ของ MITRAC PSDC กับ CCR</td>
+            <td style="text-align: left;">ตรวจสอบสถานะ Alarm ของ MITRAC PSDC กับ CCR</td>
             <td><input type="checkbox" name="result1" /></td>
             <td><input type="text" name="remark1" placeholder="หมายเหตุข้อ 1" style="width:95%;"></td>
         </tr>
         <tr>
             <td>2.</td>
-            <td>ตรวจสอบไฟแสดงสถานะ POWER FAULT ที่ประตูตู้ MITRAC PSDC 
+            <td style="text-align: left;">ตรวจสอบไฟแสดงสถานะ POWER FAULT ที่ประตูตู้ MITRAC PSDC 
                 <br>(สถานะไฟแดงต้องไม่ติด)
             </td>
             <td><input type="checkbox" name="result2" /></td>
@@ -44,25 +237,25 @@
         </tr>
         <tr>
             <td>3.</td>
-            <td>ตรวจสอบถาดรองน้ำและท่อระบายน้ำ</td>
+            <td style="text-align: left;">ตรวจสอบถาดรองน้ำและท่อระบายน้ำ</td>
             <td><input type="checkbox" name="result3" /></td>
             <td><input type="text" name="remark3" placeholder="หมายเหตุข้อ 3" style="width:95%;"></td>
         </tr>
         <tr>
             <td>4.</td>
-            <td>ตรวจสอบการทำงานของพัดลมและระบายอากาศ</td>
+            <td style="text-align: left;">ตรวจสอบการทำงานของพัดลมและระบายอากาศ</td>
             <td><input type="checkbox" name="result4" /></td>
             <td><input type="text" name="remark4" placeholder="หมายเหตุข้อ 4" style="width:95%;"></td>
         </tr>
         <tr>
             <td>5.</td>
-            <td>ตรวจสอบ Circuit Breaker 1-10 อยู่ตำแหน่ง ON</td>
+            <td style="text-align: left;">ตรวจสอบ Circuit Breaker 1-10 อยู่ตำแหน่ง ON</td>
             <td><input type="checkbox" name="result5" /></td>
             <td><input type="text" name="remark5" placeholder="หมายเหตุข้อ 5" style="width:95%;"></td>
         </tr>
         <tr>
             <td>6.</td>
-            <td>
+            <td style="text-align: left;">
             ตรวจสอบจุดยึดของ Unit และสภาพโดยรวมของ Unit<br />
             ● VCU-Lite ● VDX1 ● VDX2 ● DX1<br />
             ● VDX3 ● VDX4 ● DX2
@@ -72,7 +265,7 @@
         </tr>
         <tr>
             <td>7.</td>
-            <td>
+            <td style="text-align: left;">
             ตรวจสอบ Connector และ MVB Cable ระหว่าง Unit<br />
             ● VCU-Lite ● VDX1 ● VDX2 ● DX1<br />
             ● VDX3 ● VDX4 ● DX2
@@ -82,25 +275,25 @@
         </tr>
         <tr>
             <td>8.</td>
-            <td>ตรวจสอบ Connector M12 ที่ตำแหน่ง X9 ของ VCU-Lite Unit</td>
+            <td style="text-align: left;">ตรวจสอบ Connector M12 ที่ตำแหน่ง X9 ของ VCU-Lite Unit</td>
             <td><input type="checkbox" name="result8" /></td>
             <td><input type="text" name="remark8" placeholder="หมายเหตุข้อ 8" style="width:95%;"></td>
         </tr>
         <tr>
             <td>9.</td>
-            <td>ตรวจสอบสภาพ Relay MITRAC ไม่มีรอยไหม้หรือแตกร้าว</td>
+            <td style="text-align: left;">ตรวจสอบสภาพ Relay MITRAC ไม่มีรอยไหม้หรือแตกร้าว</td>
             <td><input type="checkbox" name="result9" /></td>
             <td><input type="text" name="remark9" placeholder="หมายเหตุข้อ 9" style="width:95%;"></td>
         </tr>
         <tr>
             <td>10.</td>
-            <td>ตรวจสอบ Cable ที่ต่อกับ Socket ของ Relay MITRAC</td>
+            <td style="text-align: left;">ตรวจสอบ Cable ที่ต่อกับ Socket ของ Relay MITRAC</td>
             <td><input type="checkbox" name="result10" /></td>
             <td><input type="text" name="remark10" placeholder="หมายเหตุข้อ 10" style="width:95%;"></td>
         </tr>
         <tr>
             <td>11.</td>
-            <td>ตรวจสอบไฟแสดงสถานะของ VCU-Lite Unit
+            <td style="text-align: left;">ตรวจสอบไฟแสดงสถานะของ VCU-Lite Unit
                 <br>(บันทึกสถานะของ VCU-Lite ลงตารางที่ 1)
             </td>
             <td><input type="checkbox" name="result11" /></td>
@@ -108,7 +301,7 @@
         </tr>
         <tr>
             <td>12.</td>
-            <td>วัดแรงดันขาเข้า-ขาออกของ Power Supply
+            <td style="text-align: left;">วัดแรงดันขาเข้า-ขาออกของ Power Supply
                 <br>(บันทึกลงตารางที่ 2)
             </td>
             <td><input type="checkbox" name="result12" /></td>
@@ -116,7 +309,7 @@
         </tr>
         <tr>
             <td>13.</td>
-            <td>
+            <td style="text-align: left;">
             ตรวจสอบสถานะของ Unit MITRAC ผ่านโปรแกรม DCUTerm ก่อนทำการ Reset Unit MITRAC
             <br>(ใช้คำสั่ง dbs, read_psd, read_sda, time, ae) 
             </td>
@@ -125,19 +318,19 @@
         </tr>
         <tr>
             <td>14.</td>
-            <td>เปลี่ยน Mobad</td>
+            <td style="text-align: left;">เปลี่ยน Mobad</td>
             <td><input type="checkbox" name="result14" /></td>
             <td><input type="text" name="remark14" placeholder="หมายเหตุข้อ 14" style="width:95%;"></td>
         </tr>
         <tr>
             <td>15.</td>
-            <td>Off Unit MITRAC (Off MCB 1)</td>
+            <td style="text-align: left;">Off Unit MITRAC (Off MCB 1)</td>
             <td><input type="checkbox" name="result15" /></td>
             <td><input type="text" name="remark15" placeholder="หมายเหตุข้อ 15" style="width:95%;"></td>
         </tr>
         <tr>
             <td>16.</td>
-            <td>
+            <td style="text-align: left;">
             วัดค่า Contact Impedance Relay<br />
             (ถอด Relay ออกมา วัดค่า Contact Impedance โดยจ่ายไฟ และ บันทึกสถานะ Relay ลงตารางที่ 3)
             </td>
@@ -146,7 +339,7 @@
         </tr>
         <tr>
             <td>17.</td>
-            <td>
+            <td style="text-align: left;">
             ขันน็อต Socket ให้แน่นด้วยไขควง Torque ก่อนติดตั้ง Relay กลับเข้าไป<br />
             (Torque ที่ค่า 0.55 Nm)
             </td>
@@ -155,13 +348,13 @@
         </tr>
         <tr>
             <td>18.</td>
-            <td>On Unit MITRAC (On MCB 1)</td>
+            <td style="text-align: left;">On Unit MITRAC (On MCB 1)</td>
             <td><input type="checkbox" name="result18" /></td>
             <td><input type="text" name="remark18" placeholder="หมายเหตุข้อ 18" style="width:95%;"></td>
         </tr>
         <tr>
             <td>19.</td>
-            <td>ตรวจสอบสถานะของ Unit MITRAC ผ่านโปรแกรม DCUTerm หลังทำการ On Unit MITRAC
+            <td style="text-align: left;">ตรวจสอบสถานะของ Unit MITRAC ผ่านโปรแกรม DCUTerm หลังทำการ On Unit MITRAC
                 <br>(ใช้คำสั่ง dbs, read_psd, read_sda, time)
                 <br>*ตั้งเวลา VCU Lite ใหม่ หากเวลาคลาดเคลื่อนเกิน 1 นาที
             </td>
@@ -170,7 +363,7 @@
         </tr>
 <tr>
             <td>20.</td>
-            <td>ทดสอบทำ Manual Bypass MITRAC<br>
+            <td style="text-align: left;">ทดสอบทำ Manual Bypass MITRAC<br>
                 <input type="checkbox" name="type1_20" id="type1_20"> <label for="type1_20">Type 1</label>
                 <input type="checkbox" name="type2_20" id="type2_20"> <label for="type2_20">Type 2</label>
             </td>
@@ -179,13 +372,13 @@
         </tr>
         <tr>
             <td>21.</td>
-            <td>ตรวจสอบสถานะ Alarm ของ MITRAC กับ CCR</td>
+            <td style="text-align: left;">ตรวจสอบสถานะ Alarm ของ MITRAC กับ CCR</td>
             <td><input type="checkbox" name="result21" /></td>
             <td><input type="text" name="remark21" placeholder="หมายเหตุข้อ 21" style="width:95%;"></td>
         </tr>
         <tr>
             <td>22.</td>
-            <td>ตรวจสอบไฟแสดงสถานะ POWER FAULT ที่ประตูตู้ MITRAC PSDC
+            <td style="text-align: left;">ตรวจสอบไฟแสดงสถานะ POWER FAULT ที่ประตูตู้ MITRAC PSDC
                 <br>(สถานะไฟแดงต้องติด)
             </td>
             <td><input type="checkbox" name="result22" /></td>
@@ -193,13 +386,13 @@
         </tr>
         <tr>
             <td>23.</td>
-            <td>คืน Manual Bypass MITRAC</td>
+            <td style="text-align: left;">คืน Manual Bypass MITRAC</td>
             <td><input type="checkbox" name="result23" /></td>
             <td><input type="text" name="remark23" placeholder="หมายเหตุข้อ 23" style="width:95%;"></td>
         </tr>
         <tr>
             <td>24.</td>
-            <td>ตรวจสอบสถานะของ Unit MITRAC ผ่านโปรแกรม DCUTerm หลังคืน Manual Bypass MITRAC
+            <td style="text-align: left;">ตรวจสอบสถานะของ Unit MITRAC ผ่านโปรแกรม DCUTerm หลังคืน Manual Bypass MITRAC
                 <br>(ใช้คำสั่ง dbs, read_psd, read_sda, time)
             </td>
             <td><input type="checkbox" name="result24" /></td>
@@ -207,7 +400,7 @@
         </tr>
         <tr>
             <td>25.</td>
-            <td>ตรวจสอบ Relay Status 
+            <td style="text-align: left;">ตรวจสอบ Relay Status 
                 <br>(บันทึกสถานะของ Relay Status ลงตารางที่ 4)
             </td>
             <td><input type="checkbox" name="result25" /></td>
@@ -215,24 +408,207 @@
         </tr>
         <tr>
             <td>26.</td>
-            <td>ดูดฝุ่นทำความสะอาดภายในและภายนอกตู้ MITRAC</td>
+            <td style="text-align: left;">ดูดฝุ่นทำความสะอาดภายในและภายนอกตู้ MITRAC</td>
             <td><input type="checkbox" name="result26" /></td>
             <td><input type="text" name="remark26" placeholder="หมายเหตุข้อ 26" style="width:95%;"></td>
         </tr>
         <tr>
             <td>27.</td>
-            <td>ตรวจสอบสถานะ Alarm ของ MITRAC กับ CCR</td>
+            <td style="text-align: left;">ตรวจสอบสถานะ Alarm ของ MITRAC กับ CCR</td>
             <td><input type="checkbox" name="result27" /></td>
             <td><input type="text" name="remark27" placeholder="หมายเหตุข้อ 27" style="width:95%;"></td>
         </tr>
         <tr>
             <td>28.</td>
-            <td>ทีมงานตรวจสอบอุปกรณ์ทั้งหมด ก่อนออกจากพื้นที่</td>
+            <td style="text-align: left;">ทีมงานตรวจสอบอุปกรณ์ทั้งหมด ก่อนออกจากพื้นที่</td>
             <td><input type="checkbox" name="result28" /></td>
             <td><input type="text" name="remark28" placeholder="หมายเหตุข้อ 28" style="width:95%;"></td>
         </tr>
         </tbody>
+
     </table>
+
+            <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead style="background-color: #ddd;">
+                <tr>
+                    <th style="text-align: left; font-size: 16px;">
+                        รายละเอียดอื่นๆ และปัญหาที่พบ (Other Issues and Problems)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" name="other_issue_1" placeholder="รายละเอียดเพิ่มเติม 1" style="width: 100%; padding: 5px;"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="other_issue_2" placeholder="รายละเอียดเพิ่มเติม 2" style="width: 100%; padding: 5px;"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="other_issue_3" placeholder="รายละเอียดเพิ่มเติม 3" style="width: 100%; padding: 5px;"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="other_issue_4" placeholder="รายละเอียดเพิ่มเติม 4" style="width: 100%; padding: 5px;"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="other_issue_5" placeholder="รายละเอียดเพิ่มเติม 5" style="width: 100%; padding: 5px;"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <br>
+        
+        <!-- แนบรูปภาพประกอบการทำงาน -->
+        <h4 style="margin-top: 30px;">แนบรูปภาพประกอบการทำงาน (Upload Work Images)</h4>
+        <div style="border: 1px dashed gray; padding: 20px; text-align: left;">
+            <div style="margin-bottom: 10px;">
+                <label>แนบรูปที่ 1:</label><br>
+                <input type="file" name="work_picture_1" accept="image/*">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>แนบรูปที่ 2:</label><br>
+                <input type="file" name="work_picture_2" accept="image/*">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>แนบรูปที่ 3:</label><br>
+                <input type="file" name="work_picture_3" accept="image/*">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>แนบรูปที่ 4:</label><br>
+                <input type="file" name="work_picture_4" accept="image/*">
+            </div>
+        </div>
+    </body>
+    </html>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary btn-lg">
+            บันทึกข้อมูล
+        </button>
+    </div>
+</form>
+</body>
+
+   
+
+<!-- โหลด Flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</body>
+</html>
+    <script>
+        flatpickr("#time1", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+        flatpickr("#time2", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+        </script>
+    <script>
+        function generateWorkOrderInputs() {
+            const count = document.getElementById('workOrderCount').value;
+            const container = document.getElementById('workOrderInputs');
+            container.innerHTML = ''; // ล้างช่องเก่าก่อน
+        
+            for (let i = 1; i <= count; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = `work${i}`;
+                input.placeholder = `หมายเลขใบงานที่ ${i}`;
+                input.style.marginBottom = '5px';
+                input.style.display = 'block'; // ขึ้นบรรทัดใหม่ทุกช่อง
+                container.appendChild(input);
+            }
+        }
+        </script>
+        <script>
+            function generateTprInputs() {
+                const count = document.getElementById('tprCount').value;
+                const container = document.getElementById('tprInputs');
+                container.innerHTML = ''; // เคลียร์ของเก่า
+            
+                for (let i = 1; i <= count; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = `tpr${i}`;
+                    input.placeholder = `หมายเลข TPR ที่ ${i}`;
+                    input.style.marginBottom = '5px';
+                    input.style.display = 'block'; // ขึ้นบรรทัดใหม่
+                    container.appendChild(input);
+                }
+            }
+            </script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const allMemberNames = {{ apostles|tojson }};
+                    const memberCountSelect = document.getElementById('memberCount');
+                    const memberInputsContainer = document.getElementById('memberInputs');
+                
+                    memberCountSelect.addEventListener('change', generateMemberInputs);
+                
+                    function generateMemberInputs() {
+                        const memberCount = parseInt(memberCountSelect.value) || 0;
+                        memberInputsContainer.innerHTML = '';
+
+                        for (let i = 0; i < memberCount; i++) {
+                            const select = document.createElement('select');
+
+                            // 👇 ตั้งชื่อให้ตรงกับ template Word
+                            select.name = `person${i + 1}`;
+                            
+                            select.classList.add('form-select', 'mb-2');
+                            select.dataset.index = i;
+
+                            select.addEventListener('change', updateSelectOptions);
+                            memberInputsContainer.appendChild(select);
+                        }
+
+                        updateSelectOptions();
+                    }
+                
+                    function updateSelectOptions() {
+                        const selects = memberInputsContainer.querySelectorAll('select');
+                        const selectedNames = Array.from(selects)
+                            .map(select => select.value)
+                            .filter(name => name !== "");
+                
+                        selects.forEach(select => {
+                            const currentValue = select.value;
+                            select.innerHTML = '';
+                
+                            const optionDefault = document.createElement('option');
+                            optionDefault.value = "";
+                            optionDefault.textContent = "-- เลือกสมาชิก --";
+                            select.appendChild(optionDefault);
+                
+                            allMemberNames.forEach(name => {
+                                if (!selectedNames.includes(name) || name === currentValue) {
+                                    const option = document.createElement('option');
+                                    option.value = name;
+                                    option.textContent = name;
+                                    if (name === currentValue) {
+                                        option.selected = true;
+                                    }
+                                    select.appendChild(option);
+                                }
+                            });
+                        });
+                    }
+                });
+                </script>
+<script>
+function closeOrRedirect() {
+    window.close();
+    setTimeout(function() {
+        window.location.href = "{{ url_for('report.main') }}";
+    }, 200);
+}
+</script>
 
 
 {% endblock %}

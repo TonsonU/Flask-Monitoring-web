@@ -80,7 +80,7 @@
           <div class="card shadow">
             <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
               <h3 class="mb-0"><i class="fa-solid fa-plus"></i> Report Point (M2)</h3>
-              <a href="javascript:history.back()" class="btn-close btn-close-white" aria-label="Close"></a>
+              <a href="#" onclick="closeOrRedirect();" class="btn-close btn-close-white" aria-label="Close"></a>
             </div>
             <div class="card-body">
               <!-- Flash Messages -->
@@ -690,5 +690,13 @@
                     }
                 });
                 </script>
+<script>
+function closeOrRedirect() {
+    window.close();
+    setTimeout(function() {
+        window.location.href = "{{ url_for('report.main') }}";
+    }, 200);
+}
+</script>
 
 {% endblock %}
