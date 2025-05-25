@@ -10,7 +10,7 @@
 #
 ####################################################
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort, send_file, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort, send_file
 from flask_login import login_required, current_user
 import pytz
 from pytz import timezone
@@ -18,24 +18,10 @@ from datetime import datetime
 from app.extensions import db
 from . import report_bp
 from werkzeug.utils import secure_filename
-# from app.static import uploads
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
 import tempfile
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 import uuid
 import os
-from docx import Document
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import Image
-from reportlab.lib.units import cm
-from docxtpl import DocxTemplate
-from docxtpl import InlineImage
+from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Cm
 
 
@@ -170,7 +156,8 @@ def generate_point_y1_pdf():
         file = request.files.get(key)
         if file and file.filename:
             temp_dir = tempfile.mkdtemp()
-            file_path = os.path.join(temp_dir, file.filename)
+            safe_filename = secure_filename(file.filename)
+            file_path = os.path.join(temp_dir, safe_filename)
             file.save(file_path)
             context[key] = InlineImage(doc, file_path, width=Cm(6))
         else:
@@ -294,7 +281,8 @@ def generate_point_m6_pdf():
         file = request.files.get(key)
         if file and file.filename:
             temp_dir = tempfile.mkdtemp()
-            file_path = os.path.join(temp_dir, file.filename)
+            safe_filename = secure_filename(file.filename)
+            file_path = os.path.join(temp_dir, safe_filename)
             file.save(file_path)
             context[key] = InlineImage(doc, file_path, width=Cm(6))
         else:
@@ -411,7 +399,8 @@ def generate_point_m2_pdf():
         file = request.files.get(key)
         if file and file.filename:
             temp_dir = tempfile.mkdtemp()
-            file_path = os.path.join(temp_dir, file.filename)
+            safe_filename = secure_filename(file.filename)
+            file_path = os.path.join(temp_dir, safe_filename)
             file.save(file_path)
             context[key] = InlineImage(doc, file_path, width=Cm(6))
         else:
@@ -528,7 +517,8 @@ def generate_point_m1_pdf():
         file = request.files.get(key)
         if file and file.filename:
             temp_dir = tempfile.mkdtemp()
-            file_path = os.path.join(temp_dir, file.filename)
+            safe_filename = secure_filename(file.filename)
+            file_path = os.path.join(temp_dir, safe_filename)
             file.save(file_path)
             context[key] = InlineImage(doc, file_path, width=Cm(6))
         else:
