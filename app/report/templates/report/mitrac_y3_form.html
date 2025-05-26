@@ -73,7 +73,7 @@
     </script>
 </head>
 <body>
-    <form method="POST" action="{{ url_for('report.generate_point_y1_pdf') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('report.generate_mitrac_y3_pdf') }}" enctype="multipart/form-data">
     <body class="bg-light">
         <div class="container py-5">
           <div class="card shadow">
@@ -567,230 +567,228 @@
     </tr>
   </thead>
   <tbody>
-    <!-- NB Relays -->
     <tr>
       <td rowspan="10">NB</td>
       <td>FSR_1</td>
-      <td><input type="text" name="FSR_1_en1"></td>
-      <td><input type="text" name="FSR_1_en2"></td>
-      <td><input type="text" name="FSR_1_en3"></td>
-      <td><input type="text" name="FSR_1_en4"></td>
-      <td><input type="text" name="FSR_1_de1"></td>
-      <td><input type="text" name="FSR_1_de2"></td>
-      <td><input type="text" name="FSR_1_de3"></td>
-      <td><input type="text" name="FSR_1_de4"></td>
+      <td><input type="text" name="r_FSR_1_en1"></td>
+      <td><input type="text" name="r_FSR_1_en2"></td>
+      <td><input type="text" name="r_FSR_1_en3"></td>
+      <td><input type="text" name="r_FSR_1_en4"></td>
+      <td><input type="text" name="r_FSR_1_de1"></td>
+      <td><input type="text" name="r_FSR_1_de2"></td>
+      <td><input type="text" name="r_FSR_1_de3"></td>
+      <td><input type="text" name="r_FSR_1_de4"></td>
     </tr>
     <tr>
       <td>DCR_1</td>
-      <td><input type="text" name="DCR_1_en1"></td>
-      <td><input type="text" name="DCR_1_en2"></td>
-      <td><input type="text" name="DCR_1_en3"></td>
-      <td><input type="text" name="DCR_1_en4"></td>
-      <td><input type="text" name="DCR_1_de1"></td>
-      <td><input type="text" name="DCR_1_de2"></td>
-      <td><input type="text" name="DCR_1_de3"></td>
-      <td><input type="text" name="DCR_1_de4"></td>
+      <td><input type="text" name="r_DCR_1_en1"></td>
+      <td><input type="text" name="r_DCR_1_en2"></td>
+      <td><input type="text" name="r_DCR_1_en3"></td>
+      <td><input type="text" name="r_DCR_1_en4"></td>
+      <td><input type="text" name="r_DCR_1_de1"></td>
+      <td><input type="text" name="r_DCR_1_de2"></td>
+      <td><input type="text" name="r_DCR_1_de3"></td>
+      <td><input type="text" name="r_DCR_1_de4"></td>
     </tr>
     <tr>
       <td>NDR_1</td>
-      <td><input type="text" name="NDR_1_en1"></td>
-      <td><input type="text" name="NDR_1_en2"></td>
-      <td><input type="text" name="NDR_1_en3"></td>
-      <td><input type="text" name="NDR_1_en4"></td>
-      <td><input type="text" name="NDR_1_de1"></td>
-      <td><input type="text" name="NDR_1_de2"></td>
-      <td><input type="text" name="NDR_1_de3"></td>
-      <td><input type="text" name="NDR_1_de4"></td>
+      <td><input type="text" name="r_NDR_1_en1"></td>
+      <td><input type="text" name="r_NDR_1_en2"></td>
+      <td><input type="text" name="r_NDR_1_en3"></td>
+      <td><input type="text" name="r_NDR_1_en4"></td>
+      <td><input type="text" name="r_NDR_1_de1"></td>
+      <td><input type="text" name="r_NDR_1_de2"></td>
+      <td><input type="text" name="r_NDR_1_de3"></td>
+      <td><input type="text" name="r_NDR_1_de4"></td>
     </tr>
     <tr>
       <td>FIR_2</td>
-      <td><input type="text" name="FIR_2_en1"></td>
-      <td><input type="text" name="FIR_2_en2"></td>
-      <td><input type="text" name="FIR_2_en3"></td>
-      <td><input type="text" name="FIR_2_en4"></td>
-      <td><input type="text" name="FIR_2_de1"></td>
-      <td><input type="text" name="FIR_2_de2"></td>
-      <td><input type="text" name="FIR_2_de3"></td>
-      <td><input type="text" name="FIR_2_de4"></td>
+      <td><input type="text" name="r_FIR_2_en1"></td>
+      <td><input type="text" name="r_FIR_2_en2"></td>
+      <td><input type="text" name="r_FIR_2_en3"></td>
+      <td><input type="text" name="r_FIR_2_en4"></td>
+      <td><input type="text" name="r_FIR_2_de1"></td>
+      <td><input type="text" name="r_FIR_2_de2"></td>
+      <td><input type="text" name="r_FIR_2_de3"></td>
+      <td><input type="text" name="r_FIR_2_de4"></td>
     </tr>
     <tr>
       <td>DOR_2</td>
-      <td><input type="text" name="DOR_2_en1"></td>
-      <td><input type="text" name="DOR_2_en2"></td>
-      <td><input type="text" name="DOR_2_en3"></td>
-      <td><input type="text" name="DOR_2_en4"></td>
-      <td><input type="text" name="DOR_2_de1"></td>
-      <td><input type="text" name="DOR_2_de2"></td>
-      <td><input type="text" name="DOR_2_de3"></td>
-      <td><input type="text" name="DOR_2_de4"></td>
+      <td><input type="text" name="r_DOR_2_en1"></td>
+      <td><input type="text" name="r_DOR_2_en2"></td>
+      <td><input type="text" name="r_DOR_2_en3"></td>
+      <td><input type="text" name="r_DOR_2_en4"></td>
+      <td><input type="text" name="r_DOR_2_de1"></td>
+      <td><input type="text" name="r_DOR_2_de2"></td>
+      <td><input type="text" name="r_DOR_2_de3"></td>
+      <td><input type="text" name="r_DOR_2_de4"></td>
     </tr>
     <tr>
       <td>RDR_2</td>
-      <td><input type="text" name="RDR_2_en1"></td>
-      <td><input type="text" name="RDR_2_en2"></td>
-      <td><input type="text" name="RDR_2_en3"></td>
-      <td><input type="text" name="RDR_2_en4"></td>
-      <td><input type="text" name="RDR_2_de1"></td>
-      <td><input type="text" name="RDR_2_de2"></td>
-      <td><input type="text" name="RDR_2_de3"></td>
-      <td><input type="text" name="RDR_2_de4"></td>
+      <td><input type="text" name="r_RDR_2_en1"></td>
+      <td><input type="text" name="r_RDR_2_en2"></td>
+      <td><input type="text" name="r_RDR_2_en3"></td>
+      <td><input type="text" name="r_RDR_2_en4"></td>
+      <td><input type="text" name="r_RDR_2_de1"></td>
+      <td><input type="text" name="r_RDR_2_de2"></td>
+      <td><input type="text" name="r_RDR_2_de3"></td>
+      <td><input type="text" name="r_RDR_2_de4"></td>
     </tr>
     <tr>
       <td>ADCLR_2</td>
-      <td><input type="text" name="ADCLR_2_en1"></td>
-      <td><input type="text" name="ADCLR_2_en2"></td>
-      <td><input type="text" name="ADCLR_2_en3"></td>
-      <td><input type="text" name="ADCLR_2_en4"></td>
-      <td><input type="text" name="ADCLR_2_de1"></td>
-      <td><input type="text" name="ADCLR_2_de2"></td>
-      <td><input type="text" name="ADCLR_2_de3"></td>
-      <td><input type="text" name="ADCLR_2_de4"></td>
+      <td><input type="text" name="r_ADCLR_2_en1"></td>
+      <td><input type="text" name="r_ADCLR_2_en2"></td>
+      <td><input type="text" name="r_ADCLR_2_en3"></td>
+      <td><input type="text" name="r_ADCLR_2_en4"></td>
+      <td><input type="text" name="r_ADCLR_2_de1"></td>
+      <td><input type="text" name="r_ADCLR_2_de2"></td>
+      <td><input type="text" name="r_ADCLR_2_de3"></td>
+      <td><input type="text" name="r_ADCLR_2_de4"></td>
     </tr>
     <tr>
       <td>3CTR_1</td>
-      <td><input type="text" name="3CTR_1_en1"></td>
-      <td><input type="text" name="3CTR_1_en2"></td>
-      <td><input type="text" name="3CTR_1_en3"></td>
-      <td><input type="text" name="3CTR_1_en4"></td>
-      <td><input type="text" name="3CTR_1_de1"></td>
-      <td><input type="text" name="3CTR_1_de2"></td>
-      <td><input type="text" name="3CTR_1_de3"></td>
-      <td><input type="text" name="3CTR_1_de4"></td>
+      <td><input type="text" name="r_3CTR_1_en1"></td>
+      <td><input type="text" name="r_3CTR_1_en2"></td>
+      <td><input type="text" name="r_3CTR_1_en3"></td>
+      <td><input type="text" name="r_3CTR_1_en4"></td>
+      <td><input type="text" name="r_3CTR_1_de1"></td>
+      <td><input type="text" name="r_3CTR_1_de2"></td>
+      <td><input type="text" name="r_3CTR_1_de3"></td>
+      <td><input type="text" name="r_3CTR_1_de4"></td>
     </tr>
     <tr>
       <td>4CTR_1</td>
-      <td><input type="text" name="4CTR_1_en1"></td>
-      <td><input type="text" name="4CTR_1_en2"></td>
-      <td><input type="text" name="4CTR_1_en3"></td>
-      <td><input type="text" name="4CTR_1_en4"></td>
-      <td><input type="text" name="4CTR_1_de1"></td>
-      <td><input type="text" name="4CTR_1_de2"></td>
-      <td><input type="text" name="4CTR_1_de3"></td>
-      <td><input type="text" name="4CTR_1_de4"></td>
+      <td><input type="text" name="r_4CTR_1_en1"></td>
+      <td><input type="text" name="r_4CTR_1_en2"></td>
+      <td><input type="text" name="r_4CTR_1_en3"></td>
+      <td><input type="text" name="r_4CTR_1_en4"></td>
+      <td><input type="text" name="r_4CTR_1_de1"></td>
+      <td><input type="text" name="r_4CTR_1_de2"></td>
+      <td><input type="text" name="r_4CTR_1_de3"></td>
+      <td><input type="text" name="r_4CTR_1_de4"></td>
     </tr>
     <tr>
       <td>6CTR_1</td>
-      <td><input type="text" name="6CTR_1_en1"></td>
-      <td><input type="text" name="6CTR_1_en2"></td>
-      <td><input type="text" name="6CTR_1_en3"></td>
-      <td><input type="text" name="6CTR_1_en4"></td>
-      <td><input type="text" name="6CTR_1_de1"></td>
-      <td><input type="text" name="6CTR_1_de2"></td>
-      <td><input type="text" name="6CTR_1_de3"></td>
-      <td><input type="text" name="6CTR_1_de4"></td>
+      <td><input type="text" name="r_6CTR_1_en1"></td>
+      <td><input type="text" name="r_6CTR_1_en2"></td>
+      <td><input type="text" name="r_6CTR_1_en3"></td>
+      <td><input type="text" name="r_6CTR_1_en4"></td>
+      <td><input type="text" name="r_6CTR_1_de1"></td>
+      <td><input type="text" name="r_6CTR_1_de2"></td>
+      <td><input type="text" name="r_6CTR_1_de3"></td>
+      <td><input type="text" name="r_6CTR_1_de4"></td>
     </tr>
 
-    <!-- EB Relays -->
     <tr>
       <td rowspan="10">EB</td>
       <td>FSR_3</td>
-      <td><input type="text" name="FSR_3_en1"></td>
-      <td><input type="text" name="FSR_3_en2"></td>
-      <td><input type="text" name="FSR_3_en3"></td>
-      <td><input type="text" name="FSR_3_en4"></td>
-      <td><input type="text" name="FSR_3_de1"></td>
-      <td><input type="text" name="FSR_3_de2"></td>
-      <td><input type="text" name="FSR_3_de3"></td>
-      <td><input type="text" name="FSR_3_de4"></td>
+      <td><input type="text" name="r_FSR_3_en1"></td>
+      <td><input type="text" name="r_FSR_3_en2"></td>
+      <td><input type="text" name="r_FSR_3_en3"></td>
+      <td><input type="text" name="r_FSR_3_en4"></td>
+      <td><input type="text" name="r_FSR_3_de1"></td>
+      <td><input type="text" name="r_FSR_3_de2"></td>
+      <td><input type="text" name="r_FSR_3_de3"></td>
+      <td><input type="text" name="r_FSR_3_de4"></td>
     </tr>
     <tr>
     <td>DCR_3</td>
-    <td><input type="text" name="DCR_3_en1"></td>
-    <td><input type="text" name="DCR_3_en2"></td>
-    <td><input type="text" name="DCR_3_en3"></td>
-    <td><input type="text" name="DCR_3_en4"></td>
-    <td><input type="text" name="DCR_3_de1"></td>
-    <td><input type="text" name="DCR_3_de2"></td>
-    <td><input type="text" name="DCR_3_de3"></td>
-    <td><input type="text" name="DCR_3_de4"></td>
+    <td><input type="text" name="r_DCR_3_en1"></td>
+    <td><input type="text" name="r_DCR_3_en2"></td>
+    <td><input type="text" name="r_DCR_3_en3"></td>
+    <td><input type="text" name="r_DCR_3_en4"></td>
+    <td><input type="text" name="r_DCR_3_de1"></td>
+    <td><input type="text" name="r_DCR_3_de2"></td>
+    <td><input type="text" name="r_DCR_3_de3"></td>
+    <td><input type="text" name="r_DCR_3_de4"></td>
     </tr>
     <tr>
     <td>NDR_3</td>
-    <td><input type="text" name="NDR_3_en1"></td>
-    <td><input type="text" name="NDR_3_en2"></td>
-    <td><input type="text" name="NDR_3_en3"></td>
-    <td><input type="text" name="NDR_3_en4"></td>
-    <td><input type="text" name="NDR_3_de1"></td>
-    <td><input type="text" name="NDR_3_de2"></td>
-    <td><input type="text" name="NDR_3_de3"></td>
-    <td><input type="text" name="NDR_3_de4"></td>
+    <td><input type="text" name="r_NDR_3_en1"></td>
+    <td><input type="text" name="r_NDR_3_en2"></td>
+    <td><input type="text" name="r_NDR_3_en3"></td>
+    <td><input type="text" name="r_NDR_3_en4"></td>
+    <td><input type="text" name="r_NDR_3_de1"></td>
+    <td><input type="text" name="r_NDR_3_de2"></td>
+    <td><input type="text" name="r_NDR_3_de3"></td>
+    <td><input type="text" name="r_NDR_3_de4"></td>
     </tr>
     <tr>
     <td>FIR_4</td>
-    <td><input type="text" name="FIR_4_en1"></td>
-    <td><input type="text" name="FIR_4_en2"></td>
-    <td><input type="text" name="FIR_4_en3"></td>
-    <td><input type="text" name="FIR_4_en4"></td>
-    <td><input type="text" name="FIR_4_de1"></td>
-    <td><input type="text" name="FIR_4_de2"></td>
-    <td><input type="text" name="FIR_4_de3"></td>
-    <td><input type="text" name="FIR_4_de4"></td>
+    <td><input type="text" name="r_FIR_4_en1"></td>
+    <td><input type="text" name="r_FIR_4_en2"></td>
+    <td><input type="text" name="r_FIR_4_en3"></td>
+    <td><input type="text" name="r_FIR_4_en4"></td>
+    <td><input type="text" name="r_FIR_4_de1"></td>
+    <td><input type="text" name="r_FIR_4_de2"></td>
+    <td><input type="text" name="r_FIR_4_de3"></td>
+    <td><input type="text" name="r_FIR_4_de4"></td>
     </tr>
     <tr>
     <td>DOR_4</td>
-    <td><input type="text" name="DOR_4_en1"></td>
-    <td><input type="text" name="DOR_4_en2"></td>
-    <td><input type="text" name="DOR_4_en3"></td>
-    <td><input type="text" name="DOR_4_en4"></td>
-    <td><input type="text" name="DOR_4_de1"></td>
-    <td><input type="text" name="DOR_4_de2"></td>
-    <td><input type="text" name="DOR_4_de3"></td>
-    <td><input type="text" name="DOR_4_de4"></td>
+    <td><input type="text" name="r_DOR_4_en1"></td>
+    <td><input type="text" name="r_DOR_4_en2"></td>
+    <td><input type="text" name="r_DOR_4_en3"></td>
+    <td><input type="text" name="r_DOR_4_en4"></td>
+    <td><input type="text" name="r_DOR_4_de1"></td>
+    <td><input type="text" name="r_DOR_4_de2"></td>
+    <td><input type="text" name="r_DOR_4_de3"></td>
+    <td><input type="text" name="r_DOR_4_de4"></td>
     </tr>
     <tr>
     <td>RDR_4</td>
-    <td><input type="text" name="RDR_4_en1"></td>
-    <td><input type="text" name="RDR_4_en2"></td>
-    <td><input type="text" name="RDR_4_en3"></td>
-    <td><input type="text" name="RDR_4_en4"></td>
-    <td><input type="text" name="RDR_4_de1"></td>
-    <td><input type="text" name="RDR_4_de2"></td>
-    <td><input type="text" name="RDR_4_de3"></td>
-    <td><input type="text" name="RDR_4_de4"></td>
+    <td><input type="text" name="r_RDR_4_en1"></td>
+    <td><input type="text" name="r_RDR_4_en2"></td>
+    <td><input type="text" name="r_RDR_4_en3"></td>
+    <td><input type="text" name="r_RDR_4_en4"></td>
+    <td><input type="text" name="r_RDR_4_de1"></td>
+    <td><input type="text" name="r_RDR_4_de2"></td>
+    <td><input type="text" name="r_RDR_4_de3"></td>
+    <td><input type="text" name="r_RDR_4_de4"></td>
     </tr>
     <tr>
     <td>ADCLR_4</td>
-    <td><input type="text" name="ADCLR_4_en1"></td>
-    <td><input type="text" name="ADCLR_4_en2"></td>
-    <td><input type="text" name="ADCLR_4_en3"></td>
-    <td><input type="text" name="ADCLR_4_en4"></td>
-    <td><input type="text" name="ADCLR_4_de1"></td>
-    <td><input type="text" name="ADCLR_4_de2"></td>
-    <td><input type="text" name="ADCLR_4_de3"></td>
-    <td><input type="text" name="ADCLR_4_de4"></td>
+    <td><input type="text" name="r_ADCLR_4_en1"></td>
+    <td><input type="text" name="r_ADCLR_4_en2"></td>
+    <td><input type="text" name="r_ADCLR_4_en3"></td>
+    <td><input type="text" name="r_ADCLR_4_en4"></td>
+    <td><input type="text" name="r_ADCLR_4_de1"></td>
+    <td><input type="text" name="r_ADCLR_4_de2"></td>
+    <td><input type="text" name="r_ADCLR_4_de3"></td>
+    <td><input type="text" name="r_ADCLR_4_de4"></td>
     </tr>
     <tr>
     <td>3CTR_2</td>
-    <td><input type="text" name="3CTR_2_en1"></td>
-    <td><input type="text" name="3CTR_2_en2"></td>
-    <td><input type="text" name="3CTR_2_en3"></td>
-    <td><input type="text" name="3CTR_2_en4"></td>
-    <td><input type="text" name="3CTR_2_de1"></td>
-    <td><input type="text" name="3CTR_2_de2"></td>
-    <td><input type="text" name="3CTR_2_de3"></td>
-    <td><input type="text" name="3CTR_2_de4"></td>
+    <td><input type="text" name="r_3CTR_2_en1"></td>
+    <td><input type="text" name="r_3CTR_2_en2"></td>
+    <td><input type="text" name="r_3CTR_2_en3"></td>
+    <td><input type="text" name="r_3CTR_2_en4"></td>
+    <td><input type="text" name="r_3CTR_2_de1"></td>
+    <td><input type="text" name="r_3CTR_2_de2"></td>
+    <td><input type="text" name="r_3CTR_2_de3"></td>
+    <td><input type="text" name="r_3CTR_2_de4"></td>
     </tr>
     <tr>
     <td>4CTR_2</td>
-    <td><input type="text" name="4CTR_2_en1"></td>
-    <td><input type="text" name="4CTR_2_en2"></td>
-    <td><input type="text" name="4CTR_2_en3"></td>
-    <td><input type="text" name="4CTR_2_en4"></td>
-    <td><input type="text" name="4CTR_2_de1"></td>
-    <td><input type="text" name="4CTR_2_de2"></td>
-    <td><input type="text" name="4CTR_2_de3"></td>
-    <td><input type="text" name="4CTR_2_de4"></td>
+    <td><input type="text" name="r_4CTR_2_en1"></td>
+    <td><input type="text" name="r_4CTR_2_en2"></td>
+    <td><input type="text" name="r_4CTR_2_en3"></td>
+    <td><input type="text" name="r_4CTR_2_en4"></td>
+    <td><input type="text" name="r_4CTR_2_de1"></td>
+    <td><input type="text" name="r_4CTR_2_de2"></td>
+    <td><input type="text" name="r_4CTR_2_de3"></td>
+    <td><input type="text" name="r_4CTR_2_de4"></td>
     </tr>
     <tr>
     <td>6CTR_2</td>
-    <td><input type="text" name="6CTR_2_en1"></td>
-    <td><input type="text" name="6CTR_2_en2"></td>
-    <td><input type="text" name="6CTR_2_en3"></td>
-    <td><input type="text" name="6CTR_2_en4"></td>
-    <td><input type="text" name="6CTR_2_de1"></td>
-    <td><input type="text" name="6CTR_2_de2"></td>
-    <td><input type="text" name="6CTR_2_de3"></td>
-    <td><input type="text" name="6CTR_2_de4"></td>
+    <td><input type="text" name="r_6CTR_2_en1"></td>
+    <td><input type="text" name="r_6CTR_2_en2"></td>
+    <td><input type="text" name="r_6CTR_2_en3"></td>
+    <td><input type="text" name="r_6CTR_2_en4"></td>
+    <td><input type="text" name="r_6CTR_2_de1"></td>
+    <td><input type="text" name="r_6CTR_2_de2"></td>
+    <td><input type="text" name="r_6CTR_2_de3"></td>
+    <td><input type="text" name="r_6CTR_2_de4"></td>
     </tr>
     </table>
     </form>
@@ -1079,6 +1077,64 @@
         }
     }
 </script>
+<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const allMemberNames = {{ apostles|tojson }};
+                    const memberCountSelect = document.getElementById('memberCount');
+                    const memberInputsContainer = document.getElementById('memberInputs');
+                
+                    memberCountSelect.addEventListener('change', generateMemberInputs);
+                
+                    function generateMemberInputs() {
+                        const memberCount = parseInt(memberCountSelect.value) || 0;
+                        memberInputsContainer.innerHTML = '';
+
+                        for (let i = 0; i < memberCount; i++) {
+                            const select = document.createElement('select');
+
+                            // 👇 ตั้งชื่อให้ตรงกับ template Word
+                            select.name = `person${i + 1}`;
+                            
+                            select.classList.add('form-select', 'mb-2');
+                            select.dataset.index = i;
+
+                            select.addEventListener('change', updateSelectOptions);
+                            memberInputsContainer.appendChild(select);
+                        }
+
+                        updateSelectOptions();
+                    }
+                
+                    function updateSelectOptions() {
+                        const selects = memberInputsContainer.querySelectorAll('select');
+                        const selectedNames = Array.from(selects)
+                            .map(select => select.value)
+                            .filter(name => name !== "");
+                
+                        selects.forEach(select => {
+                            const currentValue = select.value;
+                            select.innerHTML = '';
+                
+                            const optionDefault = document.createElement('option');
+                            optionDefault.value = "";
+                            optionDefault.textContent = "-- เลือกสมาชิก --";
+                            select.appendChild(optionDefault);
+                
+                            allMemberNames.forEach(name => {
+                                if (!selectedNames.includes(name) || name === currentValue) {
+                                    const option = document.createElement('option');
+                                    option.value = name;
+                                    option.textContent = name;
+                                    if (name === currentValue) {
+                                        option.selected = true;
+                                    }
+                                    select.appendChild(option);
+                                }
+                            });
+                        });
+                    }
+                });
+                </script>
 <script>
     function closeOrRedirect() {
         window.close();

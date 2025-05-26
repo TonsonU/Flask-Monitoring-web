@@ -549,3 +549,385 @@ def generate_point_m1_pdf():
 @report_bp.route('/mitrac_y3_form')
 def mitrac_y3_form():
     return render_template('mitrac_y3_form.html')
+
+@report_bp.route("/generate_mitrac_y3_pdf", methods=["POST"])
+def generate_mitrac_y3_pdf():
+    context = {}
+
+    # ========== Section 1: ข้อมูลทั่วไป ==========
+    text_fields = [
+        'leaders', 'date', 'coordinate', 'station', 'location', 'apostles', 'work_description', 'time1', 'time2', 'apostles'
+    ]
+    for field in text_fields:
+        context[field] = request.form.get(field, "")
+
+    # Members (person1, person2, ..., person7)
+    for i in range(1, 8):
+        context[f"person{i}"] = request.form.get(f"person{i}", "")
+
+    # Work orders (work1, work2, ..., work7)
+    for i in range(1, 8):
+        context[f"work{i}"] = request.form.get(f"work{i}", "")
+
+    # TPR numbers (tpr1, tpr2, ..., tpr4)
+    for i in range(1, 5):
+        context[f"tpr{i}"] = request.form.get(f"tpr{i}", "")
+
+    # Checkbox กลุ่มแรก
+    def markbox(name):
+        return '✔' if request.form.get(name) else '☐'
+
+    checkbox_fields = [
+        'station_in', 'station_out', 'borrow_earthing', 'borrow_voltage', 'borrow_item',
+        'return_item', 'track_in', 'track_out'
+    ]
+    for field in checkbox_fields:
+        context[field] = markbox(field)
+    
+    # ========== Section 2: Visual Inspection & Cleaning Procedure (Y3) ==========
+    num_general_items = 28
+
+    # Loop for items result1-result28 and remark1-remark28
+    for i in range(1, num_general_items + 1):
+        context[f"result{i}"] = markbox(f"result{i}")
+        context[f"remark{i}"] = request.form.get(f"remark{i}", "")
+
+    # Specific handling for item 20's additional checkboxes
+    context["type1_20"] = markbox("type1_20")
+    context["type2_20"] = markbox("type2_20")
+
+    # ========== Section 3: VCU-Lite Unit Status (ตารางที่ 1) ==========
+    indicators = ["POW", "ERR", "TX", "RX", "MVB", "SC", "WA", "RTS"]
+    statuses = ["ON", "OFF", "BLINK"]
+
+    for indicator in indicators:
+        for status in statuses:
+            # สำหรับ checkbox ของสถานะ LED เช่น POW_ON, ERR_OFF
+            context[f"{indicator}_{status}"] = markbox(f"{indicator}_{status}")
+        # สำหรับช่องข้อความ Remark เช่น POW_remark, ERR_remark
+        context[f"{indicator}_remark"] = request.form.get(f"{indicator}_remark", "")
+    
+    # ========== Section 4: แรงดันไฟฟ้าของ Power Supply (ตารางที่ 2) ==========
+    sections = {
+    "input": ["result", "remark"],
+    "output": ["result", "remark"]
+    }
+
+    for section_name, field_types in sections.items():
+        for field_type in field_types:
+            # สร้างชื่อ field แบบเต็ม เช่น "input_result", "output_remark"
+            full_field_name = f"{section_name}_{field_type}"
+            context[full_field_name] = request.form.get(full_field_name, "")
+    
+    # ========== Section 5: บันทึกค่า Contact Impedance Relay (ตารางที่ 3) ==========
+    platform_sides = ["NB", "EB"]
+
+    relays = {
+        "NB": ["FSR_1", "DCR_1", "NDR_1", "FIR_2", "DOR_2", "RDR_2", "ADCLR_2", "3CTR_1", "4CTR_1", "6CTR_1"],
+        "EB": ["FSR_3", "DCR_3", "NDR_3", "FIR_4", "DOR_4", "RDR_4", "ADCLR_4", "3CTR_2", "4CTR_2", "6CTR_2"]
+    }
+
+    states = ["en", "de"]
+
+    measurements = [1, 2, 3, 4]
+
+    for platform in platform_sides:
+        for relay_name in relays[platform]:
+            for state in states:
+                for i in measurements:
+                    field_name = f"r_{relay_name}_{state}{i}"
+                    context[field_name] = request.form.get(field_name, "")
+
+    # ========== Section 6: Other Issues ==========
+    for i in range(1, 6):
+        context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
+
+    # ========== Render Word Template (สร้าง doc ก่อนใช้) ==========
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(base_dir, "templates", "docx_templates", "MITRAC (Y3).docx")
+    doc = DocxTemplate(template_path)
+
+    # ========== Section 7: แนบรูป ==========
+    image_keys = ['work_picture_1', 'work_picture_2', 'work_picture_3', 'work_picture_4']  # ตามชื่อใน template.docx
+
+    for key in image_keys:
+        file = request.files.get(key)
+        if file and file.filename:
+            temp_dir = tempfile.mkdtemp()
+            safe_filename = secure_filename(file.filename)
+            file_path = os.path.join(temp_dir, safe_filename)
+            file.save(file_path)
+            context[key] = InlineImage(doc, file_path, width=Cm(6))
+        else:
+            context[key] = ""
+
+    # ========== สร้าง Word จาก context ==========
+    doc.render(context)
+
+    temp_path = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    doc.save(temp_path.name)
+
+    # ---------- ✨ สร้างชื่อไฟล์ตามรูปแบบที่ต้องการ ✨ ----------
+    today_str = datetime.today().strftime("%Y-%m-%d")             # YYYY-MM-DD
+    job_name   = context.get("work_description", "Job")
+    location   = context.get("location", "Location")
+    # ป้องกันอักขระต้องห้ามในชื่อไฟล์ (Windows ฯลฯ)
+    job_name = secure_filename(job_name) or "Job"
+    location = secure_filename(location) or "Location"
+
+    download_filename = (
+        f"KK-{today_str} PM (Y3) Mitrac {job_name} At {location}.docx"
+    )
+
+    # ---------- ส่งไฟล์ให้ดาวน์โหลด ----------
+
+    return send_file(temp_path.name, as_attachment=True, download_name=download_filename)
+
+@report_bp.route('/mitrac_y1_form')
+def mitrac_y1_form():
+    return render_template('mitrac_y1_form.html')
+
+@report_bp.route("/generate_mitrac_y1_pdf", methods=["POST"])
+def generate_mitrac_y1_pdf():
+    context = {}
+
+    # ========== Section 1: ข้อมูลทั่วไป ==========
+    text_fields = [
+        'leaders', 'date', 'coordinate', 'station', 'location', 'apostles', 'work_description', 'time1', 'time2', 'apostles'
+    ]
+    for field in text_fields:
+        context[field] = request.form.get(field, "")
+
+    # Members (person1, person2, ..., person7)
+    for i in range(1, 8):
+        context[f"person{i}"] = request.form.get(f"person{i}", "")
+
+    # Work orders (work1, work2, ..., work7)
+    for i in range(1, 8):
+        context[f"work{i}"] = request.form.get(f"work{i}", "")
+
+    # TPR numbers (tpr1, tpr2, ..., tpr4)
+    for i in range(1, 5):
+        context[f"tpr{i}"] = request.form.get(f"tpr{i}", "")
+
+    # Checkbox กลุ่มแรก
+    def markbox(name):
+        return '✔' if request.form.get(name) else '☐'
+
+    checkbox_fields = [
+        'station_in', 'station_out', 'borrow_earthing', 'borrow_voltage', 'borrow_item',
+        'return_item', 'track_in', 'track_out'
+    ]
+    for field in checkbox_fields:
+        context[field] = markbox(field)
+
+    # ========== Section 6: Other Issues ==========
+    for i in range(1, 6):
+        context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
+
+    # ========== Render Word Template (สร้าง doc ก่อนใช้) ==========
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(base_dir, "templates", "docx_templates", "MITRAC (Y1).docx")
+    doc = DocxTemplate(template_path)
+
+    # ========== Section 7: แนบรูป ==========
+    image_keys = ['work_picture_1', 'work_picture_2', 'work_picture_3', 'work_picture_4']  # ตามชื่อใน template.docx
+
+    for key in image_keys:
+        file = request.files.get(key)
+        if file and file.filename:
+            temp_dir = tempfile.mkdtemp()
+            safe_filename = secure_filename(file.filename)
+            file_path = os.path.join(temp_dir, safe_filename)
+            file.save(file_path)
+            context[key] = InlineImage(doc, file_path, width=Cm(6))
+        else:
+            context[key] = ""
+
+    # ========== สร้าง Word จาก context ==========
+    doc.render(context)
+
+    temp_path = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    doc.save(temp_path.name)
+
+    # ---------- ✨ สร้างชื่อไฟล์ตามรูปแบบที่ต้องการ ✨ ----------
+    today_str = datetime.today().strftime("%Y-%m-%d")             # YYYY-MM-DD
+    job_name   = context.get("work_description", "Job")
+    location   = context.get("location", "Location")
+    # ป้องกันอักขระต้องห้ามในชื่อไฟล์ (Windows ฯลฯ)
+    job_name = secure_filename(job_name) or "Job"
+    location = secure_filename(location) or "Location"
+
+    download_filename = (
+        f"KK-{today_str} PM (Y1) Mitrac {job_name} At {location}.docx"
+    )
+
+    # ---------- ส่งไฟล์ให้ดาวน์โหลด ----------
+
+    return send_file(temp_path.name, as_attachment=True, download_name=download_filename)
+
+@report_bp.route('/mitrac_m6_form')
+def mitrac_m6_form():
+    return render_template('mitrac_m6_form.html')
+
+@report_bp.route("/generate_mitrac_m6_pdf", methods=["POST"])
+def generate_mitrac_m6_pdf():
+    context = {}
+
+    # ========== Section 1: ข้อมูลทั่วไป ==========
+    text_fields = [
+        'leaders', 'date', 'coordinate', 'station', 'location', 'apostles', 'work_description', 'time1', 'time2', 'apostles'
+    ]
+    for field in text_fields:
+        context[field] = request.form.get(field, "")
+
+    # Members (person1, person2, ..., person7)
+    for i in range(1, 8):
+        context[f"person{i}"] = request.form.get(f"person{i}", "")
+
+    # Work orders (work1, work2, ..., work7)
+    for i in range(1, 8):
+        context[f"work{i}"] = request.form.get(f"work{i}", "")
+
+    # TPR numbers (tpr1, tpr2, ..., tpr4)
+    for i in range(1, 5):
+        context[f"tpr{i}"] = request.form.get(f"tpr{i}", "")
+
+    # Checkbox กลุ่มแรก
+    def markbox(name):
+        return '✔' if request.form.get(name) else '☐'
+
+    checkbox_fields = [
+        'station_in', 'station_out', 'borrow_earthing', 'borrow_voltage', 'borrow_item',
+        'return_item', 'track_in', 'track_out'
+    ]
+    for field in checkbox_fields:
+        context[field] = markbox(field)
+
+    # ========== Section 6: Other Issues ==========
+    for i in range(1, 6):
+        context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
+
+    # ========== Render Word Template (สร้าง doc ก่อนใช้) ==========
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(base_dir, "templates", "docx_templates", "MITRAC (M6).docx")
+    doc = DocxTemplate(template_path)
+
+    # ========== Section 7: แนบรูป ==========
+    image_keys = ['work_picture_1', 'work_picture_2', 'work_picture_3', 'work_picture_4']  # ตามชื่อใน template.docx
+
+    for key in image_keys:
+        file = request.files.get(key)
+        if file and file.filename:
+            temp_dir = tempfile.mkdtemp()
+            safe_filename = secure_filename(file.filename)
+            file_path = os.path.join(temp_dir, safe_filename)
+            file.save(file_path)
+            context[key] = InlineImage(doc, file_path, width=Cm(6))
+        else:
+            context[key] = ""
+
+    # ========== สร้าง Word จาก context ==========
+    doc.render(context)
+
+    temp_path = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    doc.save(temp_path.name)
+
+    # ---------- ✨ สร้างชื่อไฟล์ตามรูปแบบที่ต้องการ ✨ ----------
+    today_str = datetime.today().strftime("%Y-%m-%d")             # YYYY-MM-DD
+    job_name   = context.get("work_description", "Job")
+    location   = context.get("location", "Location")
+    # ป้องกันอักขระต้องห้ามในชื่อไฟล์ (Windows ฯลฯ)
+    job_name = secure_filename(job_name) or "Job"
+    location = secure_filename(location) or "Location"
+
+    download_filename = (
+        f"KK-{today_str} PM (M6) Mitrac {job_name} At {location}.docx"
+    )
+
+    # ---------- ส่งไฟล์ให้ดาวน์โหลด ----------
+
+    return send_file(temp_path.name, as_attachment=True, download_name=download_filename)
+
+@report_bp.route('/mitrac_m3_form')
+def mitrac_m3_form():
+    return render_template('mitrac_m3_form.html')
+
+@report_bp.route("/generate_mitrac_m3_pdf", methods=["POST"])
+def generate_mitrac_m3_pdf():
+    context = {}
+
+    # ========== Section 1: ข้อมูลทั่วไป ==========
+    text_fields = [
+        'leaders', 'date', 'coordinate', 'station', 'location', 'apostles', 'work_description', 'time1', 'time2', 'apostles'
+    ]
+    for field in text_fields:
+        context[field] = request.form.get(field, "")
+
+    # Members (person1, person2, ..., person7)
+    for i in range(1, 8):
+        context[f"person{i}"] = request.form.get(f"person{i}", "")
+
+    # Work orders (work1, work2, ..., work7)
+    for i in range(1, 8):
+        context[f"work{i}"] = request.form.get(f"work{i}", "")
+
+    # TPR numbers (tpr1, tpr2, ..., tpr4)
+    for i in range(1, 5):
+        context[f"tpr{i}"] = request.form.get(f"tpr{i}", "")
+
+    # Checkbox กลุ่มแรก
+    def markbox(name):
+        return '✔' if request.form.get(name) else '☐'
+
+    checkbox_fields = [
+        'station_in', 'station_out', 'borrow_earthing', 'borrow_voltage', 'borrow_item',
+        'return_item', 'track_in', 'track_out'
+    ]
+    for field in checkbox_fields:
+        context[field] = markbox(field)
+
+    # ========== Section 6: Other Issues ==========
+    for i in range(1, 6):
+        context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
+
+    # ========== Render Word Template (สร้าง doc ก่อนใช้) ==========
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(base_dir, "templates", "docx_templates", "MITRAC (M3).docx")
+    doc = DocxTemplate(template_path)
+
+    # ========== Section 7: แนบรูป ==========
+    image_keys = ['work_picture_1', 'work_picture_2', 'work_picture_3', 'work_picture_4']  # ตามชื่อใน template.docx
+
+    for key in image_keys:
+        file = request.files.get(key)
+        if file and file.filename:
+            temp_dir = tempfile.mkdtemp()
+            safe_filename = secure_filename(file.filename)
+            file_path = os.path.join(temp_dir, safe_filename)
+            file.save(file_path)
+            context[key] = InlineImage(doc, file_path, width=Cm(6))
+        else:
+            context[key] = ""
+
+    # ========== สร้าง Word จาก context ==========
+    doc.render(context)
+
+    temp_path = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    doc.save(temp_path.name)
+
+    # ---------- ✨ สร้างชื่อไฟล์ตามรูปแบบที่ต้องการ ✨ ----------
+    today_str = datetime.today().strftime("%Y-%m-%d")             # YYYY-MM-DD
+    job_name   = context.get("work_description", "Job")
+    location   = context.get("location", "Location")
+    # ป้องกันอักขระต้องห้ามในชื่อไฟล์ (Windows ฯลฯ)
+    job_name = secure_filename(job_name) or "Job"
+    location = secure_filename(location) or "Location"
+
+    download_filename = (
+        f"KK-{today_str} PM (M3) Mitrac {job_name} At {location}.docx"
+    )
+
+    # ---------- ส่งไฟล์ให้ดาวน์โหลด ----------
+
+    return send_file(temp_path.name, as_attachment=True, download_name=download_filename)
