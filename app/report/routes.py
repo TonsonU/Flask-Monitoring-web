@@ -637,8 +637,22 @@ def generate_mitrac_y3_pdf():
                 for i in measurements:
                     field_name = f"r_{relay_name}_{state}{i}"
                     context[field_name] = request.form.get(field_name, "")
+    
+    # ========== Section 6: Relay Status (ตารางที่ 4) ==========
+    relay_list = [
+    "FSR_1", "DCR_1", "NDR_1", "FIR_2", "DOR_2", "RDR_2", "ADCLR_2", "3CTR_1", "4CTR_1", "6CTR_1",
+    "FSR_3", "DCR_3", "NDR_3", "FIR_4", "DOR_4", "RDR_4", "ADCLR_4", "3CTR_2", "4CTR_2", "6CTR_2"
+]
 
-    # ========== Section 6: Other Issues ==========
+    for relay in relay_list:
+        relay_key = relay
+
+        context[f"led_{relay_key}_on"] = markbox(f"led_{relay_key}_on")
+        context[f"led_{relay_key}_off"] = markbox(f"led_{relay_key}_off")
+        context[f"led_{relay_key}_blink"] = markbox(f"led_{relay_key}_blink")
+        context[f"remark_{relay_key}"] = request.form.get(f"remark_{relay_key}", "")
+
+    # ========== Section 7: Other Issues ==========
     for i in range(1, 6):
         context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
 
@@ -647,7 +661,7 @@ def generate_mitrac_y3_pdf():
     template_path = os.path.join(base_dir, "templates", "docx_templates", "MITRAC (Y3).docx")
     doc = DocxTemplate(template_path)
 
-    # ========== Section 7: แนบรูป ==========
+    # ========== Section 8: แนบรูป ==========
     image_keys = ['work_picture_1', 'work_picture_2', 'work_picture_3', 'work_picture_4']  # ตามชื่อใน template.docx
 
     for key in image_keys:
