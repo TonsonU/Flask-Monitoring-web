@@ -71,6 +71,29 @@
             border-radius: 20px;
             font-size: 12px;
         }
+        .status-group {
+            display: flex;
+            gap: 4px; /* 🔧 ปรับตรงนี้เพื่อลดช่องว่าง */
+        }
+
+        .status-button {
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: transparent;
+            color: #007bff;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid #007bff;
+            border-radius: 9999px;
+            font-size: 12px;
+            transition: all 0.2s ease;
+            margin: 0; /* ✅ ลบ margin ออกทั้งหมด */
+        }
+
+        .status-button:hover {
+            background-color: #007bff;
+            color: white;
+        }
     </style>
     
     <div class="report-container">
@@ -113,10 +136,12 @@
     
         <div class="report-item">
             <span class="report-title">Point </span>
-            <span class="status-label"><a href="{{ url_for('report.point_m1_form') }}" class="status-button">M1</a></span>
-            <span class="status-label"><a href="{{ url_for('report.point_m2_form') }}" class="status-button">M2</a></span>
-            <span class="status-label"><a href="{{ url_for('report.point_m6_form') }}" class="status-button">M6</a></span>
-            <span class="status-label"><a href="{{ url_for('report.point_y1_form') }}" class="status-button">Y1</a></span>
+            <div class="status-group">
+                <a href="{{ url_for('report.point_m1_form') }}" class="status-button">M1</a>
+                <a href="{{ url_for('report.point_m2_form') }}" class="status-button">M2</a>
+                <a href="{{ url_for('report.point_m6_form') }}" class="status-button">M6</a>
+                <a href="{{ url_for('report.point_y1_form') }}" class="status-button">Y1</a>
+            </div>
         </div>
     
         <div class="report-item">
@@ -126,10 +151,12 @@
     
         <div class="report-item">
             <span class="report-title">Mitrac </span>
-            <span class="status-label"><a href="{{ url_for('report.mitrac_m3_form') }}" class="status-button">M3</a></span>
-            <span class="status-label"><a href="{{ url_for('report.mitrac_m6_form') }}" class="status-button">M6</a></span>
-            <span class="status-label"><a href="{{ url_for('report.mitrac_y1_form') }}" class="status-button">Y1</a></span>
-            <span class="status-label"><a href="{{ url_for('report.mitrac_y3_form') }}" class="status-button">Y3</a></span>
+            <div class="status-group">
+                <a href="{{ url_for('report.mitrac_m3_form') }}" class="status-button">M3</a>
+                <a href="{{ url_for('report.mitrac_m6_form') }}" class="status-button">M6</a>
+                <a href="{{ url_for('report.mitrac_y1_form') }}" class="status-button">Y1</a>
+                <a href="{{ url_for('report.mitrac_y3_form') }}" class="status-button">Y3</a>
+            </div>
         </div>
     
         <div class="report-item">
