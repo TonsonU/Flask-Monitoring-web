@@ -449,7 +449,7 @@
       <td><input type="checkbox" name="POW_ON"> ON</td>
       <td><input type="checkbox" name="POW_OFF"> OFF</td>
       <td><input type="checkbox" name="POW_BLINK"> BLINK</td>
-      <td><input type="text" name="POW_remark"></td>
+      <td><input type="text" name="POW_remark" placeholder="หมายเหตุข้อ 1"></td>
     </tr>
     <tr>
       <td>ERR</td>
@@ -457,7 +457,7 @@
       <td><input type="checkbox" name="ERR_ON"> ON</td>
       <td><input type="checkbox" name="ERR_OFF"> OFF</td>
       <td><input type="checkbox" name="ERR_BLINK"> BLINK</td>
-      <td><input type="text" name="ERR_remark"></td>
+      <td><input type="text" name="ERR_remark" placeholder="หมายเหตุข้อ 2"></td>
     </tr>
     <tr>
       <td>TX</td>
@@ -465,7 +465,7 @@
       <td><input type="checkbox" name="TX_ON"> ON</td>
       <td><input type="checkbox" name="TX_OFF"> OFF</td>
       <td><input type="checkbox" name="TX_BLINK"> BLINK</td>
-      <td><input type="text" name="TX_remark"></td>
+      <td><input type="text" name="TX_remark" placeholder="หมายเหตุข้อ 3"></td>
     </tr>
     <tr>
       <td>RX</td>
@@ -473,7 +473,7 @@
       <td><input type="checkbox" name="RX_ON"> ON</td>
       <td><input type="checkbox" name="RX_OFF"> OFF</td>
       <td><input type="checkbox" name="RX_BLINK"> BLINK</td>
-      <td><input type="text" name="RX_remark"></td>
+      <td><input type="text" name="RX_remark" placeholder="หมายเหตุข้อ 4"></td>
     </tr>
     <tr>
       <td>MVB</td>
@@ -481,7 +481,7 @@
       <td><input type="checkbox" name="MVB_ON"> ON</td>
       <td><input type="checkbox" name="MVB_OFF"> OFF</td>
       <td><input type="checkbox" name="MVB_BLINK"> BLINK</td>
-      <td><input type="text" name="MVB_remark"></td>
+      <td><input type="text" name="MVB_remark" placeholder="หมายเหตุข้อ 5"></td>
     </tr>
     <tr>
       <td>S-C</td>
@@ -489,7 +489,7 @@
       <td><input type="checkbox" name="SC_ON"> ON</td>
       <td><input type="checkbox" name="SC_OFF"> OFF</td>
       <td><input type="checkbox" name="SC_BLINK"> BLINK</td>
-      <td><input type="text" name="SC_remark"></td>
+      <td><input type="text" name="SC_remark" placeholder="หมายเหตุข้อ 6"></td>
     </tr>
     <tr>
       <td>WA</td>
@@ -497,7 +497,7 @@
       <td><input type="checkbox" name="WA_ON"> ON</td>
       <td><input type="checkbox" name="WA_OFF"> OFF</td>
       <td><input type="checkbox" name="WA_BLINK"> BLINK</td>
-      <td><input type="text" name="WA_remark"></td>
+      <td><input type="text" name="WA_remark" placeholder="หมายเหตุข้อ 7"></td>
     </tr>
     <tr>
       <td>RTS</td>
@@ -505,7 +505,7 @@
       <td><input type="checkbox" name="RTS_ON"> ON</td>
       <td><input type="checkbox" name="RTS_OFF"> OFF</td>
       <td><input type="checkbox" name="RTS_BLINK"> BLINK</td>
-      <td><input type="text" name="RTS_remark"></td>
+      <td><input type="text" name="RTS_remark" placeholder="หมายเหตุข้อ 8"></td>
     </tr>
   </tbody>
 </table>
@@ -528,12 +528,12 @@
     <tr>
       <td>วัดแรงดันขาเข้าของ Power Supply <small>(Input Terminal 8, 9 / 220-230 Vac)</small></td>
       <td><input type="text" name="input_result" placeholder="Vac"></td>
-      <td><input type="text" name="input_remark"></td>
+      <td><input type="text" name="input_remark" placeholder="หมายเหตุข้อ 1"></td>
     </tr>
     <tr>
       <td>วัดแรงดันขาออกของ Power Supply <small>(Output Terminal 1, 3 or 2, 4 / 20-24 Vdc)</small></td>
       <td><input type="text" name="output_result" placeholder="Vdc"></td>
-      <td><input type="text" name="output_remark"></td>
+      <td><input type="text" name="output_remark" placeholder="หมายเหตุข้อ 2"></td>
     </tr>
   </tbody>
 </table>
@@ -815,7 +815,7 @@
             <td><input type="checkbox" name="led_FSR_1_on"> ON</td>
             <td><input type="checkbox" name="led_FSR_1_off"> OFF</td>
             <td><input type="checkbox" name="led_FSR_1_blink"> BLINK</td>
-            <td><input type="text" name="remark_FSR_1"></td>
+            <td><input type="text" name="remark_FSR_1" placeholder="หมายเหตุข้อ 1"></td>
         </tr>
         <tr>
             <td>DCR_1</td>
@@ -823,7 +823,7 @@
             <td><input type="checkbox" name="led_DCR_1_on"> ON</td>
             <td><input type="checkbox" name="led_DCR_1_off"> OFF</td>
             <td><input type="checkbox" name="led_DCR_1_blink"> BLINK</td>
-            <td><input type="text" name="remark_DCR_1"></td>
+            <td><input type="text" name="remark_DCR_1" placeholder="หมายเหตุข้อ 2"></td>
         </tr>
         <tr>
             <td>NDR_1</td>
@@ -831,7 +831,7 @@
             <td><input type="checkbox" name="led_NDR_1_on"> ON</td>
             <td><input type="checkbox" name="led_NDR_1_off"> OFF</td>
             <td><input type="checkbox" name="led_NDR_1_blink"> BLINK</td>
-            <td><input type="text" name="remark_NDR_1"></td>
+            <td><input type="text" name="remark_NDR_1" placeholder="หมายเหตุข้อ 3"></td>
         </tr>
         <tr>
             <td>FIR_2</td>
@@ -839,7 +839,7 @@
             <td><input type="checkbox" name="led_FIR_2_on"> ON</td>
             <td><input type="checkbox" name="led_FIR_2_off"> OFF</td>
             <td><input type="checkbox" name="led_FIR_2_blink"> BLINK</td>
-            <td><input type="text" name="remark_FIR_2"></td>
+            <td><input type="text" name="remark_FIR_2" placeholder="หมายเหตุข้อ 4"></td>
         </tr>
         <tr>
             <td>DOR_2</td>
@@ -847,7 +847,7 @@
             <td><input type="checkbox" name="led_DOR_2_on"> ON</td>
             <td><input type="checkbox" name="led_DOR_2_off"> OFF</td>
             <td><input type="checkbox" name="led_DOR_2_blink"> BLINK</td>
-            <td><input type="text" name="remark_DOR_2"></td>
+            <td><input type="text" name="remark_DOR_2" placeholder="หมายเหตุข้อ 5"></td>
         </tr>
         <tr>
             <td>RDR_2</td>
@@ -855,7 +855,7 @@
             <td><input type="checkbox" name="led_RDR_2_on"> ON</td>
             <td><input type="checkbox" name="led_RDR_2_off"> OFF</td>
             <td><input type="checkbox" name="led_RDR_2_blink"> BLINK</td>
-            <td><input type="text" name="remark_RDR_2"></td>
+            <td><input type="text" name="remark_RDR_2" placeholder="หมายเหตุข้อ 6"></td>
         </tr>
         <tr>
             <td>ADCLR_2</td>
@@ -863,7 +863,7 @@
             <td><input type="checkbox" name="led_ADCLR_2_on"> ON</td>
             <td><input type="checkbox" name="led_ADCLR_2_off"> OFF</td>
             <td><input type="checkbox" name="led_ADCLR_2_blink"> BLINK</td>
-            <td><input type="text" name="remark_ADCLR_2"></td>
+            <td><input type="text" name="remark_ADCLR_2" placeholder="หมายเหตุข้อ 7"></td>
         </tr>
         <tr>
             <td>3CTR_1</td>
@@ -871,7 +871,7 @@
             <td><input type="checkbox" name="led_3CTR_1_on"> ON</td>
             <td><input type="checkbox" name="led_3CTR_1_off"> OFF</td>
             <td><input type="checkbox" name="led_3CTR_1_blink"> BLINK</td>
-            <td><input type="text" name="remark_3CTR_1"></td>
+            <td><input type="text" name="remark_3CTR_1" placeholder="หมายเหตุข้อ 8"></td>
         </tr>
         <tr>
             <td>4CTR_1</td>
@@ -879,7 +879,7 @@
             <td><input type="checkbox" name="led_4CTR_1_on"> ON</td>
             <td><input type="checkbox" name="led_4CTR_1_off"> OFF</td>
             <td><input type="checkbox" name="led_4CTR_1_blink"> BLINK</td>
-            <td><input type="text" name="remark_4CTR_1"></td>
+            <td><input type="text" name="remark_4CTR_1" placeholder="หมายเหตุข้อ 9"></td>
         </tr>
         <tr>
             <td>6CTR_1</td>
@@ -887,7 +887,7 @@
             <td><input type="checkbox" name="led_6CTR_1_on"> ON</td>
             <td><input type="checkbox" name="led_6CTR_1_off"> OFF</td>
             <td><input type="checkbox" name="led_6CTR_1_blink"> BLINK</td>
-            <td><input type="text" name="remark_6CTR_1"></td>
+            <td><input type="text" name="remark_6CTR_1" placeholder="หมายเหตุข้อ 10"></td>
         </tr>
         <tr>
             <td rowspan="10">EB</td>
@@ -896,7 +896,7 @@
             <td><input type="checkbox" name="led_FSR_3_on"> ON</td>
             <td><input type="checkbox" name="led_FSR_3_off"> OFF</td>
             <td><input type="checkbox" name="led_FSR_3_blink"> BLINK</td>
-            <td><input type="text" name="remark_FSR_3"></td>
+            <td><input type="text" name="remark_FSR_3" placeholder="หมายเหตุข้อ 11"></td>
         </tr>
         <tr>
             <td>DCR_3</td>
@@ -904,7 +904,7 @@
             <td><input type="checkbox" name="led_DCR_3_on"> ON</td>
             <td><input type="checkbox" name="led_DCR_3_off"> OFF</td>
             <td><input type="checkbox" name="led_DCR_3_blink"> BLINK</td>
-            <td><input type="text" name="remark_DCR_3"></td>
+            <td><input type="text" name="remark_DCR_3" placeholder="หมายเหตุข้อ 12"></td>
         </tr>
         <tr>
             <td>NDR_3</td>
@@ -912,7 +912,7 @@
             <td><input type="checkbox" name="led_NDR_3_on"> ON</td>
             <td><input type="checkbox" name="led_NDR_3_off"> OFF</td>
             <td><input type="checkbox" name="led_NDR_3_blink"> BLINK</td>
-            <td><input type="text" name="remark_NDR_3"></td>
+            <td><input type="text" name="remark_NDR_3" placeholder="หมายเหตุข้อ 13"></td>
         </tr>
         <tr>
             <td>FIR_4</td>
@@ -920,7 +920,7 @@
             <td><input type="checkbox" name="led_FIR_4_on"> ON</td>
             <td><input type="checkbox" name="led_FIR_4_off"> OFF</td>
             <td><input type="checkbox" name="led_FIR_4_blink"> BLINK</td>
-            <td><input type="text" name="remark_FIR_4"></td>
+            <td><input type="text" name="remark_FIR_4" placeholder="หมายเหตุข้อ 14"></td>
         </tr>
         <tr>
             <td>DOR_4</td>
@@ -928,7 +928,7 @@
             <td><input type="checkbox" name="led_DOR_4_on"> ON</td>
             <td><input type="checkbox" name="led_DOR_4_off"> OFF</td>
             <td><input type="checkbox" name="led_DOR_4_blink"> BLINK</td>
-            <td><input type="text" name="remark_DOR_4"></td>
+            <td><input type="text" name="remark_DOR_4" placeholder="หมายเหตุข้อ 15"></td>
         </tr>
         <tr>
             <td>RDR_4</td>
@@ -936,7 +936,7 @@
             <td><input type="checkbox" name="led_RDR_4_on"> ON</td>
             <td><input type="checkbox" name="led_RDR_4_off"> OFF</td>
             <td><input type="checkbox" name="led_RDR_4_blink"> BLINK</td>
-            <td><input type="text" name="remark_RDR_4"></td>
+            <td><input type="text" name="remark_RDR_4" placeholder="หมายเหตุข้อ 16"></td>
         </tr>
         <tr>
             <td>ADCLR_4</td>
@@ -944,7 +944,7 @@
             <td><input type="checkbox" name="led_ADCLR_4_on"> ON</td>
             <td><input type="checkbox" name="led_ADCLR_4_off"> OFF</td>
             <td><input type="checkbox" name="led_ADCLR_4_blink"> BLINK</td>
-            <td><input type="text" name="remark_ADCLR_4"></td>
+            <td><input type="text" name="remark_ADCLR_4" placeholder="หมายเหตุข้อ 17"></td>
         </tr>
         <tr>
             <td>3CTR_2</td>
@@ -952,7 +952,7 @@
             <td><input type="checkbox" name="led_3CTR_2_on"> ON</td>
             <td><input type="checkbox" name="led_3CTR_2_off"> OFF</td>
             <td><input type="checkbox" name="led_3CTR_2_blink"> BLINK</td>
-            <td><input type="text" name="remark_3CTR_2"></td>
+            <td><input type="text" name="remark_3CTR_2" placeholder="หมายเหตุข้อ 18"></td>
         </tr>
         <tr>
             <td>4CTR_2</td>
@@ -960,7 +960,7 @@
             <td><input type="checkbox" name="led_4CTR_2_on"> ON</td>
             <td><input type="checkbox" name="led_4CTR_2_off"> OFF</td>
             <td><input type="checkbox" name="led_4CTR_2_blink"> BLINK</td>
-            <td><input type="text" name="remark_4CTR_2"></td>
+            <td><input type="text" name="remark_4CTR_2" placeholder="หมายเหตุข้อ 19"></td>
         </tr>
         <tr>
             <td>6CTR_2</td>
@@ -968,7 +968,7 @@
             <td><input type="checkbox" name="led_6CTR_2_on"> ON</td>
             <td><input type="checkbox" name="led_6CTR_2_off"> OFF</td>
             <td><input type="checkbox" name="led_6CTR_2_blink"> BLINK</td>
-            <td><input type="text" name="remark_6CTR_2"></td>
+            <td><input type="text" name="remark_6CTR_2" placeholder="หมายเหตุข้อ 20"></td>
         </tr>
     </table>
 </body>

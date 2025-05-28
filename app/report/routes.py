@@ -734,8 +734,57 @@ def generate_mitrac_y1_pdf():
     ]
     for field in checkbox_fields:
         context[field] = markbox(field)
+    
+    # ========== Section 2: Visual Inspection & Cleaning Procedure (Y3) ==========
+    num_general_items = 23
 
-    # ========== Section 6: Other Issues ==========
+    # Loop for items result1-result28 and remark1-remark28
+    for i in range(1, num_general_items + 1):
+        context[f"result{i}"] = markbox(f"result{i}")
+        context[f"remark{i}"] = request.form.get(f"remark{i}", "")
+
+    # Specific handling for item 15's additional checkboxes
+    context["type1_15"] = markbox("type1_15")
+    context["type2_15"] = markbox("type2_15")
+
+    # ========== Section 3: VCU-Lite Unit Status (ตารางที่ 1) ==========
+    indicators = ["POW", "ERR", "TX", "RX", "MVB", "SC", "WA", "RTS"]
+    statuses = ["ON", "OFF", "BLINK"]
+
+    for indicator in indicators:
+        for status in statuses:
+            # สำหรับ checkbox ของสถานะ LED เช่น POW_ON, ERR_OFF
+            context[f"{indicator}_{status}"] = markbox(f"{indicator}_{status}")
+        # สำหรับช่องข้อความ Remark เช่น POW_remark, ERR_remark
+        context[f"{indicator}_remark"] = request.form.get(f"{indicator}_remark", "")
+    
+    # ========== Section 4: แรงดันไฟฟ้าของ Power Supply (ตารางที่ 2) ==========
+    sections = {
+    "input": ["result", "remark"],
+    "output": ["result", "remark"]
+    }
+
+    for section_name, field_types in sections.items():
+        for field_type in field_types:
+            # สร้างชื่อ field แบบเต็ม เช่น "input_result", "output_remark"
+            full_field_name = f"{section_name}_{field_type}"
+            context[full_field_name] = request.form.get(full_field_name, "")
+     
+    # ========== Section 6: Relay Status (ตารางที่ 4) ==========
+    relay_list = [
+    "FSR_1", "DCR_1", "NDR_1", "FIR_2", "DOR_2", "RDR_2", "ADCLR_2", "3CTR_1", "4CTR_1", "6CTR_1",
+    "FSR_3", "DCR_3", "NDR_3", "FIR_4", "DOR_4", "RDR_4", "ADCLR_4", "3CTR_2", "4CTR_2", "6CTR_2"
+]
+
+    for relay in relay_list:
+        relay_key = relay
+
+        context[f"led_{relay_key}_on"] = markbox(f"led_{relay_key}_on")
+        context[f"led_{relay_key}_off"] = markbox(f"led_{relay_key}_off")
+        context[f"led_{relay_key}_blink"] = markbox(f"led_{relay_key}_blink")
+        context[f"remark_{relay_key}"] = request.form.get(f"remark_{relay_key}", "")
+
+    # ========== Section 7: Other Issues ==========
     for i in range(1, 6):
         context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
 
@@ -744,7 +793,7 @@ def generate_mitrac_y1_pdf():
     template_path = os.path.join(base_dir, "templates", "docx_templates", "MITRAC (Y1).docx")
     doc = DocxTemplate(template_path)
 
-    # ========== Section 7: แนบรูป ==========
+    # ========== Section 8: แนบรูป ==========
     image_keys = ['work_picture_1', 'work_picture_2', 'work_picture_3', 'work_picture_4']  # ตามชื่อใน template.docx
 
     for key in image_keys:
@@ -818,6 +867,41 @@ def generate_mitrac_m6_pdf():
     for field in checkbox_fields:
         context[field] = markbox(field)
 
+    # ========== Section 2: Visual Inspection & Cleaning Procedure (Y3) ==========
+    num_general_items = 22
+
+    # Loop for items result1-result28 and remark1-remark28
+    for i in range(1, num_general_items + 1):
+        context[f"result{i}"] = markbox(f"result{i}")
+        context[f"remark{i}"] = request.form.get(f"remark{i}", "")
+
+    # Specific handling for item 15's additional checkboxes
+    context["type1_15"] = markbox("type1_15")
+    context["type2_15"] = markbox("type2_15")
+
+    # ========== Section 3: VCU-Lite Unit Status (ตารางที่ 1) ==========
+    indicators = ["POW", "ERR", "TX", "RX", "MVB", "SC", "WA", "RTS"]
+    statuses = ["ON", "OFF", "BLINK"]
+
+    for indicator in indicators:
+        for status in statuses:
+            # สำหรับ checkbox ของสถานะ LED เช่น POW_ON, ERR_OFF
+            context[f"{indicator}_{status}"] = markbox(f"{indicator}_{status}")
+        # สำหรับช่องข้อความ Remark เช่น POW_remark, ERR_remark
+        context[f"{indicator}_remark"] = request.form.get(f"{indicator}_remark", "")
+    
+    # ========== Section 4: แรงดันไฟฟ้าของ Power Supply (ตารางที่ 2) ==========
+    sections = {
+    "input": ["result", "remark"],
+    "output": ["result", "remark"]
+    }
+
+    for section_name, field_types in sections.items():
+        for field_type in field_types:
+            # สร้างชื่อ field แบบเต็ม เช่น "input_result", "output_remark"
+            full_field_name = f"{section_name}_{field_type}"
+            context[full_field_name] = request.form.get(full_field_name, "")
+     
     # ========== Section 6: Other Issues ==========
     for i in range(1, 6):
         context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
@@ -900,7 +984,30 @@ def generate_mitrac_m3_pdf():
     ]
     for field in checkbox_fields:
         context[field] = markbox(field)
+    
+     # ========== Section 2: Visual Inspection & Cleaning Procedure (Y3) ==========
+    num_general_items = 22
 
+    # Loop for items result1-result28 and remark1-remark28
+    for i in range(1, num_general_items + 1):
+        context[f"result{i}"] = markbox(f"result{i}")
+        context[f"remark{i}"] = request.form.get(f"remark{i}", "")
+
+    # Specific handling for item 15's additional checkboxes
+    context["type1_15"] = markbox("type1_15")
+    context["type2_15"] = markbox("type2_15")
+
+    # ========== Section 3: VCU-Lite Unit Status (ตารางที่ 1) ==========
+    indicators = ["POW", "ERR", "TX", "RX", "MVB", "SC", "WA", "RTS"]
+    statuses = ["ON", "OFF", "BLINK"]
+
+    for indicator in indicators:
+        for status in statuses:
+            # สำหรับ checkbox ของสถานะ LED เช่น POW_ON, ERR_OFF
+            context[f"{indicator}_{status}"] = markbox(f"{indicator}_{status}")
+        # สำหรับช่องข้อความ Remark เช่น POW_remark, ERR_remark
+        context[f"{indicator}_remark"] = request.form.get(f"{indicator}_remark", "")
+    
     # ========== Section 6: Other Issues ==========
     for i in range(1, 6):
         context[f"other_issue_{i}"] = request.form.get(f"other_issue_{i}", "")
