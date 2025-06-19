@@ -15,167 +15,140 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "layout.html" %}
 
+{% block title %}Knowledge Base{% endblock %}
+
+{% block styles %}
+<!-- โหลด CSS เฉพาะหน้า (ถ้ามี) -->
+<link 
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.css"
+/>
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='style.css') }}"
+/>
+{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Bootstrap CSS -->
-        <link 
-            rel="stylesheet" 
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-        >
-        <!-- Bootstrap Table CSS -->
-        <link 
-            rel="stylesheet" 
-            href="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.css"
-        >
-        <!-- เชื่อมต่อไฟล์ CSS ของ Flask -->
-        <link 
-            rel="stylesheet" 
-            href="{{ url_for('static', filename='/style.css') }}"
-        >
-        <title>Knowledge Base</title>
-    </head>
-    <body>
-    <div class="container">
-        <br>
-        <h2><i class="fa-solid fa-list-check" style="color: #74C0FC;"></i> Knowledge Base </h2>
+<div class="container">
+    <br>
+    <h2><i class="fa-solid fa-list-check" style="color: #74C0FC;"></i> Knowledge Base </h2>
 
-        {{ form.hidden_tag() }}
-    
-        <!-- Flash Messages (Flask) -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    
-        <!-- Toolbar ที่มีปุ่มเปล่า ๆ -->
-        <div id="toolbar">
-            <a href="{{ url_for('knowledge_base.create_knowledge_base') }}" class="custom-index-btn">
-                <i class="fa-solid fa-plus"></i>Create
-            </a>
-        </div>
-        
+    {{ form.hidden_tag() }}
 
-        <div class="table-responsive">
-            <table 
-                data-toggle="table"
-                data-toolbar="#toolbar"
-                data-search="true"
-                data-pagination="true"
-                data-page-list="[10, 25, 50, 100, all]"
-                class="table table-striped table-hover"
-            >
-                <thead class="table-dark">
-                    <tr>
-                        <th data-sortable="true">Number</th>
-                        <th data-sortable="true">Create Date</th>
-                        <th data-sortable="true">Device Type</th>
-                        <th data-sortable="true">Topic</th>
-                        <th data-sortable="true">Create By</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in items %}
-                    <tr>
-                        <td>{{ item.number }}</td>
-                        <td>{{ item.create_date }}</td>
-                        <td>{{ item.device_type }}</td>
-                        <td>{{ item.topic }}</td>
-                        <td>{{ item.create_by }}</td> 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-                        <td class="actions">
-                            <a href="{{ url_for('knowledge_base.knowledge_base_detail', number=item.number) }}" class="btn custom-view-btn">
-                                <i class="fa-solid fa-eye fa-lg"></i>
-                            </a>
-                            {% if current_user.role == 'admin' %}
-                            <a href="#" onclick="confirmDelete('{{ item.number }}')" class="btn custom-delete-btn">
-                                    <i class="fa-solid fa-trash-can fa-lg"></i>
-                            </a>
-                        {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div id="toolbar">
+        <a href="{{ url_for('knowledge_base.create_knowledge_base') }}" class="custom-index-btn">
+            <i class="fa-solid fa-plus"></i> Create
+        </a>
     </div>
-    
-    <!-- Bootstrap, jQuery และ Bootstrap Table JS -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-    <script 
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js">
-    </script>
-    <script 
-        src="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.js">
-    </script>
-    <script>
-        async function confirmDelete(itemNumber) { // ใช้ async เพื่อรอ fetch
-            if (confirm('คุณแน่ใจว่าต้องการที่จะลบ Knowledge: ' + itemNumber + ' ?')) {
-                // 1. ดึงค่า CSRF token (ยังคงต้องมีบนหน้า)
-                const csrfTokenInput = document.querySelector('input[name="csrf_token"]');
-                const csrfToken = csrfTokenInput ? csrfTokenInput.value : null;
 
-                if (!csrfToken) {
-                    alert('Error: Could not find security token. Please refresh the page.');
-                    return;
-                }
+    <div class="table-responsive">
+        <table 
+            id="knowledgeTable"
+            data-toolbar="#toolbar"
+            data-search="true"
+            data-pagination="true"
+            data-page-list="[10, 25, 50, 100, all]"
+            class="table table-striped table-hover"
+        >
+            <thead class="table-dark">
+                <tr>
+                    <th data-sortable="true">Number</th>
+                    <th data-sortable="true">Create Date</th>
+                    <th data-sortable="true">Device Type</th>
+                    <th data-sortable="true">Topic</th>
+                    <th data-sortable="true">Create By</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.number }}</td>
+                    <td>{{ item.create_date }}</td>
+                    <td>{{ item.device_type }}</td>
+                    <td>{{ item.topic }}</td>
+                    <td>{{ item.create_by }}</td> 
+                    <td class="actions">
+                        <a href="{{ url_for('knowledge_base.knowledge_base_detail', number=item.number) }}" class="btn custom-view-btn" title="View">
+                            <i class="fa-solid fa-eye fa-lg"></i>
+                        </a>
+                        {% if current_user.role == 'admin' %}
+                        <a href="#" onclick="confirmDelete('{{ item.number }}')" class="btn custom-delete-btn" title="Delete">
+                            <i class="fa-solid fa-trash-can fa-lg"></i>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
 
-                // 2. สร้าง URL สำหรับลบ
-                //    *** ตรวจสอบชื่อ endpoint 'knowledge_base.deleteknowledge' ให้ถูกต้อง ***
-                let deleteUrlTemplate = "{{ url_for('knowledge_base.deleteknowledge', number=0) }}";
-                let deleteUrl = deleteUrlTemplate.replace('/0', '/' + itemNumber);
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.js"></script>
 
-                try {
-                    // 3. ส่ง request ด้วย fetch
-                    const response = await fetch(deleteUrl, {
-                        method: 'POST', // หรือ 'DELETE' ถ้า route รองรับ
-                        headers: {
-                            'X-CSRFToken': csrfToken, // ส่ง token ใน header
-                            'Accept': 'application/json' // บอก Server ว่าคาดหวัง JSON (ถ้า Server ตอบกลับ)
-                        }
-                        // ไม่มี body ถ้าใช้ DELETE หรือถ้า POST ไม่ต้องการข้อมูลเพิ่ม
-                    });
+<script>
+    // initialize bootstrap-table ด้วย id
+    $(function () {
+        $('#knowledgeTable').bootstrapTable();
+    });
 
-                    // 4. จัดการกับการตอบกลับจาก Server
-                    if (response.ok) {
-                        // สำเร็จ: อาจจะลบแถวออกจากตาราง หรือ reload หน้า
-                        alert('Knowledge base item deleted successfully.');
-                        window.location.reload(); // Reload หน้าเพื่ออัปเดตตาราง
-                    } else {
-                        // ไม่สำเร็จ: แสดงข้อผิดพลาด
-                        // ลองอ่านข้อความจาก Server (อาจจะเป็น JSON หรือ Text)
-                        let errorData;
-                        try {
-                            errorData = await response.json(); // ลองอ่านเป็น JSON
-                        } catch (e) {
-                            errorData = await response.text(); // ถ้าไม่ใช่ JSON อ่านเป็น Text
-                        }
-                        console.error("Delete failed:", errorData);
-                        alert(`Error deleting item: ${response.status} - ${errorData.message || errorData}`);
+    async function confirmDelete(itemNumber) {
+        if (confirm('คุณแน่ใจว่าต้องการที่จะลบ Knowledge: ' + itemNumber + ' ?')) {
+            const csrfTokenInput = document.querySelector('input[name="csrf_token"]');
+            const csrfToken = csrfTokenInput ? csrfTokenInput.value : null;
+
+            if (!csrfToken) {
+                alert('Error: Could not find security token. Please refresh the page.');
+                return;
+            }
+
+            let deleteUrlTemplate = "{{ url_for('knowledge_base.deleteknowledge', number=0) }}";
+            let deleteUrl = deleteUrlTemplate.replace('/0', '/' + itemNumber);
+
+            try {
+                const response = await fetch(deleteUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json'
                     }
-                } catch (error) {
-                    console.error("Network or other error:", error);
-                    alert('An error occurred while trying to delete the item.');
+                });
+
+                if (response.ok) {
+                    alert('Knowledge base item deleted successfully.');
+                    window.location.reload();
+                } else {
+                    let errorData;
+                    try {
+                        errorData = await response.json();
+                    } catch (e) {
+                        errorData = await response.text();
+                    }
+                    console.error("Delete failed:", errorData);
+                    alert(`Error deleting item: ${response.status} - ${errorData.message || errorData}`);
                 }
+            } catch (error) {
+                console.error("Network or other error:", error);
+                alert('An error occurred while trying to delete the item.');
             }
         }
-    </script>
-    
-    
-    
-    </body>
-    </html>
-    
+    }
+</script>
 {% endblock %}

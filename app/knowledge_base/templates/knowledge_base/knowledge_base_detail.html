@@ -12,53 +12,41 @@
 ####################################################
 -->
 
-{% import "bootstrap/wtf.html" as wtf %}
 {% extends "layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<style>
+.description-content {
+  overflow-wrap: break-word; /* หรือ word-wrap: break-word */
+}
+.description-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-     <!-- Add Font Awesome -->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-     <!-- เชื่อมต่อไฟล์ CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
-    <!-- ลิงก์ไปยัง Boxicons -->
-	<link href="https://unpkg.com/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
-
-    <style>
-        .description-content {
-          /* ไม่ใช้ white-space: pre-line เพราะอาจรบกวน HTML */
-          overflow-wrap: break-word; /* หรือ word-wrap: break-word */
-        }
-        
-        .description-content img {
-          max-width: 100%;
-          height: auto;
-          display: block;
-        }
-        </style>
-
-</head>
 <div class="container my-2">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-    <body class="bg-light">
-        <div class="container py-5">
-            <div class="card shadow">
-                <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Knowledge Base Detail</h3>
-                    <a href="{{ url_for('knowledge_base.main') }}" class="btn-close btn-close-white" aria-label="Close"></a>
-                </div>
-                <div class="card-body">
-                    <div class="edit-btn-container">
-                        <a href="{{ url_for('knowledge_base.edit_knowledge_base', number=items.number) }}" class="btn custom-edit-btn" style="width: 150px;"><i class="fa-solid fa-pen-to-square"></i>Edit</a>
+    <div class="container py-5">
+        <div class="card shadow">
+            <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Knowledge Base Detail</h3>
+                <a href="{{ url_for('knowledge_base.main') }}" class="btn-close btn-close-white" aria-label="Close"></a>
+            </div>
+            <div class="card-body">
+                <div class="edit-btn-container mb-3">
+                    <a href="{{ url_for('knowledge_base.edit_knowledge_base', number=items.number) }}" class="btn custom-edit-btn" style="width: 150px;">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
                     </a>
-                    </div>
+                </div>
                 <div class="table-responsive-lg">
                     <table class="table table-striped">
                         <thead>
@@ -81,13 +69,13 @@
                         </tbody>
                     </table>
                 </div>
-                
-                <!-- การแสดง Flash Message -->
+
+                <!-- Flash Message -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                <div class="alert-container">
+                <div class="alert-container mt-3">
                     {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} mt-2" role="alert">
+                    <div class="alert alert-{{ category }}" role="alert">
                         {{ message }}
                     </div>
                     {% endfor %}
@@ -96,15 +84,15 @@
                 {% endwith %}
 
                 <div class="mt-4 p-3 border rounded">
-                    <!-- ข้อความรายละเอียด -->
                     <div class="description-content">
                         {{ items.description|safe }}
                     </div>
                 </div>
-                
-    </body>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-</html>
+<!-- โหลด JS flatpickr ไว้ท้าย body -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% endblock %}

@@ -77,25 +77,28 @@ async function loadCMStatusPieChart() {
 // 📌 โหลด Pie Chart สำหรับอุปกรณ์ที่เสียบ่อยที่สุด
 async function loadEquipmentFailurePieChart() {
     try {
-        let equipResponse = await fetch("/dashboard/api/equipment_failure");
-        let equipData = await equipResponse.json();
-        console.log("📊 Equipment Data:", equipData);
+        const equipResponse = await fetch("/dashboard/api/equipment_failure");
+        const rawData = await equipResponse.json();
 
-        let equipCtx = document.getElementById("equipment-failure-pie-chart").getContext("2d");
+        const rawLabels = rawData.labels;
+        const rawValues = rawData.values;
+
+        const total = rawValues.reduce((sum, val) => sum + val, 0) || 1;
+        const dynamicColors = generateColorPalette(rawLabels.length);
+        const defaultDataLabelColor = "#333";
+
+        const ctx = document.getElementById("equipment-failure-pie-chart").getContext("2d");
 
         if (window.equipmentFailureChart) {
             window.equipmentFailureChart.destroy();
         }
 
-        let dynamicColors = generateColorPalette(equipData.labels.length);
-        let total = equipData.values.reduce((sum, val) => sum + val, 0);
-
-        window.equipmentFailureChart = new Chart(equipCtx, {
+        window.equipmentFailureChart = new Chart(ctx, {
             type: "pie",
             data: {
-                labels: equipData.labels,
+                labels: rawLabels,
                 datasets: [{
-                    data: equipData.values,
+                    data: rawValues,
                     backgroundColor: dynamicColors
                 }]
             },
@@ -105,9 +108,13 @@ async function loadEquipmentFailurePieChart() {
                 plugins: {
                     legend: { position: "bottom" },
                     datalabels: {
-                        formatter: (value) => {
-                            let percentage = ((value / total) * 100).toFixed(1);
-                            return `${percentage}%`;
+                        formatter: (value, context) => {
+                            const index = context.dataIndex;
+                            if (index < 5) {  // เฉพาะ 5 อันดับแรก
+                                const percent = ((value / total) * 100).toFixed(1);
+                                return `${percent}%`;
+                            }
+                            return '';
                         },
                         color: defaultDataLabelColor,
                         font: { weight: "bold", size: 14 }
@@ -116,6 +123,7 @@ async function loadEquipmentFailurePieChart() {
             },
             plugins: [ChartDataLabels]
         });
+
     } catch (error) {
         console.error("❌ Error fetching Equipment Failure data:", error);
     }

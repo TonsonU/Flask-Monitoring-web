@@ -232,7 +232,7 @@
 
             .then(data => {
               // data.location = URL ของไฟล์ใน /static/temp_uploads/...
-              callback(data.location, { alt: file.name });
+              callback(data.location);
               // บันทึก URL ที่อัปโหลดใน global array
               window.uploadedImages.push(data.location);
             })

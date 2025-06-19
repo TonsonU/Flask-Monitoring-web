@@ -388,6 +388,7 @@ def breakdown_by_equipment():
         .filter(DeviceType.name == equipment_name)  # ✅ กรองตามประเภทอุปกรณ์
         .group_by(DeviceName.name)  # ✅ รวม Device Name ที่ซ้ำกัน
         .order_by(db.func.count(Work.device_name_id).desc())  # ✅ เรียงจากมากไปน้อย
+        .limit(10) 
         .all()
     )
     print("🔍 DEBUG: Breakdown Data:", breakdown_data)

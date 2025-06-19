@@ -32,6 +32,7 @@ def create_app():
     app.config.from_object('config.Config')
     app.config['WTF_CSRF_HEADERS'] = ['X-CSRFToken'] 
 
+    
     # Initialize Flask Extensions
     db.init_app(app)
     csrf.init_app(app)
@@ -58,7 +59,8 @@ def create_app():
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(report_bp, url_prefix='/report')
     app.add_template_filter(datetime_bangkok, 'datetime_bangkok')
-
+    
+        
     return app
 
 
