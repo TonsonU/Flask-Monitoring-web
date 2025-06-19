@@ -1,0 +1,702 @@
+<!--
+####################################################
+# Flask Monitoring Web
+#
+# 
+# Project : Python, Flask, MySQLite, Bootstrap
+# Author  : Thanapoom Sukarin
+# Modifier: 
+# Version : 
+# Date    : Dec 01, 2024
+#
+####################################################
+-->
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+  <title> Report Point (M1)</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+  <!-- TinyMCE (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/tinymce@6.2.0/tinymce.min.js" referrerpolicy="origin"></script>
+  
+    <meta charset="UTF-8">
+    <title>Form Layout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px dotted gray;
+            padding: 5px;
+            vertical-align: middle;
+            text-align: center;
+        }
+        input[type="text"], input[type="date"], input[type="time"], select {
+            width: 95%;
+            padding: 4px;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <script>
+        function generateMemberInputs() {
+            const count = document.getElementById("memberCount").value;
+            const container = document.getElementById("memberInputs");
+            container.innerHTML = "";
+            for (let i = 1; i <= count; i++) {
+                container.innerHTML += `สมาชิก ${i}: <input type="text" name="person${i}"><br>`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <form method="POST" action="{{ url_for('report.generate_point_m1_pdf') }}" enctype="multipart/form-data">
+    <body class="bg-light">
+        <div class="container py-5">
+          <div class="card shadow">
+            <div class="card-header custom-edit-header text-white d-flex justify-content-between align-items-center">
+              <h3 class="mb-0"><i class="fa-solid fa-plus"></i> Report Point (M1)</h3>
+              <a href="#" onclick="closeOrRedirect();" class="btn-close btn-close-white" aria-label="Close"></a>
+            </div>
+            <div class="card-body">
+              <!-- Flash Messages -->
+              {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+              {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              {% endfor %}
+              {% endif %}
+              {% endwith %}
+        <!-- Section: Header -->
+        <div class="section-header">
+            <h4>MAINTENANCE REPORT</h4>
+            <h4>PM (M1) : POINT MACHINE (JEA72&amp;JEA73)</h4>
+        </div>
+    
+        <form>
+    
+            <!-- Section 1: ข้อมูลทั่วไป -->
+            <table>
+                <tbody>
+                    <tr>
+                        <td>LEADER WAYSIDE:</td>
+                        <td>
+                            <select name="leaders">
+                                <option value="">-- กรุณาเลือก LEADER WAYSIDE --</option>
+                                {% for name in leaders %}
+                                    <option value="{{ name }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>DATE:</td>
+                        <td><input type="date" name="date" placeholder="เลือกวันที่"></td>
+                        <td>TIME:</td>
+                        <td colspan="3">
+                            <input name="time1" type="time" placeholder="เวลาเริ่ม" style="width: 45%; display: inline-block;">
+                            <input name="time2" type="time" placeholder="เวลาสิ้นสุด" style="width: 45%; display: inline-block; margin-left: 5%;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>COORDINATE PERSON:</td>
+                        <td><input type="text" name="coordinate" placeholder="ชื่อผู้ประสานงาน CCR, LC"></td>
+                        <td>STATION:</td>
+                        <td><input type="text" name="station" placeholder="สถานี"></td>
+                        <td>LOCATION AREA:</td>
+                        <td><input type="text" name="location" placeholder="พื้นที่ทำงาน N9-N10"></td>
+                    </tr>
+                    <tr>
+                        <td>APOSTLE:</td>
+                        <td colspan="2">
+                            <select name="apostles">
+                                <option value="">-- กรุณาเลือก APOSTLE --</option>
+                                {% for name in apostles %}
+                                    <option value="{{ name }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>TPR NO:</td>
+                        <td colspan="3" style="text-align: left;">
+                            <label for="tprCount">เลือกจำนวน TPR NO:</label>
+                            <select id="tprCount" onchange="generateTprInputs()">
+                                <option value="0">-- เลือกจำนวนหมายเลข TPR --</option>
+                                {% for i in range(1, 5) %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <div id="tprInputs" style="margin-top: 10px;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>TEAM NAME LIST:</td>
+                        <td colspan="5" style="text-align: left;">
+                            <label for="memberCount">เลือกจำนวนสมาชิก:</label>
+                            <select id="memberCount" onchange="generateMemberInputs()">
+                                <option value="0">-- เลือกจำนวนสมาชิก --</option>
+                                {% for i in range(1, 8) %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <div id="memberInputs" style="margin-top: 10px;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>WORK ORDER NO:</td>
+                        <td colspan="5" style="text-align: left;">
+                            <label for="workOrderCount">เลือกจำนวนใบงาน:</label>
+                            <select id="workOrderCount" onchange="generateWorkOrderInputs()">
+                                <option value="0">-- เลือกจำนวนใบงาน --</option>
+                                {% for i in range(1, 8) %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <div id="workOrderInputs" style="margin-top: 10px;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>WORK DESCRIPTION:</td>
+                        <td colspan="5"><input type="text" name="work_description" placeholder="รายละเอียดงาน"></td>
+                    </tr>
+                    <tr>
+                        <td>ลงชื่อเข้า / ออก พื้นที่สถานี:</td>
+                        <td colspan="2" class="checkbox-group">
+                            <label><input type="checkbox" name="station_in"> เข้า</label>
+                            <label><input type="checkbox" name="station_out"> ออก</label>
+                        </td>
+                        <td>ยืม / คืน อุปกรณ์:</td>
+                        <td colspan="2" class="checkbox-group">
+                            <label><input type="checkbox" name="borrow_earthing"> Earthing Device</label>
+                            <label><input type="checkbox" name="borrow_voltage"> Voltage Tester</label>
+                            <label><input type="checkbox" name="borrow_item"> ยืม</label>
+                            <label><input type="checkbox" name="return_item"> คืน</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>แจ้งเข้า / ออก พื้นที่ตาม Track Possession กับ CCR:</td>
+                        <td colspan="5" class="checkbox-group">
+                            <label><input type="checkbox" name="track_in"> เข้า</label>
+                            <label><input type="checkbox" name="track_out"> ออก</label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    
+            <br>
+    
+            <!-- Section 2: ตารางงาน -->
+            <p style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+                Visual Inspection & Cleaning Procedure (M1)
+            </p>
+            <table>
+                <thead style="background-color: #ddd;">
+                    <tr>
+                        <th rowspan="2" style="width: 5%;">No.</th>
+                        <th rowspan="2" style="width: 55%;">Description</th>
+                        <th colspan="4" style="width: 20%;">Point Machine Number</th>
+                        <th rowspan="2" style="width: 20%;">Remark</th>
+                    </tr>
+                    <tr>
+                        <th><input type="text" name="poi_1" placeholder="P1" style="width:90%;"></th>
+                        <th><input type="text" name="poi_2" placeholder="P2" style="width:90%;"></th>
+                        <th><input type="text" name="poi_3" placeholder="P3" style="width:90%;"></th>
+                        <th><input type="text" name="poi_4" placeholder="P4" style="width:90%;"></th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+    
+                                    <!-- Row 1 -->
+                    <tr>
+                        <td>1.</td>
+                        <td style="text-align: left;">ตรวจสอบตำแหน่งทิศทางของ Point Machine ก่อนเริ่มงาน</td>
+                        <td><input type="text" name="poi1_1_1" placeholder="บ/ล" style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_1" placeholder="บ/ล" style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_1" placeholder="บ/ล" style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_1" placeholder="บ/ล" style="width:90%;"></td>
+                        <td><input type="text" name="remark1_1" placeholder="หมายเหตุข้อ 1" style="width:95%;"></td>
+                    </tr>
+    
+                    <!-- Row 2 -->
+                    <tr>
+                        <td>2.</td>
+                        <td style="text-align: left;">Switch บวก และลบ กับ CCR เพื่อตรวจสอบสถานะ Point Machine</td>
+                        <td><input type="checkbox" name="poi1_1_2"></td>
+                        <td><input type="checkbox" name="poi1_2_2"></td>
+                        <td><input type="checkbox" name="poi1_3_2"></td>
+                        <td><input type="checkbox" name="poi1_4_2"></td>
+                        <td><input type="text" name="remark1_2" placeholder="หมายเหตุข้อ 2" style="width:95%;"></td>
+                    </tr>
+    
+                    <!-- Row 3 แบบพิเศษ -->
+                    <tr>
+                        <td rowspan="3">3.</td>
+                        <td style="text-align: left;">
+                            Switch บวก และลบ กับ CCR Test 3 mm. ด้วย Steel Template<br>
+                            <small>(สถานะปลดคั่ว End Position ทั้งด้านบวก และด้านลบ)</small>
+                        </td>
+                        <td><input type="checkbox" name="poi1_1_3_1"></td>
+                        <td><input type="checkbox" name="poi1_2_3_1"></td>
+                        <td><input type="checkbox" name="poi1_3_3_1"></td>
+                        <td><input type="checkbox" name="poi1_4_3_1"></td>
+                        <td rowspan="3"><input type="text" name="remark1_3" placeholder="หมายเหตุข้อ 3" style="width:95%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Power Rod<br>มีการปรับตั้งด้านบวก ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_3_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_3_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_3_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_3_2"  style="width:90%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Power Rod<br>มีการปรับตั้งด้านลบ ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_3_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_3_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_3_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_3_3"  style="width:90%;"></td>
+                    </tr>
+    
+                    <!-- Row 4 แบบพิเศษ -->
+                    <tr>
+                        <td rowspan="3">4.</td>
+                        <td style="text-align: left;">
+                            Switch บวก และลบ กับ CCR Test 5 mm. ด้วย Steel Template<br>
+                            <small>(สถานะปกติต้องไม่ End Position ทั้งด้านบวก และด้านลบ)</small>
+                        </td>
+                        <td><input type="checkbox" name="poi1_1_4_1"></td>
+                        <td><input type="checkbox" name="poi1_2_4_1"></td>
+                        <td><input type="checkbox" name="poi1_3_4_1"></td>
+                        <td><input type="checkbox" name="poi1_4_4_1"></td>
+                        <td rowspan="3"><input type="text" name="remark1_4" placeholder="หมายเหตุข้อ 4" style="width:95%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Power Rod<br>มีการปรับตั้งด้านบวก ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_4_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_4_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_4_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_4_2"  style="width:90%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Power Rod<br>มีการปรับตั้งด้านลบ ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_4_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_4_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_4_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_4_3"  style="width:90%;"></td>
+                    </tr>
+                
+                    <tr>
+                        <td>5.</td>
+                        <td style="text-align: left;">แจ้ง CCR ขอ Off Point Machine และยืนยันสถานะอีกครั้ง
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_5"></td>
+                        <td><input type="checkbox" name="poi1_2_5"></td>
+                        <td><input type="checkbox" name="poi1_3_5"></td>
+                        <td><input type="checkbox" name="poi1_4_5"></td>
+                        <td><input type="text" name="remark1_5" placeholder="หมายเหตุข้อ 5" style="width:95%;"></td>
+                    </tr>
+                    
+                    <!-- แถว 6 แบบพิเศษ มี 5 แถวย่อย (ย้ายจากข้อ 7 เดิม) -->
+                    <tr>
+                        <td rowspan="5">6.</td>
+                        <td style="text-align: left;">ตรวจสอบระยะ Center ที่ Detector Rod (2 mm. – 3 mm.)</td>
+                        <td><input type="checkbox" name="poi1_1_6_1"></td>
+                        <td><input type="checkbox" name="poi1_2_6_1"></td>
+                        <td><input type="checkbox" name="poi1_3_6_1"></td>
+                        <td><input type="checkbox" name="poi1_4_6_1"></td>
+                        <td rowspan="5"><input type="text" name="remark1_6" placeholder="หมายเหตุข้อ 6" style="width:95%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Detector Rod มีการปรับเข้า ด้านบวก ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_6_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_6_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_6_2"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_6_2"  style="width:90%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Detector Rod มีการปรับเข้า ด้านลบ ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_6_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_6_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_6_3"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_6_3"  style="width:90%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Detector Rod มีการปรับออก ด้านบวก ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_6_4"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_6_4"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_6_4"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_6_4"  style="width:90%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">Detector Rod มีการปรับออก ด้านลบ ระยะ (mm.)</td>
+                        <td><input type="text" name="poi1_1_6_5"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_2_6_5"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_3_6_5"  style="width:90%;"></td>
+                        <td><input type="text" name="poi1_4_6_5"  style="width:90%;"></td>
+                    </tr>
+
+                    <!-- ข้อ 7 ธรรมดา (ย้ายจากข้อ 6 เดิม) -->
+                    <tr>
+                        <td>7.</td>
+                        <td style="text-align: left;">ทำความสะอาดจารบีเก่า และทาจารบีใหม่ในตัว Point Machine </td>
+                        <td><input type="checkbox" name="poi1_1_7"></td>
+                        <td><input type="checkbox" name="poi1_2_7"></td>
+                        <td><input type="checkbox" name="poi1_3_7"></td>
+                        <td><input type="checkbox" name="poi1_4_7"></td>
+                        <td><input type="text" name="remark1_7" placeholder="หมายเหตุข้อ 7" style="width:95%;"></td>
+                    </tr>
+                    
+                    <!-- แถว 8 ถึง 30 -->
+                    <tr>
+                        <td>8.</td>
+                        <td style="text-align: left;">ตรวจสอบหน้า Contact Spring Set เช็ค Marker</td>
+                        <td><input type="checkbox" name="poi1_1_8"></td>
+                        <td><input type="checkbox" name="poi1_2_8"></td>
+                        <td><input type="checkbox" name="poi1_3_8"></td>
+                        <td><input type="checkbox" name="poi1_4_8"></td>
+                        <td><input type="text" name="remark1_8" placeholder="หมายเหตุข้อ 8" style="width:95%;"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>9.</td>
+                        <td style="text-align: left;">ตรวจสอบความแน่นหนาของจุดเชื่อมต่อต่างๆใน Point Machine</td>
+                        <td><input type="checkbox" name="poi1_1_9"></td>
+                        <td><input type="checkbox" name="poi1_2_9"></td>
+                        <td><input type="checkbox" name="poi1_3_9"></td>
+                        <td><input type="checkbox" name="poi1_4_9"></td>
+                        <td><input type="text" name="remark1_9" placeholder="หมายเหตุข้อ 9" style="width:95%;"></td>
+                    </tr>
+    
+                    <tr>
+                        <td>10.</td>
+                        <td style="text-align: left;">ตรวจสอบรอยแตกร้าวที่บริเวณฐานปูนของ Point Machine
+                            (ความกว้างของรอยแตกร้าวต้องไม่เกิน 2 mm.)
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_10"></td>
+                        <td><input type="checkbox" name="poi1_2_10"></td>
+                        <td><input type="checkbox" name="poi1_3_10"></td>
+                        <td><input type="checkbox" name="poi1_4_10"></td>
+                        <td><input type="text" name="remark1_10" placeholder="หมายเหตุข้อ 10" style="width:95%;"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>11.</td>
+                        <td style="text-align: left;">ตรวจสอบสภาพอุปกรณ์จากการกัดกร่อนและความเสียหายอื่นๆ 
+                            ทั้งภายในและภายนอก
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_11"></td>
+                        <td><input type="checkbox" name="poi1_2_11"></td>
+                        <td><input type="checkbox" name="poi1_3_11"></td>
+                        <td><input type="checkbox" name="poi1_4_11"></td>
+                        <td><input type="text" name="remark1_11" placeholder="หมายเหตุข้อ 11" style="width:95%;"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>12.</td>
+                        <td style="text-align: left;">ตรวจสอบระดับน้ำมันเกียร์ 
+                            (ถ้าต่ำกว่าขีดด้านล่างของเกจ ให้เติมเพิ่ม)
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_12"></td>
+                        <td><input type="checkbox" name="poi1_2_12"></td>
+                        <td><input type="checkbox" name="poi1_3_12"></td>
+                        <td><input type="checkbox" name="poi1_4_12"></td>
+                        <td><input type="text" name="remark1_12" placeholder="หมายเหตุข้อ 12" style="width:95%;"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>13.</td>
+                        <td style="text-align: left;">ตรวจสอบ Ground Cable ระหว่าง Point Machine กับ Running Rail
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_13"></td>
+                        <td><input type="checkbox" name="poi1_2_13"></td>
+                        <td><input type="checkbox" name="poi1_3_13"></td>
+                        <td><input type="checkbox" name="poi1_4_13"></td>
+                        <td><input type="text" name="remark1_13" placeholder="หมายเหตุข้อ 13" style="width:95%;"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>14.</td>
+                        <td style="text-align: left;">ทำความสะอาดภายในและภายนอกของ Point Machine 
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_14"></td>
+                        <td><input type="checkbox" name="poi1_2_14"></td>
+                        <td><input type="checkbox" name="poi1_3_14"></td>
+                        <td><input type="checkbox" name="poi1_4_14"></td>
+                        <td><input type="text" name="remark1_14" placeholder="หมายเหตุข้อ 14" style="width:95%;"></td>
+                    </tr>
+                                      
+                    <tr>
+                        <td>15.</td>
+                        <td style="text-align: left;">Crank Point Machine ให้อยู่ในตำแหน่งเริ่มต้นก่อนการทำงาน
+                            และทำการ On Point Machine
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_15"></td>
+                        <td><input type="checkbox" name="poi1_2_15"></td>
+                        <td><input type="checkbox" name="poi1_3_15"></td>
+                        <td><input type="checkbox" name="poi1_4_15"></td>
+                        <td><input type="text" name="remark1_15" placeholder="หมายเหตุข้อ 15" style="width:95%;"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>16.</td>
+                        <td style="text-align: left;">Switch บวก และลบ กับ CCR 
+                            เพื่อตรวจสอบสถานะ Point Machine
+                           </td>
+                        <td><input type="checkbox" name="poi1_1_16"></td>
+                        <td><input type="checkbox" name="poi1_2_16"></td>
+                        <td><input type="checkbox" name="poi1_3_16"></td>
+                        <td><input type="checkbox" name="poi1_4_16"></td>
+                        <td><input type="text" name="remark1_16" placeholder="หมายเหตุข้อ 16" style="width:95%;"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>17.</td>
+                        <td style="text-align: left;">Switch บวก และ ลบ กับ CCR Test 3 mm. ด้วย Steel Template
+                            (สถานะปกติต้อง End Position ทั้งด้านบวก และ ด้านลบ)
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_17"></td>
+                        <td><input type="checkbox" name="poi1_2_17"></td>
+                        <td><input type="checkbox" name="poi1_3_17"></td>
+                        <td><input type="checkbox" name="poi1_4_17"></td>
+                        <td><input type="text" name="remark1_17" placeholder="หมายเหตุข้อ 17" style="width:95%;"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>18.</td>
+                        <td style="text-align: left;">Switch บวก และ ลบ กับ CCR Test 5 mm. ด้วย Steel Template
+                            (สถานะปกติต้องไม่ End Position ทั้งด้านบวก และ ด้านลบ)
+                            
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_18"></td>
+                        <td><input type="checkbox" name="poi1_2_18"></td>
+                        <td><input type="checkbox" name="poi1_3_18"></td>
+                        <td><input type="checkbox" name="poi1_4_18"></td>
+                        <td><input type="text" name="remark1_18" placeholder="หมายเหตุข้อ 18" style="width:95%;"></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>19.</td>
+                        <td style="text-align: left;">Apostle ตรวจสอบอุปกรณ์ทั้งหมด ก่อนออกจากพื้นที่ 
+                            และยืนยันกับ CCR ว่าปฏิบัติงานเสร็จเรียบร้อย
+                            
+                            </td>
+                        <td><input type="checkbox" name="poi1_1_19"></td>
+                        <td><input type="checkbox" name="poi1_2_19"></td>
+                        <td><input type="checkbox" name="poi1_3_19"></td>
+                        <td><input type="checkbox" name="poi1_4_19"></td>
+                        <td><input type="text" name="remark1_19" placeholder="หมายเหตุข้อ 19" style="width:95%;"></td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+    
+            <br>
+    
+        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead style="background-color: #ddd;">
+                <tr>
+                    <th style="text-align: left; font-size: 16px;">
+                        รายละเอียดอื่นๆ และปัญหาที่พบ (Other Issues and Problems)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" name="other_issue_1" placeholder="รายละเอียดเพิ่มเติม 1" style="width: 100%; padding: 5px;"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="other_issue_2" placeholder="รายละเอียดเพิ่มเติม 2" style="width: 100%; padding: 5px;"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="other_issue_3" placeholder="รายละเอียดเพิ่มเติม 3" style="width: 100%; padding: 5px;"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="other_issue_4" placeholder="รายละเอียดเพิ่มเติม 4" style="width: 100%; padding: 5px;"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="other_issue_5" placeholder="รายละเอียดเพิ่มเติม 5" style="width: 100%; padding: 5px;"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <br>
+        
+        <!-- แนบรูปภาพประกอบการทำงาน -->
+        <h4 style="margin-top: 30px;">แนบรูปภาพประกอบการทำงาน (Upload Work Images)</h4>
+        <div style="border: 1px dashed gray; padding: 20px; text-align: left;">
+            <div style="margin-bottom: 10px;">
+                <label>แนบรูปที่ 1:</label><br>
+                <input type="file" name="work_picture_1" accept="image/*">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>แนบรูปที่ 2:</label><br>
+                <input type="file" name="work_picture_2" accept="image/*">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>แนบรูปที่ 3:</label><br>
+                <input type="file" name="work_picture_3" accept="image/*">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>แนบรูปที่ 4:</label><br>
+                <input type="file" name="work_picture_4" accept="image/*">
+            </div>
+        </div>
+    </body>
+    </html>
+    
+    
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary btn-lg">
+            บันทึกข้อมูล
+        </button>
+    </div>
+</form>
+</body>
+
+   
+
+<!-- โหลด Flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</body>
+</html>
+    <script>
+        flatpickr("#time1", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+        flatpickr("#time2", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+        </script>
+    <script>
+        function generateWorkOrderInputs() {
+            const count = document.getElementById('workOrderCount').value;
+            const container = document.getElementById('workOrderInputs');
+            container.innerHTML = ''; // ล้างช่องเก่าก่อน
+        
+            for (let i = 1; i <= count; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = `work${i}`;
+                input.placeholder = `หมายเลขใบงานที่ ${i}`;
+                input.style.marginBottom = '5px';
+                input.style.display = 'block'; // ขึ้นบรรทัดใหม่ทุกช่อง
+                container.appendChild(input);
+            }
+        }
+        </script>
+        <script>
+            function generateTprInputs() {
+                const count = document.getElementById('tprCount').value;
+                const container = document.getElementById('tprInputs');
+                container.innerHTML = ''; // เคลียร์ของเก่า
+            
+                for (let i = 1; i <= count; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = `tpr${i}`;
+                    input.placeholder = `หมายเลข TPR ที่ ${i}`;
+                    input.style.marginBottom = '5px';
+                    input.style.display = 'block'; // ขึ้นบรรทัดใหม่
+                    container.appendChild(input);
+                }
+            }
+            </script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const allMemberNames = {{ apostles|tojson }};
+                    const memberCountSelect = document.getElementById('memberCount');
+                    const memberInputsContainer = document.getElementById('memberInputs');
+                
+                    memberCountSelect.addEventListener('change', generateMemberInputs);
+                
+                    function generateMemberInputs() {
+                        const memberCount = parseInt(memberCountSelect.value) || 0;
+                        memberInputsContainer.innerHTML = '';
+
+                        for (let i = 0; i < memberCount; i++) {
+                            const select = document.createElement('select');
+
+                            // 👇 ตั้งชื่อให้ตรงกับ template Word
+                            select.name = `person${i + 1}`;
+                            
+                            select.classList.add('form-select', 'mb-2');
+                            select.dataset.index = i;
+
+                            select.addEventListener('change', updateSelectOptions);
+                            memberInputsContainer.appendChild(select);
+                        }
+
+                        updateSelectOptions();
+                    }
+                
+                    function updateSelectOptions() {
+                        const selects = memberInputsContainer.querySelectorAll('select');
+                        const selectedNames = Array.from(selects)
+                            .map(select => select.value)
+                            .filter(name => name !== "");
+                
+                        selects.forEach(select => {
+                            const currentValue = select.value;
+                            select.innerHTML = '';
+                
+                            const optionDefault = document.createElement('option');
+                            optionDefault.value = "";
+                            optionDefault.textContent = "-- เลือกสมาชิก --";
+                            select.appendChild(optionDefault);
+                
+                            allMemberNames.forEach(name => {
+                                if (!selectedNames.includes(name) || name === currentValue) {
+                                    const option = document.createElement('option');
+                                    option.value = name;
+                                    option.textContent = name;
+                                    if (name === currentValue) {
+                                        option.selected = true;
+                                    }
+                                    select.appendChild(option);
+                                }
+                            });
+                        });
+                    }
+                });
+                </script>
+<script>
+function closeOrRedirect() {
+    window.close();
+    setTimeout(function() {
+        window.location.href = "{{ url_for('report.main') }}";
+    }, 200);
+}
+</script>
+
+{% endblock %}

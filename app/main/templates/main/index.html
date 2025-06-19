@@ -167,5 +167,40 @@
         const currentPath = window.location.pathname;
         sessionStorage.setItem('previousPage', currentPath);
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // ดึงค่าเก่าจาก sessionStorage
+        const savedSearch = sessionStorage.getItem('tableSearch') || '';
+        const savedPage = parseInt(sessionStorage.getItem('tablePage')) || 1;
+        const savedPageSize = parseInt(sessionStorage.getItem('tablePageSize')) || 10;
+
+        // สร้างตาราง bootstrap-table พร้อมตั้งค่าจาก sessionStorage
+        $('table').bootstrapTable({
+            search: true,
+            pagination: true,
+            pageList: [10, 25, 50, 100, 'all'],
+            pageNumber: savedPage,
+            pageSize: savedPageSize,
+        });
+
+        // ตั้งค่า search หากมีค่าเก็บไว้
+        if (savedSearch) {
+            $('table').bootstrapTable('resetSearch', savedSearch);
+        }
+
+        // เก็บสถานะทุกครั้งที่มีการเปลี่ยนแปลง
+        $('table').on('search.bs.table page-change.bs.table page-size.bs.table', function(e, text, page) {
+            // เก็บค่า search
+            const currentSearch = $('table').bootstrapTable('getOptions').searchText || '';
+            sessionStorage.setItem('tableSearch', currentSearch);
+
+            // เก็บหน้าและขนาดหน้า
+            const options = $('table').bootstrapTable('getOptions');
+            sessionStorage.setItem('tablePage', options.pageNumber);
+            sessionStorage.setItem('tablePageSize', options.pageSize);
+        });
+    });
 </script>
+</body>
+</html>
 {% endblock %}
