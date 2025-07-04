@@ -1,0 +1,135 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block dashboard_content %}
+
+<div id="location-dashboard" class="container-fluid">
+    <div class="row mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h2 class="fw-bold mb-3 me-3">Equipment Overview</h2>
+            <!-- ส่วน Toggle ปรับ theme ถูกลบออกแล้ว -->
+        </div>
+              
+        <!-- 📌 Dropdown Filter -->
+        <div class="col-12 mb-4">
+            <label for="equipmentFilter" class="form-label fw-semibold">เลือกประเภทอุปกรณ์: </label>
+            <select id="equipmentFilter" class="form-select custom-dropdown w-auto d-inline-block">
+                <option value="">-- ทุกประเภท --</option>
+            </select>
+        </div>
+
+        <!-- ✅ Charts Section -->
+        <div class="row g-4">
+
+            <!-- Pie: จำนวนงาน CM -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card shadow-sm rounded-4 text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">จำนวนงาน CM</h5>
+                        <canvas id="work-count-by-equipment-chart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pie: สถานะ -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card shadow-sm rounded-4 text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">สัดส่วนสถานะงานซ่อม (Open / Closed)</h5>
+                        <canvas id="status-pie-chart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line: รายปี -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card shadow-sm rounded-4 text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">แนวโน้มปัญหาของอุปกรณ์ (ปี)</h5>
+                        <canvas id="work-trend-line-chart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line: รายเดือน -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card shadow-sm rounded-4 text-center position-relative h-100">
+                    <div class="card-body pt-4">
+                        <h5 class="card-title fw-bold mb-3">แนวโน้มปัญหาของอุปกรณ์ (เดือน)</h5>
+                        <!-- 📌 Dropdown ปี (อยู่ขวาบน) -->
+                        <select id="monthYearSelect"
+                                class="form-select form-select-sm position-absolute"
+                                style="top: 1rem; right: 1rem; width: auto; max-width: 150px;">
+                        </select>
+                        <canvas id="monthly-trend-line-chart" style="max-height: 285px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar: Location Breakdown -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card shadow-sm rounded-4 text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">จำนวนงาน CM แต่ละ Location</h5>
+                        <canvas id="device-location-breakdown-chart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar: Device Breakdown -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card shadow-sm rounded-4 text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">อุปกรณ์ที่เกิดเคสบ่อยที่สุด</h5>
+                        <canvas id="breakdown-equipment-chart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Point Case Chart -->
+            <div id="point-card" class="col-lg-6 col-md-12" style="display: none;">
+                <div class="card shadow-sm rounded-4 text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">จำนวนสาเหตุเคส CM ของ Point</h5>
+                        <canvas id="point-case-chart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cause Case Chart -->
+            <div id="cause-card" class="col-lg-6 col-md-12" style="display: none;">
+                <div class="card shadow-sm rounded-4 text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">เคส CM ของ Point เกิดจาก</h5>
+                        <canvas id="cause-case-chart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='equipment_dashboard.js') }}"></script>
+
+    
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-4px);
+    }
+
+    .form-select.custom-dropdown {
+        min-width: 220px;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    
+</style>
+
+{% endblock %}
