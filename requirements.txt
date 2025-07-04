@@ -1,0 +1,6 @@
+flask-login
+flask_migrate
+wtforms_sqlalchemy
+pytz
+docxtpl 
+python-docx

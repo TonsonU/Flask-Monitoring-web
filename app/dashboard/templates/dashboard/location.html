@@ -1,0 +1,85 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block dashboard_content %}
+
+<div id="location-dashboard" class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h2 class="fw-bold mb-3 me-3">Location Overview</h2>
+            <!-- Dark mode toggle ถูกลบออกแล้ว -->
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4">
+        <!-- Bar Chart: งานซ่อมที่ค้างอยู่ -->
+        <div class="col-lg-6 col-md-12">
+            <div class="card shadow-sm rounded-4 text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">งาน CM ที่ค้างอยู่ในแต่ละสถานที่</h5>
+                    <canvas id="work-location-bar-chart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stacked Bar Chart: สถานะงาน CM -->
+        <div class="col-lg-6 col-md-12">
+            <div class="card shadow-sm rounded-4 text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">สถานะงาน CM ในแต่ละสถานที่</h5>
+                    <canvas id="work-status-stacked-chart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="col-12">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">งานซ่อมที่เกี่ยวข้อง</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Work Order</th>
+                                    <th>สถานะ</th>
+                                    <th>ประเภทอุปกรณ์</th>
+                                    <th>ชื่ออุปกรณ์</th>
+                                    <th>สถานที่</th>
+                                    <th>รายละเอียด</th>
+                                    <th>ผู้รายงาน</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center">เลือก Location เพื่อดูข้อมูล</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='location_dashboard.js') }}"></script>
+
+<!-- ✅ Styling -->
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-4px);
+    }
+    .chart-container {
+        width: 100%;
+        height: auto;
+    }
+    /* ลบสไตล์ที่เกี่ยวข้องกับ dark mode ออก */
+</style>
+
+{% endblock %}
