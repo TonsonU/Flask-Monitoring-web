@@ -33,3 +33,14 @@ Thumbs.db
 # ยกเว้น log file และ output ต่าง ๆ
 *.log
 *.out
+
+# Tailwind CSS
+node_modules/
+*.exe
+# Production build (Vite, React)
+dist/
+build/
+
+# Local environment file
+.env
+.env.local
